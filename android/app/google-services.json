@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "509309716089",
+    "project_id": "student-union-app",
+    "storage_bucket": "student-union-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509309716089:android:50cfbbf6927fcfb0e976a8",
+        "android_client_info": {
+          "package_name": "com.taberner.student_union_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509309716089-74u9cuhntl4g9878vsmu4p3v6onikrqc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAt4MzBB6fDBYVSXJHNlc4sv-LVQb6tcU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509309716089-74u9cuhntl4g9878vsmu4p3v6onikrqc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
