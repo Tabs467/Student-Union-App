@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/services/database.dart';
 
-class Quiz extends StatefulWidget {
-  const Quiz({Key? key}) : super(key: key);
+class QuizAdmin extends StatefulWidget {
+  const QuizAdmin({Key? key}) : super(key: key);
 
   @override
-  _QuizState createState() => _QuizState();
+  _QuizAdminState createState() => _QuizAdminState();
 }
 
-class _QuizState extends State<Quiz> {
+class _QuizAdminState extends State<QuizAdmin> {
+
+  Future startQuiz() async {
+    await DatabaseService().startQuiz('i0VXURC5VW3DATZpge1T');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,41 +104,14 @@ class _QuizState extends State<Quiz> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-                Container(
-                  height: 250,
-                  child: Card(
-                      margin: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/quiz/activeQuiz');
-                        },
-                        child: Row (
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                                children: const [
-                                  Text(
-                                    'Join Quiz',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                    ),
-                                  ),
-                                ]
-                            ),
-                          ],
-                        ),
-                      )
-                  ),
-                ),
-
               Container(
                 height: 250,
                 child: Card(
                     margin: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                     child: InkWell(
-                      onTap: () {
-                        //Navigator.pushNamed(context, '/quiz/leaderboards');
+                      onTap: () async {
+                        await startQuiz();
+                        Navigator.pushNamed(context, '/quiz/admin/quizControl');
                       },
                       child: Row (
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -140,7 +119,7 @@ class _QuizState extends State<Quiz> {
                           Column(
                               children: const [
                                 Text(
-                                  'Leaderboards',
+                                  'Start Quiz',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -160,7 +139,7 @@ class _QuizState extends State<Quiz> {
                     margin: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                     child: InkWell(
                       onTap: () {
-                        //Navigator.pushNamed(context, '/quiz/myTeam');
+                        //Navigator.pushNamed(context, '/quiz/admin/editQuizzes');
                       },
                       child: Row (
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -168,7 +147,7 @@ class _QuizState extends State<Quiz> {
                           Column(
                               children: const [
                                 Text(
-                                  'My Team',
+                                  'Edit Quizzes',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -182,22 +161,6 @@ class _QuizState extends State<Quiz> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-
-
-      floatingActionButton: Container(
-        height: 200.0,
-        width: 200.0,
-        child: FittedBox(
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.pushNamed(context, '/quiz/admin');
-            },
-            backgroundColor: Color.fromRGBO(22, 66, 139, 1),
-            label: const Text('Admin Controls'),
-            icon: const Icon(Icons.admin_panel_settings_rounded),
           ),
         ),
       ),
