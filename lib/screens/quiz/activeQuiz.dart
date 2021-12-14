@@ -10,13 +10,40 @@ class ActiveQuiz extends StatefulWidget {
 
 class _ActiveQuizState extends State<ActiveQuiz> {
 
-  Future retrieveQuestions() async {
-    //await DatabaseService().createQuestion('i0VXURC5VW3DATZpge1T', 1, 'c', 'What is the capital city of Germany?', 'Paris', 'Madrid', 'Berlin', 'London');
-  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: RawScrollbar(
+        isAlwaysShown: true,
+        thumbColor: Color.fromRGBO(22, 66, 139, 1),
+        //radius: Radius.circular(20),
+        thickness: 7.5,
+
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+
+              ),
+              Row(
+
+              ),
+            ],
+          ),
+        ),
+      ),
+
+
+
+
+
+
+
+
+
+
       backgroundColor: Color.fromRGBO(244, 175, 20, 1),
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(22, 66, 139, 1),
@@ -93,26 +120,6 @@ class _ActiveQuizState extends State<ActiveQuiz> {
             },
           )
         ],
-      ),
-
-      body: RawScrollbar(
-        isAlwaysShown: true,
-        thumbColor: Color.fromRGBO(22, 66, 139, 1),
-        //radius: Radius.circular(20),
-        thickness: 7.5,
-
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-
-              ),
-              Row(
-
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
