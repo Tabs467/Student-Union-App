@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:student_union_app/Models/MenuGroup.dart';
 import 'package:student_union_app/Models/MenuSubGroup.dart';
 import 'package:student_union_app/Models/MenuItem.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_union_app/services/database.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -13,166 +15,184 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
 
-  // Temporarily static menu groups, subgroups and items
-  List<MenuItem> burgers = [
-    MenuItem(name: 'Cheeseburger', price: '£6'),
-    MenuItem(name: 'Veggie Burger', price: '£6'),
-    MenuItem(name: 'Bacon Cheeseburger', price: '£7'),
-  ];
-  List<MenuItem> pizzas = [
-    MenuItem(name: 'Cheese Pizza', price: '£4'),
-    MenuItem(name: 'Pepperoni Pizza', price: '£6'),
-    MenuItem(name: 'Ham and Mushroom Pizza', price: '£6.50'),
-  ];
-  List<MenuItem> softDrinks = [
-    MenuItem(name: 'Coke', price: '£2'),
-    MenuItem(name: 'Lemonade', price: '£2'),
-    MenuItem(name: 'Orange Soda', price: '£2.50'),
-  ];
-  List<MenuItem> juices = [
-    MenuItem(name: 'Orange Juice', price: '£3'),
-    MenuItem(name: 'Apple Juice', price: '£3'),
-    MenuItem(name: 'Tropical Juice', price: '£3.50'),
-  ];
-
-  //List<MenuSubGroup> mainsSubMenuGroups = [
-    //MenuSubGroup(name: 'Burgers', menuItems: burgers),
-    //MenuSubGroup(name: 'Pizzas', menuItems: pizzas),
-  //];
-  //List<MenuSubGroup> drinksSubMenuGroups = [
-    //MenuSubGroup(name: 'Soft Drinks', menuItems: softDrinks),
-    //MenuSubGroup(name: 'Juices', menuItems: juices),
-  //];
-
-
-  //List<MenuGroup> menuGroups = [
-    //MenuGroup(name: 'Mains', menuSubGroups: mainsSubMenuGroups),
-    //MenuGroup(name: 'Drinks', menuSubGroups: drinksSubMenuGroups)
-  //];
-
-
-
+  String selectedMenuGroupID = '2V7MRLZ9BzIjQXYfP8ug';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(244, 175, 20, 1),
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(22, 66, 139, 1),
-        //title: Image.asset('assets/US_SU_Logo.jpg', fit: BoxFit.fitWidth),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/US_SU_Logo.jpg',
-              fit: BoxFit.contain,
-              height:70,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                'Food/Drink',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ],
-        ),
+        backgroundColor: Color.fromRGBO(244, 175, 20, 1),
+        appBar: buildAppBar(context, 'Menu'),
 
+        body: StreamBuilder<QuerySnapshot>(stream: FirebaseFirestore.instance.
+        collection('MenuGroup').snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong retrieving the menu groups');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading Menu Groups...');
+              }
 
-        actions: <Widget>[
+              snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data = document.data()! as Map<
+                    String,
+                    dynamic>;
+              });
 
-          IconButton(
-            icon: const Icon(Icons.fastfood_rounded),
-            tooltip: 'Food/Drink Menu',
-            color: Color.fromRGBO(244, 175, 20, 1),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.quiz_rounded),
-            tooltip: 'Pub Quiz',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/quiz');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.mic_external_on_rounded),
-            tooltip: 'Bandaoke',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.emoji_emotions_rounded),
-            tooltip: 'Comedy Night',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.campaign_rounded),
-            tooltip: 'News',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.person_rounded),
-            tooltip: 'Login/Register',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          )
-        ],
-      ),
-
-      body: Column(
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, '/menu/mains');
-            },
-            child: Container(
-              height: 200,
-              child: Card(
-                margin: EdgeInsets.all(16.0),
-                child: Row (
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                        children: const [
-                          Text(
-                              'Mains',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40,
-                              ),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Material(
+                    elevation: 20,
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(22, 66, 139, 1),
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1.5,
+                            color: Color.fromRGBO(31, 31, 31, 1.0),
                           ),
-                        ]
-                    ),
-                    Image.asset(
-                      'assets/Burgers.jpg',
-                      fit: BoxFit.contain,
-                      height:70,
-                    ),
-                  ],
-                )
-              ),
-            ),
-          )
-        ]
-      ),
+                        )
+                      ),
 
+                      child: const Text(
+                        'Food/Drink Menu',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 60.0),
+                    child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: snapshot.data!.docs
+                            .map((DocumentSnapshot document) {
+                          Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                          return FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Card(
+                              color: const Color.fromRGBO(
+                                  22, 66, 139, 1),
+                              elevation: 20,
+                              shape: RoundedRectangleBorder(
+                                //side: BorderSide(color: Colors.black, width: 1),
+                                side: BorderSide(color: (selectedMenuGroupID == data['id']) ? Colors.yellow : Colors.black, width: 3),
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    selectedMenuGroupID = data['id'];
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    data['name'],
+                                    style: const TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList()),
+                  ),
+
+
+                  StreamBuilder<QuerySnapshot>(stream: FirebaseFirestore.instance.
+                  collection('MenuSubGroup').where('MenuGroupID', isEqualTo: selectedMenuGroupID).snapshots(),
+                  builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Something went wrong retrieving the menu groups');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Text('Loading Menu Groups...');
+                    }
+
+                    snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map<String, dynamic> data = document.data()! as Map<
+                    String,
+                    dynamic>;
+                    });
+
+                    return Expanded(
+                      child: ListView(
+                      children: snapshot.data!.docs
+                      .map((DocumentSnapshot document) {
+                      Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                      return SizedBox(
+                        width: double.infinity,
+                        child: Card(
+                          color: const Color.fromRGBO(
+                              255, 255, 255, 1.0),
+                          elevation: 20,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.black, width: 1),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ExpansionTile(
+                              title: Text(
+                                data['name'],
+                                //data.toString(),
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              children: <Widget>[
+                                for(var MenuItem in data['MenuItems'] )
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          MenuItem,
+                                          style: const TextStyle(
+                                          fontStyle:
+                                          FontStyle.italic,
+                                            fontSize: 20,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Divider(
+                                        thickness: 1.25,
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
+                      )
+                      );
+                      }).toList()),
+                    );}
+              ),
+              ]
+              );
+            }
+        ),
     );
   }
 }
-
-

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_union_app/services/database.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
 
 class QuizAdmin extends StatefulWidget {
   const QuizAdmin({Key? key}) : super(key: key);
@@ -18,82 +19,7 @@ class _QuizAdminState extends State<QuizAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 175, 20, 1),
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(22, 66, 139, 1),
-        //title: Image.asset('assets/US_SU_Logo.jpg', fit: BoxFit.fitWidth),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/US_SU_Logo.jpg',
-              fit: BoxFit.contain,
-              height:70,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Pub Quiz',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ],
-        ),
-
-
-        actions: <Widget>[
-
-          IconButton(
-            icon: const Icon(Icons.fastfood_rounded),
-            tooltip: 'Food/Drink Menu',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.quiz_rounded),
-            tooltip: 'Pub Quiz',
-            color: Color.fromRGBO(244, 175, 20, 1),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/quiz');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.mic_external_on_rounded),
-            tooltip: 'Bandaoke',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.emoji_emotions_rounded),
-            tooltip: 'Comedy Night',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.campaign_rounded),
-            tooltip: 'News',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.person_rounded),
-            tooltip: 'Login/Register',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          )
-        ],
-      ),
+      appBar: buildAppBar(context, 'Quiz'),
 
       body: RawScrollbar(
         isAlwaysShown: true,
@@ -104,6 +30,33 @@ class _QuizAdminState extends State<QuizAdmin> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Material(
+                elevation: 20,
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                      color: Color.fromRGBO(22, 66, 139, 1),
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 1.5,
+                          color: Color.fromRGBO(31, 31, 31, 1.0),
+                        ),
+                      )
+                  ),
+
+                  child: const Text(
+                    'Quiz Admin Panel',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 40,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
               Container(
                 height: 250,
                 child: Card(

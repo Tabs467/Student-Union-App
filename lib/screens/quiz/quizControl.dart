@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_union_app/services/database.dart';
 import 'package:student_union_app/models/Question.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
 
 class QuizControl extends StatefulWidget {
   const QuizControl({Key? key}) : super(key: key);
@@ -43,6 +44,9 @@ class _QuizControlState extends State<QuizControl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(244, 175, 20, 1),
+      appBar: buildAppBar(context, 'Quiz'),
+
       body: Column(
         children: [
           Flexible(
@@ -54,10 +58,10 @@ class _QuizControlState extends State<QuizControl> {
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
-                    return const Text('Something went wrong');
+                    return const Text('Something went wrong loading the quiz');
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text('Loading');
+                    return const Text('Loading the quiz...');
                   }
 
                   snapshot.data!.docs.map((DocumentSnapshot document) {
@@ -78,11 +82,11 @@ class _QuizControlState extends State<QuizControl> {
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {
-                          return const Text('Something went wrong');
+                          return const Text('Something went wrong loading the question');
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text('Loading');
+                          return const Text('Loading the question...');
                         }
 
                         return Column(
@@ -113,6 +117,7 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
+                                              side: BorderSide(color: Colors.white70, width: 1),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(16.0),
@@ -138,7 +143,8 @@ class _QuizControlState extends State<QuizControl> {
                                             elevation: 20,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(0),
+                                              side: BorderSide(color: Colors.white70, width: 1),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -160,7 +166,8 @@ class _QuizControlState extends State<QuizControl> {
                                             elevation: 20,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(0),
+                                              side: BorderSide(color: Colors.white70, width: 1),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -182,7 +189,8 @@ class _QuizControlState extends State<QuizControl> {
                                             elevation: 20,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(0),
+                                              side: BorderSide(color: Colors.white70, width: 1),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -204,7 +212,8 @@ class _QuizControlState extends State<QuizControl> {
                                             elevation: 20,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(0),
+                                              side: BorderSide(color: Colors.white70, width: 1),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -228,6 +237,7 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
+                                              side: BorderSide(color: Colors.yellow, width: 3),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -326,76 +336,6 @@ class _QuizControlState extends State<QuizControl> {
                       });
                 }),
           ),
-        ],
-      ),
-      backgroundColor: Color.fromRGBO(244, 175, 20, 1),
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(22, 66, 139, 1),
-        //title: Image.asset('assets/US_SU_Logo.jpg', fit: BoxFit.fitWidth),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/US_SU_Logo.jpg',
-              fit: BoxFit.contain,
-              height: 70,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Pub Quiz',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ],
-        ),
-
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.fastfood_rounded),
-            tooltip: 'Food/Drink Menu',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.quiz_rounded),
-            tooltip: 'Pub Quiz',
-            color: Color.fromRGBO(244, 175, 20, 1),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/quiz');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.mic_external_on_rounded),
-            tooltip: 'Bandaoke',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.emoji_emotions_rounded),
-            tooltip: 'Comedy Night',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.campaign_rounded),
-            tooltip: 'News',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_rounded),
-            tooltip: 'Login/Register',
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/menu');
-            },
-          )
         ],
       ),
     );
