@@ -72,7 +72,7 @@ class _QuizAdminState extends State<QuizAdmin> {
                           Column(
                               children: const [
                                 Text(
-                                  'Start Quiz',
+                                  'Start/Continue Quiz',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
