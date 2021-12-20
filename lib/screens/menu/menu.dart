@@ -187,7 +187,8 @@ class _MenuState extends State<Menu> {
                       )
                       );
                       }).toList()),
-                    );}
+                    );
+                  }
               ),
               ]
               );

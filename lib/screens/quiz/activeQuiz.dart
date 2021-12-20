@@ -13,10 +13,11 @@ class ActiveQuiz extends StatefulWidget {
 
 class _ActiveQuizState extends State<ActiveQuiz> {
 
-  String quizID = 'i0VXURC5VW3DATZpge1T';
+  String quizID = '';
   int currentQuestionNumber = 1;
   int questionCount = 10;
   bool quizEnded = false;
+  bool anyQuizActive = false;
 
   initState() {
     retrieveCurrentQuestionNumber();
@@ -34,6 +35,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
           currentQuestionNumber = data['currentQuestion'];
           questionCount = data['questionCount'];
           quizEnded = data['quizEnded'];
+          quizID = data['id'];
         });
       });
     });
@@ -66,9 +68,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                     Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
                     currentQuestionNumber = data['currentQuestion'];
+                    quizEnded = data['quizEnded'];
+                    quizID = data['id'];
                   });
-
-                  //return Text(currentQuestionNumber.toString());
 
                   return StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance

@@ -1,19 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:student_union_app/models/Question.dart';
+//import 'package:student_union_app/models/Question.dart';
 
 class DatabaseService {
 
   CollectionReference quizCollection = FirebaseFirestore.instance.collection('Quizzes');
   CollectionReference questionCollection = FirebaseFirestore.instance.collection('Questions');
 
-  bool quizActive = false;
-
-  isQuizActive() {
-    return quizActive;
-  }
-
+  // Insert a question into the Questions collection in the database
   Future createQuestion(String quizID, int questionNumber, String questionText, String correctAnswer, String answerA, String answerB, String answerC, String answerD) async {
     // If document with questionID does not already exist it will be created
     return await questionCollection.doc().set({
@@ -28,8 +21,6 @@ class DatabaseService {
     });
   }
 
-
-
   Stream<QuerySnapshot> get quizzes {
     return quizCollection.snapshots();
   }
@@ -38,12 +29,8 @@ class DatabaseService {
     return questionCollection.snapshots();
   }
 
-  /**int questionNumberFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.docs.map((doc){
-      return doc.get('currentQuestion') ?? -1;
-    }).toList();
-  }*/
-
+  // Not currently using the Question Model
+  /**
   List <Question> questionDetailsFromSnapshot(QuerySnapshot snapshot){
     return snapshot.docs.map((doc){
       return Question(
@@ -58,48 +45,42 @@ class DatabaseService {
           answerD: doc.get('answerD') ?? '',
       );
     }).toList();
-  }
+  }*/
 
-  retrieveCurrentQuestion(String quizID) async {
-
-
-
-      return;
-
-      //return quizCollection.doc(quizID).get().data();
-
-      // get current question number of quiz from quizID and quiz table
-      AsyncSnapshot<DocumentSnapshot> snapshot = questionCollection.doc(quizID).get() as AsyncSnapshot<DocumentSnapshot<Object?>>;
-
-      Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-      debugPrint(data.toString());
-      return data;
-
-      // get current question data from retrieved question number and quiz id
-
-      // return question
-      //return Question();
-  }
-
+  // Mark the inputted quiz as active and set the non active quiz marker in the
+  // database to false
   Future startQuiz(String quizID) async {
-    quizActive = true;
+    // Mark the Quiz document that is used to mark that there
+    // isn't a quiz currently active as inactive
+    quizCollection.doc('cy7RWIJ3VGIXlHSM1Il8').update({"isActive" : false});
 
+    // Mark the inputted quiz document as active
     return quizCollection.doc(quizID).update({"isActive" : true, "quizEnded" : false});
   }
 
+  // Mark the inputted quiz as inactive and set the non active quiz marker in the
+  // database to true
   Future endQuiz(String quizID) async {
-    quizActive = false;
+    // Mark the Quiz document that is used to mark that there
+    // isn't a quiz currently active as active
+    quizCollection.doc('cy7RWIJ3VGIXlHSM1Il8').update({"isActive" : true});
 
+    // Mark the inputted quiz document as inactive
     return quizCollection.doc(quizID).update({"isActive" : false, "quizEnded" : true, "currentQuestion" : 1});
   }
 
+  // Move an inputted quiz to its next question and mark whether the quiz has ended or not
   Future nextQuestion(String quizID, int currentQuestionNumber, int questionCount) async {
     currentQuestionNumber++;
 
+    // If the previous question was the last question in the quiz
     if (currentQuestionNumber > questionCount) {
+      // Also mark the quiz as ended in the database
       return quizCollection.doc(quizID).update({"currentQuestion" : currentQuestionNumber, "quizEnded" : true});
     }
+    // Otherwise
     else {
+      // Just increment the current question number variable on the inputted Quiz Document
       return quizCollection.doc(quizID).update({"currentQuestion" : currentQuestionNumber});
     }
   }
