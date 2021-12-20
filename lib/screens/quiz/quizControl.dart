@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:student_union_app/services/database.dart';
-import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/services/database.dart';
 
 class QuizControl extends StatefulWidget {
   const QuizControl({Key? key}) : super(key: key);
@@ -12,25 +11,24 @@ class QuizControl extends StatefulWidget {
 }
 
 class _QuizControlState extends State<QuizControl> {
-
+  // Initialise quiz variables to standard values
   String quizID = 'i0VXURC5VW3DATZpge1T';
   int currentQuestionNumber = 1;
   int questionCount = 10;
   bool quizEnded = false;
 
-  initState() {
-    retrieveCurrentQuestionNumber();
-  }
-
+  // Set the stream to listen to the Quiz document that is marked as
+  // currently active
   final Stream<QuerySnapshot> _quizzes = FirebaseFirestore.instance
       .collection('Quizzes')
       .where('isActive', isEqualTo: true)
       .snapshots();
 
+  // Rebuild the widget tree and update the current question number,
+  // question count and quiz ended variables to their current values in the
+  // database
   retrieveCurrentQuestionNumber() {
     setState(() {
-      //Map<String, dynamic> data = snapshots.docs as Map<String, dynamic>;
-
       _quizzes.forEach((field) {
         field.docs.asMap().forEach((index, data) {
           currentQuestionNumber = data['currentQuestion'];
@@ -44,13 +42,14 @@ class _QuizControlState extends State<QuizControl> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(244, 175, 20, 1),
+      backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
       appBar: buildAppBar(context, 'Quiz'),
-
       body: Column(
         children: [
           Flexible(
             child: StreamBuilder<QuerySnapshot>(
+                // Set the stream to listen to the Quiz document that is marked as
+                // currently active
                 stream: FirebaseFirestore.instance
                     .collection('Quizzes')
                     .where('isActive', isEqualTo: true)
@@ -64,15 +63,18 @@ class _QuizControlState extends State<QuizControl> {
                     return const Text('Loading the quiz...');
                   }
 
+                  // Add the retrieved quiz to a map and update the current
+                  // question number to reflect the value in the database
                   snapshot.data!.docs.map((DocumentSnapshot document) {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
                     currentQuestionNumber = data['currentQuestion'];
                   });
 
-                  //return Text(currentQuestionNumber.toString());
-
                   return StreamBuilder<QuerySnapshot>(
+                      // Set the stream to listen to the Question document whose
+                      // contained question is part of the current quiz and
+                      // whose question number is the current position in the quiz
                       stream: FirebaseFirestore.instance
                           .collection('Questions')
                           .where('quizID', isEqualTo: quizID)
@@ -82,20 +84,23 @@ class _QuizControlState extends State<QuizControl> {
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {
-                          return const Text('Something went wrong loading the question');
+                          return const Text(
+                              'Something went wrong loading the question');
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Text('Loading the question...');
                         }
 
+                        // Display the current question along with its answers
+                        // and correct answer
+                        // Also display the End Quiz and Next Question buttons
                         return Column(
                           children: [
                             Expanded(
                               child: RawScrollbar(
                                 isAlwaysShown: true,
-                                thumbColor: Color.fromRGBO(22, 66, 139, 1),
-                                //radius: Radius.circular(20),
+                                thumbColor: const Color.fromRGBO(22, 66, 139, 1),
                                 thickness: 7.5,
 
                                 child: ListView(
@@ -117,10 +122,13 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
-                                              side: BorderSide(color: Colors.white70, width: 1),
+                                              side: const BorderSide(
+                                                  color: Colors.white70,
+                                                  width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(16.0),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
                                               child: Text(
                                                 'Q' +
                                                     data['questionNumber']
@@ -144,10 +152,13 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(0),
-                                              side: BorderSide(color: Colors.white70, width: 1),
+                                              side: const BorderSide(
+                                                  color: Colors.white70,
+                                                  width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'A: ' + data['answerA'],
                                                 style: const TextStyle(
@@ -167,10 +178,13 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(0),
-                                              side: BorderSide(color: Colors.white70, width: 1),
+                                              side: const BorderSide(
+                                                  color: Colors.white70,
+                                                  width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'B: ' + data['answerB'],
                                                 style: const TextStyle(
@@ -190,10 +204,13 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(0),
-                                              side: BorderSide(color: Colors.white70, width: 1),
+                                              side: const BorderSide(
+                                                  color: Colors.white70,
+                                                  width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'C: ' + data['answerC'],
                                                 style: const TextStyle(
@@ -213,10 +230,13 @@ class _QuizControlState extends State<QuizControl> {
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(0),
-                                              side: BorderSide(color: Colors.white70, width: 1),
+                                              side: const BorderSide(
+                                                  color: Colors.white70,
+                                                  width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'D: ' + data['answerD'],
                                                 style: const TextStyle(
@@ -232,15 +252,18 @@ class _QuizControlState extends State<QuizControl> {
                                           padding: const EdgeInsets.all(16),
                                           child: Card(
                                             color:
-                                                Color.fromRGBO(244, 140, 20, 1),
+                                                const Color.fromRGBO(244, 140, 20, 1),
                                             elevation: 20,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30),
-                                              side: BorderSide(color: Colors.yellow, width: 3),
+                                              side: const BorderSide(
+                                                  color: Colors.yellow,
+                                                  width: 3),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
                                               child: Text(
                                                 'Correct Answer: ' +
                                                     data['correctAnswer']
@@ -260,16 +283,15 @@ class _QuizControlState extends State<QuizControl> {
                                 }).toList()),
                               ),
                             ),
-                            
-                            
-                            
                             Container(
-                              color: Color.fromRGBO(244, 140, 20, 1),
+                              color: const Color.fromRGBO(244, 140, 20, 1),
                               height: 75,
                               child: Card(
                                   margin:
-                                      EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                                      const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                                   child: InkWell(
+                                    // When tapped call the function to end the
+                                    // quiz
                                     onTap: () {
                                       DatabaseService().endQuiz(quizID);
                                       Navigator.pushReplacementNamed(
@@ -296,12 +318,15 @@ class _QuizControlState extends State<QuizControl> {
                                   )),
                             ),
                             Container(
-                              color: Color.fromRGBO(244, 140, 20, 1),
+                              color: const Color.fromRGBO(244, 140, 20, 1),
                               height: 75,
                               child: Card(
                                   margin:
-                                      EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                                      const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                                   child: InkWell(
+                                    // When tapped retrieve the current question
+                                    // number from the database and call the function
+                                    // to advance the quiz to the next question
                                     onTap: () {
                                       setState(() {
                                         retrieveCurrentQuestionNumber();
