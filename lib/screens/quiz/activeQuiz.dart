@@ -17,6 +17,14 @@ class _ActiveQuizState extends State<ActiveQuiz> {
   bool quizEnded = false;
   bool anyQuizActive = false;
 
+  // On the first build of the widget tree retrieve the current question's
+  // number, question count and whether the quiz has ended
+  @override
+  initState() {
+    super.initState();
+    retrieveCurrentQuestionNumber();
+  }
+
   // Set the stream to listen to the Quiz document that is marked as
   // currently active
   final Stream<QuerySnapshot> _quizzes = FirebaseFirestore.instance
