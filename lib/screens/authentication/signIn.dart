@@ -138,7 +138,7 @@ class _SignInState extends State<SignIn> {
                                 await _auth.signOut();
                                 setState(() {
                                   error =
-                                      "Email not verified! Check yourinbox for a verification email!";
+                                      "Email not verified! Check your inbox for a verification email!";
                                 });
                               }
                             }
