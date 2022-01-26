@@ -31,7 +31,7 @@ AppBar buildAppBar(BuildContext context, String selectedTab) {
                   tooltip: 'Pub Quiz',
                   color: (selectedTab == 'Quiz') ? const Color.fromRGBO(244, 175, 20, 1) : Colors.white,
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/quiz');
+                    Navigator.pushReplacementNamed(context, '/quiz/quizAuth');
                   },
                 ),
 
@@ -67,7 +67,7 @@ AppBar buildAppBar(BuildContext context, String selectedTab) {
                   tooltip: 'Login/Register',
                   color: (selectedTab == 'Login') ? const Color.fromRGBO(244, 175, 20, 1) : Colors.white,
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/menu');
+                    Navigator.pushReplacementNamed(context, '/authentication/authenticate');
                   },
                 )
               ],

@@ -10,8 +10,9 @@ class Menu extends StatefulWidget {
   _MenuState createState() => _MenuState();
 }
 
+// Widget to display the food and drink menu screen
 class _MenuState extends State<Menu> {
-  // Default selected menu is drinks
+  // Default selected menu category is drinks
   // Will need to update this in the future to allow users to remove the
   // drinks category.
   String selectedMenuGroupID = '2V7MRLZ9BzIjQXYfP8ug';
@@ -145,6 +146,9 @@ class _MenuState extends State<Menu> {
                                         for (var menuItem in data['MenuItems'])
                                           Column(
                                             children: [
+                                              const Divider(
+                                                thickness: 1.25,
+                                              ),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(8.0),
@@ -156,9 +160,6 @@ class _MenuState extends State<Menu> {
                                                     color: Colors.black,
                                                   ),
                                                 ),
-                                              ),
-                                              const Divider(
-                                                thickness: 1.25,
                                               ),
                                             ],
                                           ),

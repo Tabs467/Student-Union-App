@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 
-class Quiz extends StatefulWidget {
-  const Quiz({Key? key}) : super(key: key);
+class AdminQuizMainMenu extends StatefulWidget {
+  const AdminQuizMainMenu({Key? key}) : super(key: key);
 
   @override
-  _QuizState createState() => _QuizState();
+  _AdminQuizMainMenuState createState() => _AdminQuizMainMenuState();
 }
 
 bool noActiveQuiz = true;
 
-class _QuizState extends State<Quiz> {
+// Widget to display the Quiz Main Menu screen including the admin floating
+// action button
+class _AdminQuizMainMenuState extends State<AdminQuizMainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
