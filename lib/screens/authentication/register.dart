@@ -23,6 +23,12 @@ class _RegisterState extends State<Register> {
   String error = '';
   bool hidePassword = true;
 
+  // Passwords must have at least 8 characters, one uppercase letter,
+  // one lowercase letter, one number, and one special character
+  bool _validatePassword(String password){
+    return RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$').hasMatch(password);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,10 +84,15 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                         obscureText: hidePassword,
-                        // Password must be at least 6 characters long
+                        // Passwords must have at least 8 characters,
+                        // one uppercase letter, one lowercase letter,
+                        // one number, and one special character
                         validator: (String? value) {
-                          if (value != null && value.length < 6) {
-                            return "Password must be at least 6 characters long!";
+                          if (value != null && !_validatePassword(value)) {
+                            setState(() {
+                              error = 'Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character!';
+                            });
+                            return "Invalid Password Format";
                           }
                           return null;
                         },

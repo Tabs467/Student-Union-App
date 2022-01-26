@@ -44,7 +44,7 @@ class _SignInState extends State<SignIn> {
                         // Email field cannot be left empty
                         validator: (String? value) {
                           if (value != null && value.isEmpty) {
-                            return "Email can't be empty!";
+                            return "Email field left empty!";
                           }
                           return null;
                         },
@@ -76,10 +76,10 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
                         obscureText: hidePassword,
-                        // Password must be at least 6 characters long
+                        // Password field cannot be left empty
                         validator: (String? value) {
-                          if (value != null && value.length < 6) {
-                            return "Password must be at least 6 characters long!";
+                          if (value != null && value.isEmpty) {
+                            return "Password field left empty!";
                           }
                           return null;
                         },
