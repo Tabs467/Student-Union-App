@@ -1,11 +1,11 @@
 import 'authentication.dart';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 
 // Database Service class to provide Google FireStore data and services
 // to the Views
 class DatabaseService {
-
   // Google FireStore collection references
   CollectionReference quizCollection =
       FirebaseFirestore.instance.collection('Quizzes');
@@ -13,6 +13,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Questions');
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('Users');
+  CollectionReference scoreCollection =
+      FirebaseFirestore.instance.collection('Scores');
 
   // Some FireStore access requires the authentication service to determine
   // the currently logged-in user's UID
@@ -174,6 +176,123 @@ class DatabaseService {
       return quizCollection
           .doc(quizID)
           .update({"currentQuestion": currentQuestionNumber});
+    }
+
+    // Tally everyone's score with currentQuestionCorrect
+    // (all score docs with quizID)
+    // add points depending on stuff found in submit answer
+    // so could refactor into a function here when finished
+
+    // Set everyone's currentQuestionCorrect to False
+  }
+
+
+  // Score document is created or updated to store whether the
+  // currently logged-in user has the correct answer currently selected on the
+  // current question in the currently active quiz.
+  Future submitAnswer(String answer) async {
+
+    // Retrieve the currently active quiz id and current question number
+    String quizID = "Not Set";
+    int currentQuestionNumber = 300;
+
+    await quizCollection
+        .where('isActive', isEqualTo: true)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                quizID = doc['id'];
+                currentQuestionNumber = doc['currentQuestion'];
+              })
+            });
+
+    // Retrieve the correct answer of the currently active question in the
+    // retrieved quiz
+    // Using the retrieved quiz id and current question number
+    String correctAnswer = "Not Set";
+
+    await questionCollection
+        .where('quizID', isEqualTo: quizID)
+        .where('questionNumber', isEqualTo: currentQuestionNumber)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                correctAnswer = doc["correctAnswer"];
+              })
+            });
+
+    // Compare the user's answer to the retrieved correct answer
+    // And store whether it is correct
+    bool answerCorrect = false;
+    if (answer == correctAnswer) {
+      answerCorrect = true;
+    }
+
+    // Retrieve the currently logged-in user's ID from the
+    // authentication service
+    String userID = _auth.currentUID()!;
+
+
+    // Attempt to retrieve the logged-in user's Score document for the
+    // currently active quiz
+    String scoreID = "Not Set";
+
+    await scoreCollection
+        .where('userID', isEqualTo: userID)
+        .where('quizID', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                scoreID = doc["id"];
+              })
+            });
+
+    // Determine whether or not this Score document already exists
+    // If updating an existing Score document
+    if (scoreID != "Not Set") {
+      // Update the Score document's currentQuestionCorrect boolean to store
+      // whether the user has the correct answer currently selected
+      if (answerCorrect) {
+        await scoreCollection
+            .doc(scoreID)
+            .update({'currentQuestionCorrect': true});
+      } else {
+        await scoreCollection
+            .doc(scoreID)
+            .update({'currentQuestionCorrect': false});
+      }
+    }
+    // Otherwise, if creating a new Score document
+    else {
+      // Create a score doc with an auto generated id
+
+      // Generate id by creating a String from generating 20 random numbers
+      // which correspond to characters in the _chars constant
+      const _chars =
+          'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+      scoreID = String.fromCharCodes(Iterable.generate(
+          20, (_) => _chars.codeUnitAt(Random().nextInt(_chars.length))));
+
+
+      // Create the Score document with the currentQuestionCorrect boolean
+      // storing whether the user has the correct answer currently selected
+      if (answerCorrect) {
+        await scoreCollection.doc(scoreID).set({
+          'id': scoreID,
+          'quizID': quizID,
+          'userID': userID,
+          'score': 0,
+          'currentQuestionCorrect': true
+        });
+      } else {
+        await scoreCollection.doc(scoreID).set({
+          'id': scoreID,
+          'quizID': quizID,
+          'userID': userID,
+          'score': 0,
+          'currentQuestionCorrect': false
+        });
+      }
     }
   }
 }

@@ -75,95 +75,91 @@ class _ProfileState extends State<Profile> {
                 child: Column(
                   children: [
                     buildTabTitle('Profile'),
-                    Column(
-                      children: [
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20.0),
-                              // Email field cannot be edited
-                              TextFormField(
-                                initialValue: returnedUser.email.toString(),
-                                enabled: false,
-                              ),
-                              const SizedBox(height: 20.0),
-                              // Name can be retyped to update the Name text
-                              // field state
-                              TextFormField(
-                                initialValue: returnedUser.name,
-                                decoration: const InputDecoration(
-                                  hintText: 'Name',
-                                ),
-                                validator: (String? value) {
-                                  if (value != null && value.isEmpty) {
-                                    return "Name cannot be empty!";
-                                  }
-                                  return null;
-                                },
-                                onChanged: (val) {
-                                  setState(() {
-                                    name = val;
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              // Team Name can be retyped to update the
-                              // Team Name text field state
-                              TextFormField(
-                                initialValue: returnedUser.teamName,
-                                decoration: const InputDecoration(
-                                  hintText: 'Pub Quiz Team Name',
-                                ),
-                                validator: (String? value) {
-                                  if (value != null && value.isEmpty) {
-                                    return "Team name cannot be empty!";
-                                  }
-                                  return null;
-                                },
-                                onChanged: (val) {
-                                  setState(() {
-                                    teamName = val;
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              // Pub Quiz Wins field cannot be edited
-                              TextFormField(
-                                initialValue: "Pub Quiz Wins: " +
-                                    returnedUser.wins.toString(),
-                                enabled: false,
-                              ),
-                              const SizedBox(height: 12.0),
-                              // Error text
-                              Text(
-                                error,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(200, 50),
-                                  maximumSize: const Size(200, 50),
-                                  primary: const Color.fromRGBO(22, 66, 139, 1),
-                                ),
-                                child: const Text('Update Name Details'),
-                                // Update the user's name details in the Users
-                                // collection with the stored text field state
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    dynamic result = await _database
-                                        .updateUserNameDetails(name, teamName);
-                                    setState(() {});
-                                  }
-                                },
-                              ),
-                            ],
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20.0),
+                          // Email field cannot be edited
+                          TextFormField(
+                            initialValue: returnedUser.email.toString(),
+                            enabled: false,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 20.0),
+                          // Name can be retyped to update the Name text
+                          // field state
+                          TextFormField(
+                            initialValue: returnedUser.name,
+                            decoration: const InputDecoration(
+                              hintText: 'Name',
+                            ),
+                            validator: (String? value) {
+                              if (value != null && value.isEmpty) {
+                                return "Name cannot be empty!";
+                              }
+                              return null;
+                            },
+                            onChanged: (val) {
+                              setState(() {
+                                name = val;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 20.0),
+                          // Team Name can be retyped to update the
+                          // Team Name text field state
+                          TextFormField(
+                            initialValue: returnedUser.teamName,
+                            decoration: const InputDecoration(
+                              hintText: 'Pub Quiz Team Name',
+                            ),
+                            validator: (String? value) {
+                              if (value != null && value.isEmpty) {
+                                return "Team name cannot be empty!";
+                              }
+                              return null;
+                            },
+                            onChanged: (val) {
+                              setState(() {
+                                teamName = val;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 20.0),
+                          // Pub Quiz Wins field cannot be edited
+                          TextFormField(
+                            initialValue: "Pub Quiz Wins: " +
+                                returnedUser.wins.toString(),
+                            enabled: false,
+                          ),
+                          const SizedBox(height: 12.0),
+                          // Error text
+                          Text(
+                            error,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 50),
+                              maximumSize: const Size(200, 50),
+                              primary: const Color.fromRGBO(22, 66, 139, 1),
+                            ),
+                            child: const Text('Update Name Details'),
+                            // Update the user's name details in the Users
+                            // collection with the stored text field state
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                dynamic result = await _database
+                                    .updateUserNameDetails(name, teamName);
+                                setState(() {});
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 25.0),
                     ElevatedButton(
