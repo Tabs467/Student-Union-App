@@ -20,6 +20,7 @@ class DatabaseService {
   // the currently logged-in user's UID
   final AuthenticationService _auth = AuthenticationService();
 
+
   // Create or update user information into the Users collection
   // in the database
   Future updateUser(String uid, String email, String name, String teamName,
@@ -36,6 +37,7 @@ class DatabaseService {
     });
   }
 
+
   // Create a CurrentUser object based on results from a query to the
   // Users collection
   CurrentUser? _userFromQuery(String uid, String email, String name,
@@ -48,6 +50,7 @@ class DatabaseService {
         wins: wins,
         admin: admin);
   }
+
 
   // Query to return a given user's data
   Future getUserData() async {
@@ -74,6 +77,7 @@ class DatabaseService {
     return _userFromQuery(uid, email, name, teamName, wins, admin);
   }
 
+
   // Check if the currently logged-in user is an admin
   Future<bool> userAdmin() async {
     bool admin = false;
@@ -94,11 +98,13 @@ class DatabaseService {
     return admin;
   }
 
+
   // Update the currently logged-in user's Name and Team Name
   Future updateUserNameDetails(name, teamName) async {
     String uid = _auth.currentUID()!;
     return userCollection.doc(uid).update({"name": name, "teamName": teamName});
   }
+
 
   // Insert a question into the Questions collection in the database
   Future createQuestion(
@@ -123,6 +129,7 @@ class DatabaseService {
     });
   }
 
+
   // Return a stream of the quizzes inside the Quizzes collection
   Stream<QuerySnapshot> get quizzes {
     return quizCollection.snapshots();
@@ -132,6 +139,7 @@ class DatabaseService {
   Stream<QuerySnapshot> get questions {
     return questionCollection.snapshots();
   }
+
 
   // Mark the inputted quiz as active and set the non active quiz marker in the
   // database to false
@@ -146,44 +154,118 @@ class DatabaseService {
         .update({"isActive": true, "quizEnded": false});
   }
 
+
   // Mark the inputted quiz as inactive and set the non active quiz marker in the
   // database to true
+  // Also reset all the currentQuestionCorrect booleans in the
+  // Scores collection for the active quiz to false
   Future endQuiz(String quizID) async {
     // Mark the Quiz document that is used to mark that there
     // isn't a quiz currently active as active
     quizCollection.doc('cy7RWIJ3VGIXlHSM1Il8').update({"isActive": true});
 
     // Mark the inputted quiz document as inactive
-    return quizCollection
+    await quizCollection
         .doc(quizID)
         .update({"isActive": false, "quizEnded": true, "currentQuestion": 1});
+
+    // In case the quiz is ended early, reset all the currentQuestionCorrect
+    // booleans for the active quiz to false
+    // To allow this quiz to be restarted without accidentally giving out
+    // any points.
+    return scoreCollection
+        .where('quizID', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) async {
+        String scoreID = doc["id"];
+        await scoreCollection
+            .doc(scoreID)
+            .update({'currentQuestionCorrect': false});
+      })
+    });
   }
 
-  // Move an inputted quiz to its next question and mark whether the quiz has ended or not
+
+  // Move an inputted quiz to its next question and mark whether the quiz
+  // has ended or not
+
+  // Also add 10 points to each score document with the currentQuestionCorrect
+  // boolean set to true
+  // And then set each one of these booleans to false so they are prepared
+  // for the next question.
+
+  // This function also resets each score to zero if it is the start of the
+  // quiz in case this quiz has been played before by the users taking part
   Future nextQuestion(
       String quizID, int currentQuestionNumber, int questionCount) async {
+
     currentQuestionNumber++;
+
+    // If the previous question is the first question in the quiz
+    // Reset all score values to 0 in case this quiz has been played before
+    // by the users taking part
+    if (currentQuestionNumber == 2) {
+      await scoreCollection
+          .where('quizID', isEqualTo: quizID)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        querySnapshot.docs.forEach((doc) async {
+          String scoreID = doc["id"];
+          await scoreCollection
+              .doc(scoreID)
+              .update({'score': 0});
+        })
+      });
+    }
 
     // If the previous question was the last question in the quiz
     if (currentQuestionNumber > questionCount) {
       // Also mark the quiz as ended in the database
-      return quizCollection.doc(quizID).update(
+      await quizCollection.doc(quizID).update(
           {"currentQuestion": currentQuestionNumber, "quizEnded": true});
     }
     // Otherwise
     else {
-      // Just increment the current question number variable on the inputted Quiz Document
-      return quizCollection
+      // Just increment the current question number variable on the
+      // inputted Quiz Document
+      await quizCollection
           .doc(quizID)
           .update({"currentQuestion": currentQuestionNumber});
     }
 
-    // Tally everyone's score with currentQuestionCorrect
-    // (all score docs with quizID)
-    // add points depending on stuff found in submit answer
-    // so could refactor into a function here when finished
 
-    // Set everyone's currentQuestionCorrect to False
+    // For each score document in the Scores collection for the currently
+    // active quiz
+    await scoreCollection
+        .where('quizID', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the document's id, whether the user tied to the document
+        // has the previous question correct, and their overall score for the
+        // currently active quiz
+        String scoreID = doc["id"];
+        bool answerCorrect = doc["currentQuestionCorrect"];
+        int currentScore = doc["score"];
+
+        // If the user tied to this Score document got the previous question
+        // correct
+        if (answerCorrect) {
+          // Add 10 points to their current score
+          await scoreCollection
+              .doc(scoreID)
+              .update({'score': currentScore + 10});
+          // And reset the boolean that marks whether they have the current
+          // question correct to false
+          await scoreCollection
+              .doc(scoreID)
+              .update({'currentQuestionCorrect': false});
+        }
+      })
+    });
   }
 
 
