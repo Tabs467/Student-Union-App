@@ -1,3 +1,3 @@
-# student_union_app
+# Student Union App
 
 Student Union App
