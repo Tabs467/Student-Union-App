@@ -155,38 +155,64 @@ class _ActiveQuizState extends State<ActiveQuiz> {
       child: Column(
         children: [
           Expanded(
-            child: RawScrollbar(
-              isAlwaysShown: true,
-              thumbColor: const Color.fromRGBO(22, 66, 139, 1),
-              //radius: Radius.circular(20),
-              thickness: 7.5,
-
-              child: ListView(
-                  children:
-                  snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                    return Container(
-                      color: const Color.fromRGBO(244, 175, 20, 1.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Card(
-                              color: const Color.fromRGBO(22, 66, 139, 1),
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                side: const BorderSide(
-                                    color: Colors.white70, width: 1),
+            child: ListView(
+                children:
+                snapshot.data!.docs.map((DocumentSnapshot document) {
+                  Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+                  return Container(
+                    color: const Color.fromRGBO(244, 175, 20, 1.0),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Card(
+                            color: const Color.fromRGBO(22, 66, 139, 1),
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: const BorderSide(
+                                  color: Colors.white70, width: 1),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                'Q' +
+                                    data['questionNumber'].toString() +
+                                    ': ' +
+                                    data['questionText'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  color: Colors.white,
+                                ),
                               ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1),
+                          child: Card(
+                            color: Colors.red[900],
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              side: BorderSide(
+                                  color: (selectedAnswer == Answer.A) ? Colors
+                                      .yellowAccent : Colors.white70,
+                                  width: 1),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _submitAnswer("a");
+                                  _selectAnswer("a");
+                                });
+                              },
                               child: Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(30.0),
                                 child: Text(
-                                  'Q' +
-                                      data['questionNumber'].toString() +
-                                      ': ' +
-                                      data['questionText'],
+                                  'A: ' + data['answerA'],
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -196,143 +222,110 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(1),
-                            child: Card(
-                              color: Colors.red[900],
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                                side: BorderSide(
-                                    color: (selectedAnswer == Answer.A) ? Colors
-                                        .yellowAccent : Colors.white70,
-                                    width: 1),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _submitAnswer("a");
-                                    _selectAnswer("a");
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Text(
-                                    'A: ' + data['answerA'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.white,
-                                    ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1),
+                          child: Card(
+                            color: Colors.blue[900],
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              side: BorderSide(
+                                  color: (selectedAnswer == Answer.B) ? Colors
+                                      .yellowAccent : Colors.white70,
+                                  width: 1),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _submitAnswer("b");
+                                  _selectAnswer("b");
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: Text(
+                                  'B: ' + data['answerB'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(1),
-                            child: Card(
-                              color: Colors.blue[900],
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                                side: BorderSide(
-                                    color: (selectedAnswer == Answer.B) ? Colors
-                                        .yellowAccent : Colors.white70,
-                                    width: 1),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _submitAnswer("b");
-                                    _selectAnswer("b");
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Text(
-                                    'B: ' + data['answerB'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.white,
-                                    ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1),
+                          child: Card(
+                            color: Colors.green[900],
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              side: BorderSide(
+                                  color: (selectedAnswer == Answer.C) ? Colors
+                                      .yellowAccent : Colors.white70,
+                                  width: 1),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _submitAnswer("c");
+                                  _selectAnswer("c");
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: Text(
+                                  'C: ' + data['answerC'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(1),
-                            child: Card(
-                              color: Colors.green[900],
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                                side: BorderSide(
-                                    color: (selectedAnswer == Answer.C) ? Colors
-                                        .yellowAccent : Colors.white70,
-                                    width: 1),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _submitAnswer("c");
-                                    _selectAnswer("c");
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Text(
-                                    'C: ' + data['answerC'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.white,
-                                    ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1),
+                          child: Card(
+                            color: Colors.yellow[900],
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              side: BorderSide(
+                                  color: (selectedAnswer == Answer.D) ? Colors
+                                      .yellowAccent : Colors.white70,
+                                  width: 1),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _submitAnswer("d");
+                                  _selectAnswer("d");
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: Text(
+                                  'D: ' + data['answerD'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(1),
-                            child: Card(
-                              color: Colors.yellow[900],
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                                side: BorderSide(
-                                    color: (selectedAnswer == Answer.D) ? Colors
-                                        .yellowAccent : Colors.white70,
-                                    width: 1),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _submitAnswer("d");
-                                    _selectAnswer("d");
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Text(
-                                    'D: ' + data['answerD'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList()),
-            ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList()),
           ),
         ],
       ),
