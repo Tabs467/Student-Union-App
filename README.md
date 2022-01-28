@@ -10,4 +10,4 @@ to each of the comedians’ social media will be included.
 
 The aim of this project is to see how much companion apps such as these can increase
 event engagement and attendence and to try and improve student social life on campus
-in the post-covid era
+in the post-covid era.
