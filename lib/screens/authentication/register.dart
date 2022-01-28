@@ -108,10 +108,13 @@ class _RegisterState extends State<Register> {
                         decoration: const InputDecoration(
                           hintText: 'Name',
                         ),
-                        // Name cannot be empty
+                        // Name cannot be empty and must be below 70 characters
                         validator: (String? value) {
                           if (value != null && value.isEmpty) {
                             return "Name cannot be empty!";
+                          }
+                          else if (value!.length > 70) {
+                            return "Name must be below 70 characters!";
                           }
                           return null;
                         },
@@ -127,10 +130,14 @@ class _RegisterState extends State<Register> {
                         decoration: const InputDecoration(
                           hintText: 'Pub Quiz Team Name',
                         ),
-                        // Team Name cannot be empty
+                        // Team Name cannot be empty and must be below 40
+                        // characters
                         validator: (String? value) {
                           if (value != null && value.isEmpty) {
                             return "Team name cannot be empty!";
+                          }
+                          else if (value!.length > 40) {
+                            return "Team Name must be below 40 characters!";
                           }
                           return null;
                         },

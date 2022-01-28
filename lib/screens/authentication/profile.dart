@@ -97,6 +97,9 @@ class _ProfileState extends State<Profile> {
                               if (value != null && value.isEmpty) {
                                 return "Name cannot be empty!";
                               }
+                              else if (value!.length > 70) {
+                                return "Name must be below 70 characters!";
+                              }
                               return null;
                             },
                             onChanged: (val) {
@@ -116,6 +119,9 @@ class _ProfileState extends State<Profile> {
                             validator: (String? value) {
                               if (value != null && value.isEmpty) {
                                 return "Team name cannot be empty!";
+                              }
+                              else if (value!.length > 40) {
+                                return "Team Name must be below 40 characters!";
                               }
                               return null;
                             },
