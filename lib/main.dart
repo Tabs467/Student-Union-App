@@ -14,7 +14,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Default route is to the food/drink menu
+  // Default route is to the Food/Drink Menu
   runApp(MaterialApp(
     initialRoute: '/menu',
     routes: {

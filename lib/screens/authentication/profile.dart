@@ -30,7 +30,7 @@ class _ProfileState extends State<Profile> {
   }
 
   _getCurrentUser() async {
-    return await _database.getUserData();
+    return await _database.getLoggedInUserData();
   }
 
   final _formKey = GlobalKey<FormState>();

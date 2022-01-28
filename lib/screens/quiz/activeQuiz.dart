@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_union_app/services/database.dart';
+import 'endLeaderboard.dart';
 import 'package:flutter/material.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
+
 
 class ActiveQuiz extends StatefulWidget {
   const ActiveQuiz({Key? key}) : super(key: key);
@@ -91,76 +93,77 @@ class _ActiveQuizState extends State<ActiveQuiz> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
       appBar: buildAppBar(context, 'Quiz'),
-      body: Column(
-        children: [
-          Flexible(
-            child: StreamBuilder<QuerySnapshot>(
-                // Set the stream to listen to the Quiz document that is marked as
-                // currently active
-                stream: FirebaseFirestore.instance
-                    .collection('Quizzes')
-                    .where('isActive', isEqualTo: true)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text(
-                        'Something went wrong retrieving the quiz');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text('Loading the quiz...');
-                  }
+      body: StreamBuilder<QuerySnapshot>(
+          // Set the stream to listen to the Quiz document that is marked as
+          // currently active
+          stream: FirebaseFirestore.instance
+              .collection('Quizzes')
+              .where('isActive', isEqualTo: true)
+              .snapshots(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Text(
+                  'Something went wrong retrieving the quiz');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading the quiz...');
+            }
 
-                  // Add the retrieved quiz to a map and update the current
-                  // question number to reflect the value in the database
-                  snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
-                    currentQuestionNumber = data['currentQuestion'];
-                    quizEnded = data['quizEnded'];
-                    quizID = data['id'];
+            // Add the retrieved quiz to a map and update the current
+            // question number to reflect the value in the database
+            snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              currentQuestionNumber = data['currentQuestion'];
+              quizEnded = data['quizEnded'];
+              quizID = data['id'];
+            });
+
+            // If the quiz hasn't ended retrieve the current question
+            if (!quizEnded) {
+              return StreamBuilder<QuerySnapshot>(
+                // Set the stream to listen to the Question document whose
+                // contained question is part of the current quiz and
+                // whose question number is the current position in the quiz
+                  stream: FirebaseFirestore.instance
+                      .collection('Questions')
+                      .where('quizID', isEqualTo: quizID)
+                      .where('questionNumber',
+                      isEqualTo: currentQuestionNumber)
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text(
+                          'Something went wrong retrieving the question');
+                    }
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Text('Loading the question...');
+                    }
+
+                    // Build the question and answer Widgets depending on
+                    // which answer the user has currently selected
+                    // So that the currently selected answer is highlighted
+                    if (answerA) {
+                      return buildSelectedAnswerA(snapshot);
+                    } else if (answerB) {
+                      return buildSelectedAnswerB(snapshot);
+                    } else if (answerC) {
+                      return buildSelectedAnswerC(snapshot);
+                    } else if (answerD) {
+                      return buildSelectedAnswerD(snapshot);
+                    } else {
+                      return buildNoSelectedAnswers(snapshot);
+                    }
                   });
-
-                  return StreamBuilder<QuerySnapshot>(
-                      // Set the stream to listen to the Question document whose
-                      // contained question is part of the current quiz and
-                      // whose question number is the current position in the quiz
-                      stream: FirebaseFirestore.instance
-                          .collection('Questions')
-                          .where('quizID', isEqualTo: quizID)
-                          .where('questionNumber',
-                              isEqualTo: currentQuestionNumber)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          return const Text(
-                              'Something went wrong retrieving the question');
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Text('Loading the question...');
-                        }
-
-                        // Build the question and answer Widgets depending on
-                        // which answer the user has currently selected
-                        // So that the currently selected answer is highlighted
-                        if (answerA) {
-                          return buildSelectedAnswerA(snapshot);
-                        } else if (answerB) {
-                          return buildSelectedAnswerB(snapshot);
-                        } else if (answerC) {
-                          return buildSelectedAnswerC(snapshot);
-                        } else if (answerD) {
-                          return buildSelectedAnswerD(snapshot);
-                        } else {
-                          return buildNoSelectedAnswers(snapshot);
-                        }
-                      });
-                }),
-          ),
-        ],
-      ),
+            }
+            // If the quiz has ended display the end of quiz leaderboard
+            else {
+              return EndLeaderboard(quizID: quizID);
+            }
+          }),
     );
   }
 

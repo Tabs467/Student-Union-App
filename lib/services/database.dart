@@ -52,8 +52,8 @@ class DatabaseService {
   }
 
 
-  // Query to return a given user's data
-  Future getUserData() async {
+  // Query to return the logged-in user's data
+  Future getLoggedInUserData() async {
     String uid = _auth.currentUID()!;
     String email = '';
     String name = '';
@@ -73,6 +73,31 @@ class DatabaseService {
                 admin = doc["admin"];
               })
             });
+
+    return _userFromQuery(uid, email, name, teamName, wins, admin);
+  }
+
+
+  // Query to return a user's data
+  Future getUserData(uid) async {
+    String email = '';
+    String name = '';
+    String teamName = '';
+    int wins = 0;
+    bool admin = false;
+
+    await userCollection
+        .where('uid', isEqualTo: uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        email = doc["email"];
+        name = doc["name"];
+        teamName = doc["teamName"];
+        wins = doc["wins"];
+        admin = doc["admin"];
+      })
+    });
 
     return _userFromQuery(uid, email, name, teamName, wins, admin);
   }

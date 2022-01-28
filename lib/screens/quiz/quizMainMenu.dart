@@ -73,7 +73,9 @@ class _QuizMainMenuState extends State<QuizMainMenu> {
                             noActiveQuiz = false;
                           }
 
-                          // If there is no active quiz display the 'No Active Quiz' card
+                          // If there is no active quiz display the
+                          // 'Quiz Ended!' card that will lead to the last
+                          // quiz's leaderboard
                           return (noActiveQuiz)
                               ? SizedBox(
                                   height: 250,
@@ -81,14 +83,17 @@ class _QuizMainMenuState extends State<QuizMainMenu> {
                                       margin: const EdgeInsets.fromLTRB(
                                           16.0, 8.0, 16.0, 8.0),
                                       child: InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, '/quiz/activeQuiz');
+                                        },
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Column(children: const [
                                               Text(
-                                                'No Active Quiz',
+                                                'Quiz Ended!',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 30,
