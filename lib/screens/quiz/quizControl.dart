@@ -119,173 +119,180 @@ class _QuizControlState extends State<QuizControl> {
                                   return Container(
                                     color:
                                         const Color.fromRGBO(244, 175, 20, 1.0),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Card(
-                                            color: const Color.fromRGBO(
-                                                22, 66, 139, 1),
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              side: const BorderSide(
-                                                  color: Colors.white70,
-                                                  width: 1),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Text(
-                                                'Q' +
-                                                    data['questionNumber']
-                                                        .toString() +
-                                                    ': ' +
-                                                    data['questionText'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                  color: Colors.white,
+                                    child: IntrinsicWidth(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Card(
+                                              color: const Color.fromRGBO(
+                                                  22, 66, 139, 1),
+                                              elevation: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                side: const BorderSide(
+                                                    color: Colors.white70,
+                                                    width: 1),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Q' +
+                                                        data['questionNumber']
+                                                            .toString() +
+                                                        ': ' +
+                                                        data['questionText'],
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 30,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(1),
-                                          child: Card(
-                                            color: Colors.red[900],
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(0),
-                                              side: const BorderSide(
-                                                  color: Colors.white70,
-                                                  width: 1),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'A: ' + data['answerA'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                  color: Colors.white,
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(15.0, 7.5, 15.0, 5.0),
+                                            child: Card(
+                                              color: Colors.red[900],
+                                              elevation: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                                side: const BorderSide(
+                                                    color: Colors.white70,
+                                                    width: 1),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  'A: ' + data['answerA'],
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(1),
-                                          child: Card(
-                                            color: Colors.blue[900],
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(0),
-                                              side: const BorderSide(
-                                                  color: Colors.white70,
-                                                  width: 1),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'B: ' + data['answerB'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                  color: Colors.white,
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 5.0),
+                                            child: Card(
+                                              color: Colors.blue[900],
+                                              elevation: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                                side: const BorderSide(
+                                                    color: Colors.white70,
+                                                    width: 1),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  'B: ' + data['answerB'],
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(1),
-                                          child: Card(
-                                            color: Colors.green[900],
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(0),
-                                              side: const BorderSide(
-                                                  color: Colors.white70,
-                                                  width: 1),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'C: ' + data['answerC'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                  color: Colors.white,
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 5.0),
+                                            child: Card(
+                                              color: Colors.green[900],
+                                              elevation: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                                side: const BorderSide(
+                                                    color: Colors.white70,
+                                                    width: 1),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  'C: ' + data['answerC'],
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(1),
-                                          child: Card(
-                                            color: Colors.yellow[900],
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(0),
-                                              side: const BorderSide(
-                                                  color: Colors.white70,
-                                                  width: 1),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'D: ' + data['answerD'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                  color: Colors.white,
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 5.0),
+                                            child: Card(
+                                              color: Colors.yellow[900],
+                                              elevation: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                                side: const BorderSide(
+                                                    color: Colors.white70,
+                                                    width: 1),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  'D: ' + data['answerD'],
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Card(
-                                            color:
-                                                const Color.fromRGBO(244, 140, 20, 1),
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              side: const BorderSide(
-                                                  color: Colors.yellow,
-                                                  width: 3),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'Correct Answer: ' +
-                                                    data['correctAnswer']
-                                                        .toUpperCase(),
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                  color: Colors.white,
+                                          Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Card(
+                                              color:
+                                                  const Color.fromRGBO(244, 140, 20, 1),
+                                              elevation: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                side: const BorderSide(
+                                                    color: Colors.yellow,
+                                                    width: 3),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Correct Answer: ' +
+                                                        data['correctAnswer']
+                                                            .toUpperCase(),
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 30,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   );
                                 }).toList()),
