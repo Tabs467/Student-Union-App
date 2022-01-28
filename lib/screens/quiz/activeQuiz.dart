@@ -21,33 +21,18 @@ class _ActiveQuizState extends State<ActiveQuiz> {
   bool anyQuizActive = false;
 
   // Selected answer state
-  bool answerA = false;
-  bool answerB = false;
-  bool answerC = false;
-  bool answerD = false;
+  Answer selectedAnswer = Answer.none;
 
   // Set which answer the user has currently selected
   _selectAnswer(String answer) {
-    if (answer == "A") {
-      answerA = true;
-      answerB = false;
-      answerC = false;
-      answerD = false;
-    } else if (answer == "B") {
-      answerA = false;
-      answerB = true;
-      answerC = false;
-      answerD = false;
-    } else if (answer == "C") {
-      answerA = false;
-      answerB = false;
-      answerC = true;
-      answerD = false;
-    } else if (answer == "D") {
-      answerA = false;
-      answerB = false;
-      answerC = false;
-      answerD = true;
+    if (answer == "a") {
+      selectedAnswer = Answer.A;
+    } else if (answer == "b") {
+      selectedAnswer = Answer.B;
+    } else if (answer == "c") {
+      selectedAnswer = Answer.C;
+    } else if (answer == "d") {
+      selectedAnswer = Answer.D;
     }
   }
 
@@ -146,13 +131,13 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                     // Build the question and answer Widgets depending on
                     // which answer the user has currently selected
                     // So that the currently selected answer is highlighted
-                    if (answerA) {
+                    if (selectedAnswer == Answer.A) {
                       return buildSelectedAnswerA(snapshot);
-                    } else if (answerB) {
+                    } else if (selectedAnswer == Answer.B) {
                       return buildSelectedAnswerB(snapshot);
-                    } else if (answerC) {
+                    } else if (selectedAnswer == Answer.C) {
                       return buildSelectedAnswerC(snapshot);
-                    } else if (answerD) {
+                    } else if (selectedAnswer == Answer.D) {
                       return buildSelectedAnswerD(snapshot);
                     } else {
                       return buildNoSelectedAnswers(snapshot);
@@ -235,7 +220,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("a");
-                                _selectAnswer("A");
+                                _selectAnswer("a");
                               });
                             },
                             child: Padding(
@@ -266,7 +251,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("b");
-                                _selectAnswer("B");
+                                _selectAnswer("b");
                               });
                             },
                             child: Padding(
@@ -297,7 +282,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("c");
-                                _selectAnswer("C");
+                                _selectAnswer("c");
                               });
                             },
                             child: Padding(
@@ -328,7 +313,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("d");
-                                _selectAnswer("D");
+                                _selectAnswer("d");
                               });
                             },
                             child: Padding(
@@ -355,6 +340,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
       ),
     );
   }
+
 
   // Build the question and answer Widgets with answer A as the selected answer
   RawScrollbar buildSelectedAnswerA(
@@ -424,7 +410,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("a");
-                                _selectAnswer("A");
+                                _selectAnswer("a");
                               });
                             },
                             child: Padding(
@@ -455,7 +441,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("b");
-                                _selectAnswer("B");
+                                _selectAnswer("b");
                               });
                             },
                             child: Padding(
@@ -486,7 +472,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("c");
-                                _selectAnswer("C");
+                                _selectAnswer("c");
                               });
                             },
                             child: Padding(
@@ -517,7 +503,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("d");
-                                _selectAnswer("D");
+                                _selectAnswer("d");
                               });
                             },
                             child: Padding(
@@ -613,7 +599,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("a");
-                                _selectAnswer("A");
+                                _selectAnswer("a");
                               });
                             },
                             child: Padding(
@@ -644,7 +630,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("b");
-                                _selectAnswer("B");
+                                _selectAnswer("b");
                               });
                             },
                             child: Padding(
@@ -675,7 +661,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("c");
-                                _selectAnswer("C");
+                                _selectAnswer("c");
                               });
                             },
                             child: Padding(
@@ -706,7 +692,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("d");
-                                _selectAnswer("D");
+                                _selectAnswer("d");
                               });
                             },
                             child: Padding(
@@ -802,7 +788,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("a");
-                                _selectAnswer("A");
+                                _selectAnswer("a");
                               });
                             },
                             child: Padding(
@@ -833,7 +819,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("b");
-                                _selectAnswer("B");
+                                _selectAnswer("b");
                               });
                             },
                             child: Padding(
@@ -864,7 +850,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("c");
-                                _selectAnswer("C");
+                                _selectAnswer("c");
                               });
                             },
                             child: Padding(
@@ -895,7 +881,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("d");
-                                _selectAnswer("D");
+                                _selectAnswer("d");
                               });
                             },
                             child: Padding(
@@ -991,7 +977,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("a");
-                                _selectAnswer("A");
+                                _selectAnswer("a");
                               });
                             },
                             child: Padding(
@@ -1022,7 +1008,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("b");
-                                _selectAnswer("B");
+                                _selectAnswer("b");
                               });
                             },
                             child: Padding(
@@ -1053,7 +1039,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("c");
-                                _selectAnswer("C");
+                                _selectAnswer("c");
                               });
                             },
                             child: Padding(
@@ -1084,7 +1070,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                             onTap: () {
                               setState(() {
                                 _submitAnswer("d");
-                                _selectAnswer("D");
+                                _selectAnswer("d");
                               });
                             },
                             child: Padding(
@@ -1111,4 +1097,12 @@ class _ActiveQuizState extends State<ActiveQuiz> {
       ),
     );
   }
+}
+
+enum Answer {
+  none,
+  A,
+  B,
+  C,
+  D,
 }
