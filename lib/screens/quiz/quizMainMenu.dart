@@ -162,7 +162,7 @@ class _QuizMainMenuState extends State<QuizMainMenu> {
                               const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                           child: InkWell(
                             onTap: () {
-                              //Navigator.pushNamed(context, '/quiz/myTeam');
+                              Navigator.pushNamed(context, '/quiz/myTeam');
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

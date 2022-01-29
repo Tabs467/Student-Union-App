@@ -131,6 +131,13 @@ class DatabaseService {
   }
 
 
+  // Update the currently logged-in user's Team Name
+  Future updateUserTeamNameDetails(teamName) async {
+    String uid = _auth.currentUID()!;
+    return userCollection.doc(uid).update({"teamName": teamName});
+  }
+
+
   // Insert a question into the Questions collection in the database
   Future createQuestion(
       String quizID,
