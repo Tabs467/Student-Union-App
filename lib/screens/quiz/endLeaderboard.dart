@@ -16,11 +16,19 @@ class EndLeaderboard extends StatefulWidget {
 
 // Widget to display the end of quiz leaderboard containing each participating
 // pub quiz team's name and score in descending order
+
+// Shared and non-shared first, second and third place rows are coloured gold,
+// silver, or bronze
+// If the currently logged-in user's score is not in the top three it will be
+// coloured pink
 class _EndLeaderboardState extends State<EndLeaderboard> {
   final AuthenticationService _auth = AuthenticationService();
   final DatabaseService _database = DatabaseService();
 
   late String quizID;
+
+  // List of returned scores in the scoreboard
+  late List<int> scoreList;
 
   // Retrieve the id of which quiz to output the scores from
   @override
@@ -56,6 +64,41 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
             return const Text('Loading the leaderboard...');
           }
 
+          // Set the list of scores to a List filled with 0s that is the
+          // same length as the number of returned Score documents
+          scoreList =
+              List<int>.filled(snapshot.data!.docs.length, 0, growable: true);
+
+          // For each returned Score document
+          for (var scoreIndex = 0;
+              scoreIndex < snapshot.data!.docs.length;
+              scoreIndex++) {
+            // If the score field in the Score document is not null
+            if (snapshot.data!.docs[scoreIndex]['score'] != null) {
+              // Add the score field's value to the List of scores
+              scoreList[scoreIndex] = snapshot.data!.docs[scoreIndex]['score'];
+            }
+          }
+
+          // Determine the values of the three highest scores so that the
+          // scoreboard rows that contain them can be coloured gold, silver,
+          // or bronze later in the ListView Widget
+          int firstHighestScore = 0;
+          int secondHighestScore = 0;
+          int thirdHighestScore = 0;
+          for (int score in scoreList) {
+            if (score > firstHighestScore) {
+              thirdHighestScore = secondHighestScore;
+              secondHighestScore = firstHighestScore;
+              firstHighestScore = score;
+            } else if (score > secondHighestScore) {
+              thirdHighestScore = secondHighestScore;
+              secondHighestScore = score;
+            } else if (score > thirdHighestScore) {
+              thirdHighestScore = score;
+            }
+          }
+
           return Container(
             padding:
                 const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
@@ -83,11 +126,10 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                       return FutureBuilder(
                         future: _getTeamName(uid),
                         builder: (context, snapshot) {
-                          // If the user data query has finished display
+                          // If the user data query has finished, display
                           // the row on the scoreboard
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
-
                             // Store the returned user data (returned as a
                             // CurrentUser model) inside of a CurrentUser model
                             CurrentUser returnedUser =
@@ -95,15 +137,27 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
 
                             // Use the authentication service to determine the
                             // user id of the currently logged-in user
-                            String loggedInUser = _auth.currentUID()!;
+                            // And then determine whether this row is
+                            // outputting the logged-in user's score.
+                            bool loggedInUser =
+                                (returnedUser.uid == _auth.currentUID()!);
 
                             // Build the row on the scoreboard
                             return Card(
-                              // If the user in the Score record is the
-                              // currently logged-in user highlight the row
-                              color: (loggedInUser == returnedUser.uid)
-                                  ? Colors.pink
-                                  : Colors.white,
+                              // Shared and non-shared first, second and third
+                              // place rows are coloured gold, silver, or
+                              // bronze
+                              // If the currently logged-in user's score is not
+                              // in the top three it will be coloured pink
+                              color: (data['score'] == firstHighestScore)
+                                  ? Colors.yellow
+                                  : (data['score'] == secondHighestScore)
+                                      ? Colors.blueGrey
+                                      : (data['score'] == thirdHighestScore)
+                                          ? Colors.deepOrangeAccent
+                                          : (loggedInUser)
+                                              ? Colors.pink
+                                              : Colors.white,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 // Display the team name of the user related
