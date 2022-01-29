@@ -108,82 +108,91 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                 const SizedBox(height: 25.0),
                 // Display a list of each team name and score for each team
                 // that participated in the quiz in order of descending score
-                ListView(
-                    shrinkWrap: true,
-                    children:
-                        snapshot.data!.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
+                Expanded(
+                  child: RawScrollbar(
+                    isAlwaysShown: true,
+                    thumbColor: const Color.fromRGBO(22, 66, 139, 1),
+                    //radius: Radius.circular(20),
+                    thickness: 3.0,
 
-                      // Retrieve the user id of the Score document
-                      String uid = data['userID'];
+                    child: ListView(
+                        shrinkWrap: true,
+                        children:
+                            snapshot.data!.docs.map((DocumentSnapshot document) {
+                          Map<String, dynamic> data =
+                              document.data()! as Map<String, dynamic>;
 
-                      // FutureBuilder to display another loading Widget until
-                      // _getTeamName returns the user data from the user id of
-                      // the Score document
-                      // This is done to discover the team name related to the
-                      // Score document
-                      return FutureBuilder(
-                        future: _getTeamName(uid),
-                        builder: (context, snapshot) {
-                          // If the user data query has finished, display
-                          // the row on the scoreboard
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            // Store the returned user data (returned as a
-                            // CurrentUser model) inside of a CurrentUser model
-                            CurrentUser returnedUser =
-                                snapshot.data as CurrentUser;
+                          // Retrieve the user id of the Score document
+                          String uid = data['userID'];
 
-                            // Use the authentication service to determine the
-                            // user id of the currently logged-in user
-                            // And then determine whether this row is
-                            // outputting the logged-in user's score.
-                            bool loggedInUser =
-                                (returnedUser.uid == _auth.currentUID()!);
+                          // FutureBuilder to display another loading Widget until
+                          // _getTeamName returns the user data from the user id of
+                          // the Score document
+                          // This is done to discover the team name related to the
+                          // Score document
+                          return FutureBuilder(
+                            future: _getTeamName(uid),
+                            builder: (context, snapshot) {
+                              // If the user data query has finished, display
+                              // the row on the scoreboard
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                // Store the returned user data (returned as a
+                                // CurrentUser model) inside of a CurrentUser model
+                                CurrentUser returnedUser =
+                                    snapshot.data as CurrentUser;
 
-                            // Build the row on the scoreboard
-                            return Card(
-                              // Shared and non-shared first, second and third
-                              // place rows are coloured gold, silver, or
-                              // bronze
-                              // If the currently logged-in user's score is not
-                              // in the top three it will be coloured pink
-                              color: (data['score'] == firstHighestScore)
-                                  ? Colors.yellow
-                                  : (data['score'] == secondHighestScore)
-                                      ? Colors.blueGrey
-                                      : (data['score'] == thirdHighestScore)
-                                          ? Colors.deepOrangeAccent
-                                          : (loggedInUser)
-                                              ? Colors.pink
-                                              : Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                // Display the team name of the user related
-                                // to the score document and display the score
-                                // from the score document
-                                child: Text(
-                                  returnedUser.teamName +
-                                      " - " +
-                                      data['score'].toString(),
-                                  style: const TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            );
-                            // Whilst the user data query is still being
-                            // carried out display a loading Widget
-                          } else {
-                            return const Text('Loading...');
-                          }
-                        },
-                      );
-                    }).toList()),
+                                // Use the authentication service to determine the
+                                // user id of the currently logged-in user
+                                // And then determine whether this row is
+                                // outputting the logged-in user's score.
+                                bool loggedInUser =
+                                    (returnedUser.uid == _auth.currentUID()!);
+
+                                // Build the row on the scoreboard
+                                return Card(
+                                    // Shared and non-shared first, second and third
+                                    // place rows are coloured gold, silver, or
+                                    // bronze
+                                    // If the currently logged-in user's score is not
+                                    // in the top three it will be coloured pink
+                                    color: (data['score'] == firstHighestScore)
+                                        ? Colors.yellow
+                                        : (data['score'] == secondHighestScore)
+                                            ? Colors.blueGrey
+                                            : (data['score'] == thirdHighestScore)
+                                                ? Colors.deepOrangeAccent
+                                                : (loggedInUser)
+                                                    ? Colors.pink
+                                                    : Colors.white,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(80.0),
+                                      // Display the team name of the user related
+                                      // to the score document and display the score
+                                      // from the score document
+                                      child: Text(
+                                        returnedUser.teamName +
+                                            " - " +
+                                            data['score'].toString(),
+                                        style: const TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                // Whilst the user data query is still being
+                                // carried out display a loading Widget
+                              } else {
+                                return const Text('Loading...');
+                              }
+                            },
+                          );
+                        }).toList()),
+                  ),
+                ),
                 const SizedBox(height: 25.0),
                 // Button to return back to the Pub Quiz Main Menu
                 ElevatedButton(
