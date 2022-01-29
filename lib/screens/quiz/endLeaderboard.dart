@@ -166,7 +166,7 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                                                     ? Colors.pink
                                                     : Colors.white,
                                     child: Padding(
-                                      padding: const EdgeInsets.all(80.0),
+                                      padding: const EdgeInsets.all(8.0),
                                       // Display the team name of the user related
                                       // to the score document and display the score
                                       // from the score document
