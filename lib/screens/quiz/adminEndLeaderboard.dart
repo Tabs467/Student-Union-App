@@ -32,6 +32,9 @@ class _AdminEndLeaderboardState extends State<AdminEndLeaderboard> {
   // List of returned scores in the scoreboard
   late List<int> scoreList;
 
+  // Highest score on the scoreboard state
+  int firstHighestScore = 0;
+
   // Retrieve the id of which quiz to output the scores from
   @override
   void initState() {
@@ -85,18 +88,14 @@ class _AdminEndLeaderboardState extends State<AdminEndLeaderboard> {
           // Determine the values of the three highest scores so that the
           // scoreboard rows that contain them can be coloured gold, silver,
           // or bronze later in the ListView Widget
-          int firstHighestScore = 0;
           int secondHighestScore = 0;
           int thirdHighestScore = 0;
           for (int score in scoreList) {
-            if (score > firstHighestScore) {
-              thirdHighestScore = secondHighestScore;
-              secondHighestScore = firstHighestScore;
+            if (score >= firstHighestScore) {
               firstHighestScore = score;
-            } else if (score > secondHighestScore) {
-              thirdHighestScore = secondHighestScore;
+            } else if (score >= secondHighestScore) {
               secondHighestScore = score;
-            } else if (score > thirdHighestScore) {
+            } else if (score >= thirdHighestScore) {
               thirdHighestScore = score;
             }
           }
@@ -203,9 +202,11 @@ class _AdminEndLeaderboardState extends State<AdminEndLeaderboard> {
                       margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                       child: InkWell(
                         // When tapped call the function to end the
-                        // quiz
+                        // quiz with the quiz id and the highest score obtained
+                        // in the quiz (so that winning users' wins field can
+                        // be updated in the Users collection)
                         onTap: () {
-                          DatabaseService().endQuiz(quizID);
+                          DatabaseService().endQuiz(quizID, firstHighestScore);
                           Navigator.pushReplacementNamed(context, '/quiz/admin');
                         },
                         child: Row(

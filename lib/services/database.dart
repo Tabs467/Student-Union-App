@@ -138,6 +138,21 @@ class DatabaseService {
   }
 
 
+  // Update a user's number of pub quiz wins to include one more win
+  Future addWin(String uid) async {
+    // Retrieve the given user's data
+    CurrentUser winningUser = await getUserData(uid) as CurrentUser;
+
+    // Calculate the new amount of wins
+    int newWins = winningUser.wins + 1;
+
+    // Update the user document to store the new number of wins
+    await userCollection.doc(uid).update({
+      'wins': newWins,
+    });
+  }
+
+
   // Insert a question into the Questions collection in the database
   Future createQuestion(
       String quizID,
@@ -187,11 +202,13 @@ class DatabaseService {
   }
 
 
-  // Mark the inputted quiz as inactive and set the non active quiz marker in the
-  // database to true
+  // Mark the inputted quiz as inactive and set the non active quiz marker in
+  // the database to true
   // Also reset all the currentQuestionCorrect booleans in the
   // Scores collection for the active quiz to false
-  Future endQuiz(String quizID) async {
+  // Also for each winning user of the quiz add one win to their User document
+  // in the Users collection
+  Future endQuiz(String quizID, int highestScore) async {
     // Mark the Quiz document that is used to mark that there
     // isn't a quiz currently active as active
     quizCollection.doc('cy7RWIJ3VGIXlHSM1Il8').update({"isActive": true});
@@ -201,8 +218,27 @@ class DatabaseService {
         .doc(quizID)
         .update({"isActive": false, "quizEnded": true, "currentQuestion": 1});
 
-    // In case the quiz is ended early, reset all the currentQuestionCorrect
-    // booleans for the active quiz to false
+    // A user only wins a quiz if they get at least one question correct
+    if (highestScore != 0) {
+      // Retrieve the Score documents related to the winning users of the given
+      // quiz
+      await scoreCollection
+          .where('quizID', isEqualTo: quizID)
+          .where('score', isEqualTo: highestScore)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        // For each winning user add one win to their User document in the
+        // Users collection
+        querySnapshot.docs.forEach((doc) async {
+          String userID = doc["userID"];
+          await addWin(userID);
+        })
+      });
+    }
+
+    // Reset all the currentQuestionCorrect booleans for the active quiz to
+    // false
     // To allow this quiz to be restarted without accidentally giving out
     // any points.
     return scoreCollection

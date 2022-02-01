@@ -103,10 +103,11 @@ class _ActiveQuizState extends State<ActiveQuiz> {
               currentQuestionNumber = data['currentQuestion'];
               quizEnded = data['quizEnded'];
               quizID = data['id'];
+              questionCount = data['questionCount'];
             });
 
-            // If the quiz hasn't ended retrieve the current question
-            if (!quizEnded) {
+            // If all the quizzes questions have been displayed
+            if (currentQuestionNumber <= questionCount) {
               return StreamBuilder<QuerySnapshot>(
                 // Set the stream to listen to the Question document whose
                 // contained question is part of the current quiz and
@@ -148,7 +149,6 @@ class _ActiveQuizState extends State<ActiveQuiz> {
     return RawScrollbar(
       isAlwaysShown: true,
       thumbColor: const Color.fromRGBO(22, 66, 139, 1),
-      //radius: Radius.circular(20),
       thickness: 7.5,
 
       // Display the current question along with its answers

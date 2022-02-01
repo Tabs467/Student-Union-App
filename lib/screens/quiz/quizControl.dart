@@ -313,8 +313,10 @@ class _QuizControlState extends State<QuizControl> {
               child: InkWell(
                 // When tapped call the function to end the
                 // quiz
+                // In this case the quiz would be ending early so there is no
+                // winning score to put into the endQuiz function
                 onTap: () {
-                  DatabaseService().endQuiz(quizID);
+                  DatabaseService().endQuiz(quizID, 0);
                   Navigator.pushReplacementNamed(context, '/quiz/admin');
                 },
                 child: Row(

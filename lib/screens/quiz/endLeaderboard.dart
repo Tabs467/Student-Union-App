@@ -87,14 +87,11 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
           int secondHighestScore = 0;
           int thirdHighestScore = 0;
           for (int score in scoreList) {
-            if (score > firstHighestScore) {
-              thirdHighestScore = secondHighestScore;
-              secondHighestScore = firstHighestScore;
+            if (score >= firstHighestScore) {
               firstHighestScore = score;
-            } else if (score > secondHighestScore) {
-              thirdHighestScore = secondHighestScore;
+            } else if (score >= secondHighestScore) {
               secondHighestScore = score;
-            } else if (score > thirdHighestScore) {
+            } else if (score >= thirdHighestScore) {
               thirdHighestScore = score;
             }
           }
