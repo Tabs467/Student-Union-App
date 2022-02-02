@@ -9,7 +9,7 @@ AppBar buildAppBar(BuildContext context, String selectedTab) {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Image.asset(
-              'assets/US_SU_Logo.jpg',
+              'assets/us_su_logo.jpg',
               fit: BoxFit.contain,
               height: 100,
             ),
