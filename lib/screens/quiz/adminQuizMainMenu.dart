@@ -48,137 +48,116 @@ class _AdminQuizMainMenuState extends State<AdminQuizMainMenu> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    buildTabTitle('Pub Quiz'),
-                    ListView(
-                        // List View shouldn't be scrollable as it will only ever
-                        // contain one element (an active quiz button or a
-                        // 'No Active Quiz' card)
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        children: snapshot.data!.docs
-                            .map((DocumentSnapshot document) {
-                          Map<String, dynamic> data =
-                              document.data()! as Map<String, dynamic>;
-
-                          // If the active quiz is currently the Quiz document
-                          // that is used to mark that there isn't a quiz currently active
-                          if (data['id'] == 'cy7RWIJ3VGIXlHSM1Il8') {
-                            // Then no quiz is currently active
-                            noActiveQuiz = true;
-                          }
-                          // Otherwise if the active quiz is a different Quiz document
-                          // (a real quiz)
-                          else {
-                            // Then a quiz is currently active
-                            noActiveQuiz = false;
-                          }
-
-                          // If there is no active quiz display the
-                          // No Active Quiz card
-                          return (noActiveQuiz)
-                              ? SizedBox(
-                                  height: 250,
-                                  child: Card(
-                                      margin: const EdgeInsets.fromLTRB(
-                                          16.0, 8.0, 16.0, 8.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Column(children: const [
-                                              Text(
-                                                'No Quiz Active',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                ),
-                                              )
-                                            ]),
-                                          ],
-                                        ),
-                                      )),
-                                )
-                              // Otherwise, display a button to join the active quiz
-                              : SizedBox(
-                                  height: 250,
-                                  child: Card(
-                                      margin: const EdgeInsets.fromLTRB(
-                                          16.0, 8.0, 16.0, 8.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                              context, '/quiz/activeQuiz');
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Column(children: const [
-                                              Text(
-                                                'Join Quiz',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 30,
-                                                ),
-                                              ),
-                                            ]),
-                                          ],
-                                        ),
-                                      )),
-                                );
-                        }).toList()),
-                    SizedBox(
-                      height: 250,
-                      child: Card(
-                          margin:
-                              const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                          child: InkWell(
-                            onTap: () {
-                              //Navigator.pushNamed(context, '/quiz/leaderboards');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(children: const [
-                                  Text(
-                                    'Leaderboards',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                    ),
-                                  ),
-                                ]),
-                              ],
-                            ),
-                          )),
+                    Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
+                      child: buildTabTitle('Pub Quiz'),
                     ),
-                    SizedBox(
-                      height: 250,
-                      child: Card(
-                          margin:
-                              const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/quiz/myTeam');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(children: const [
-                                  Text(
-                                    'My Team',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                    ),
-                                  ),
-                                ]),
-                              ],
-                            ),
-                          )),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 0.0, 4, 0.0),
+                      child: ListView(
+                          // List View shouldn't be scrollable as it will only ever
+                          // contain one element (an active quiz button or a
+                          // 'No Active Quiz' card)
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          children: snapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                                document.data()! as Map<String, dynamic>;
+
+                            // If the active quiz is currently the Quiz document
+                            // that is used to mark that there isn't a quiz currently active
+                            if (data['id'] == 'cy7RWIJ3VGIXlHSM1Il8') {
+                              // Then no quiz is currently active
+                              noActiveQuiz = true;
+                            }
+                            // Otherwise if the active quiz is a different Quiz document
+                            // (a real quiz)
+                            else {
+                              // Then a quiz is currently active
+                              noActiveQuiz = false;
+                            }
+
+                            // If there is no active quiz display the
+                            // No Active Quiz card
+                            return (noActiveQuiz)
+                                ? SizedBox(
+                                    height: 250,
+                                    child: Card(
+                                        margin: const EdgeInsets.fromLTRB(
+                                            16.0, 8.0, 16.0, 8.0),
+                                        child: Ink.image(
+                                          image: const AssetImage(
+                                              'assets/no_active_quiz.png'),
+                                          fit: BoxFit.fill,
+                                          child: InkWell(
+                                              splashColor:
+                                                  Colors.black.withOpacity(.3),
+                                              onTap: () {}),
+                                        )))
+                                // Otherwise, display a button to join the active quiz
+                                : SizedBox(
+                                    height: 250,
+                                    width: double.infinity,
+                                    child: Card(
+                                        margin: const EdgeInsets.fromLTRB(
+                                            16.0, 8.0, 16.0, 8.0),
+                                        child: Ink.image(
+                                          image: const AssetImage(
+                                              'assets/join_quiz.png'),
+                                          fit: BoxFit.fill,
+                                          child: InkWell(
+                                              splashColor:
+                                                  Colors.black.withOpacity(.3),
+                                              onTap: () {
+                                                Navigator.pushNamed(context,
+                                                    '/quiz/activeQuiz');
+                                              }),
+                                        )),
+                                  );
+                          }).toList()),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 0.0, 4, 0.0),
+                      child: SizedBox(
+                        height: 250,
+                        width: double.infinity,
+                        child: Card(
+                            margin:
+                                const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                            child: Ink.image(
+                              image:
+                                  const AssetImage('assets/leaderboards.png'),
+                              fit: BoxFit.fill,
+                              child: InkWell(
+                                  splashColor: Colors.black.withOpacity(.3),
+                                  onTap: () {
+                                    //Navigator.pushNamed(
+                                    //context, '/quiz/leaderboards');
+                                  }),
+                            )),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 0.0, 4, 0.0),
+                      child: SizedBox(
+                        height: 250,
+                        width: double.infinity,
+                        child: Card(
+                            margin:
+                                const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                            child: Ink.image(
+                              image: const AssetImage('assets/my_team.png'),
+                              fit: BoxFit.fill,
+                              child: InkWell(
+                                  splashColor: Colors.black.withOpacity(.3),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, '/quiz/myTeam');
+                                  }),
+                            )),
+                      ),
                     ),
                   ],
                 ),
