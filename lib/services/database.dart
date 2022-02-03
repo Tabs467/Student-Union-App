@@ -153,7 +153,19 @@ class DatabaseService {
   }
 
 
-  // Insert a question into the Questions collection in the database
+  // Generate id by creating a String from generating 20 random numbers
+  // which correspond to characters in the _chars constant
+  String _generateID() {
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return String.fromCharCodes(Iterable.generate(
+        20, (_) => _chars.codeUnitAt(Random().nextInt(_chars.length))));
+  }
+
+
+  // Insert a new question document into the Questions collection
+  // Whilst also incrementing the total number of questions contained within
+  // the new question's quiz
   Future createQuestion(
       String quizID,
       int questionNumber,
@@ -163,8 +175,27 @@ class DatabaseService {
       String answerB,
       String answerC,
       String answerD) async {
-    // If document with questionID does not already exist it will be created
-    return await questionCollection.doc().set({
+
+    String id = _generateID();
+
+    // Increment total questions in the new questions' quiz by one
+    await quizCollection
+        .where('id', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+        int totalQuestions = doc["questionCount"];
+
+        await questionCollection.doc(quizID).update({
+          "questionCount": (totalQuestions + 1),
+        });
+      })
+    });
+
+    // Create the question document
+    return await questionCollection.doc(id).set({
+      'id': id,
       'quizID': quizID,
       'questionNumber': questionNumber,
       'questionText': questionText,
@@ -177,10 +208,146 @@ class DatabaseService {
   }
 
 
+  // Delete a question document from the Questions collection
+  // Whilst also decrementing the total number of questions contained within
+  // the new question's quiz
+  // And decrementing all the question numbers of questions after the
+  // deleted question in the quiz
+  Future deleteQuestion(String id) async {
+    // Fetch the question document to delete
+    await questionCollection
+        .where('id', isEqualTo: id)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+
+        // Fetch the question document's question number and quiz id
+        // So that all questions after the deleted question can have their
+        // question number in the quiz moved down by one
+        int questionNumber = doc["questionNumber"];
+        String quizID = doc["quizID"];
+
+        // Fetch all questions after the deleted question in the quiz
+        await questionCollection
+            .where('quizID', isEqualTo: quizID)
+            .where('questionNumber', isGreaterThan: questionNumber)
+            .get()
+            .then((QuerySnapshot querySnapshot) =>
+        {
+          querySnapshot.docs.forEach((doc) async {
+
+            // Decrement their question number by one
+            String questionID = doc["id"];
+            int currentQuestionNumber = doc["questionNumber"];
+            await questionCollection.doc(questionID).update({
+              "questionNumber": (currentQuestionNumber - 1),
+            });
+          })
+        });
+
+
+        // Decrement the total number of questions in the quiz by one
+        await quizCollection
+            .where('id', isEqualTo: quizID)
+            .get()
+            .then((QuerySnapshot querySnapshot) =>
+        {
+          querySnapshot.docs.forEach((doc) async {
+            int totalQuestions = doc["questionCount"];
+
+            await questionCollection.doc(quizID).update({
+              "questionCount": (totalQuestions - 1),
+            });
+          })
+        });
+
+
+        // Finally, delete the question's document
+        String questionID = doc["id"];
+        // Delete the question
+        await questionCollection
+            .doc(questionID)
+            .delete();
+      })
+    });
+  }
+
+
+  // Update a question document in the Questions collection
+  Future updateQuestion(
+      String id,
+      String answerA,
+      String answerB,
+      String answerC,
+      String answerD,
+      String correctAnswer,
+      String questionText) async {
+
+    return questionCollection.doc(id).update({
+      "answerA": answerA,
+      "answerB": answerB,
+      "answerC": answerC,
+      "answerD": answerD,
+      "correctAnswer": correctAnswer,
+      "questionText": questionText
+    });
+
+  }
+
+
+  // Insert a new quiz document into the Quizzes collection
+  Future createQuiz(String quizTitle) async {
+
+    String id = _generateID();
+
+    return await questionCollection.doc(id).set({
+      'id': id,
+      'currentQuestion' : 1,
+      'isActive': false,
+      'questionCount': 0,
+      'quizEnded': false,
+      'quizTitle': quizTitle,
+      'creationDate': FieldValue.serverTimestamp(),
+    });
+  }
+
+
+  // Delete a quiz document inside of the Quizzes collection
+  // Whilst also deleting all of the question documents from the
+  // Questions collection that are contained within the deleted quiz
+  Future deleteQuiz(String id) async {
+
+    // Delete all questions from quiz
+    await questionCollection
+        .where('quizID', isEqualTo: id)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+        String questionID = doc["id"];
+        await questionCollection
+            .doc(questionID)
+            .delete();
+      })
+    });
+
+    return quizCollection.doc(id).delete();
+  }
+
+
+  // Update a quiz document's quizTitle property inside of the
+  // Quizzes collection
+  Future updateQuiz(String id, String quizTitle) async {
+    return quizCollection.doc(id).update({"quizTitle": quizTitle});
+  }
+
+
   // Return a stream of the quizzes inside the Quizzes collection
   Stream<QuerySnapshot> get quizzes {
     return quizCollection.snapshots();
   }
+
 
   // Return a stream of the questions inside the Questions collection
   Stream<QuerySnapshot> get questions {
@@ -414,15 +581,8 @@ class DatabaseService {
     }
     // Otherwise, if creating a new Score document
     else {
-      // Create a score doc with an auto generated id
-
-      // Generate id by creating a String from generating 20 random numbers
-      // which correspond to characters in the _chars constant
-      const _chars =
-          'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-      scoreID = String.fromCharCodes(Iterable.generate(
-          20, (_) => _chars.codeUnitAt(Random().nextInt(_chars.length))));
-
+      // Create a score doc with an auto generated id of 20 characters
+      scoreID = _generateID();
 
       // Create the Score document with the currentQuestionCorrect boolean
       // storing whether the user has the correct answer currently selected
