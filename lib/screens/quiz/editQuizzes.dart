@@ -153,15 +153,17 @@ class _EditQuizzesState extends State<EditQuizzes> {
                                       child: const Text('Edit Quiz'),
                                       // If the edit quiz button on a quiz is
                                       // tapped navigate the user to the
-                                      // EditQuiz Widget with the id of the
-                                      // quiz being passed as a parameter
+                                      // EditQuiz Widget with the quiz details
+                                      // passed as parameters
                                       onPressed: () async {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 EditQuiz(quizID: data['id'],
-                                                  quizTitle: data['quizTitle'],),
+                                                  quizTitle: data['quizTitle'],
+                                                    dateCreated: date,
+                                                    questionCount: questionCount),
                                           ),
                                         );
                                       },

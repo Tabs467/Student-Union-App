@@ -6,8 +6,15 @@ import '../buildTabTitle.dart';
 class EditQuiz extends StatefulWidget {
   final String quizID;
   final String quizTitle;
+  final String dateCreated;
+  final String questionCount;
 
-  const EditQuiz({Key? key, required this.quizID, required this.quizTitle})
+  const EditQuiz(
+      {Key? key,
+      required this.quizID,
+      required this.quizTitle,
+      required this.dateCreated,
+      required this.questionCount})
       : super(key: key);
 
   @override
@@ -15,6 +22,8 @@ class EditQuiz extends StatefulWidget {
 }
 
 // Widget to display a form to edit a quiz title
+// This form also displays the date the quiz was created and how many
+// questions it contains
 // Along with a button that navigates to a Widget to edit the questions
 // contained within the quiz
 class _EditQuizState extends State<EditQuiz> {
@@ -73,6 +82,16 @@ class _EditQuizState extends State<EditQuiz> {
                         quizTitle = val;
                       });
                     },
+                  ),
+                  const SizedBox(height: 20.0),
+                  TextFormField(
+                    initialValue: "Created: " +  widget.dateCreated,
+                    enabled: false,
+                  ),
+                  const SizedBox(height: 20.0),
+                  TextFormField(
+                    initialValue: "Contains " +  widget.questionCount,
+                    enabled: false,
                   ),
                   const SizedBox(height: 12.0),
                   // Error text
