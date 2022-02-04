@@ -70,7 +70,7 @@ class _QuizAdminState extends State<QuizAdmin> {
                             // When the Edit Quiz button is tapped push the user to the
                             // Edit Quizzes tab
                             onTap: () {
-                              //Navigator.pushNamed(context, '/quiz/admin/editQuizzes');
+                              Navigator.pushNamed(context, '/quiz/admin/editQuizzes');
                             }),
                       )),
                 ),

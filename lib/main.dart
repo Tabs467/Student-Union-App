@@ -7,6 +7,8 @@ import 'package:student_union_app/screens/authentication/signIn.dart';
 import 'package:student_union_app/screens/menu/menu.dart';
 import 'package:student_union_app/screens/quiz/activeQuiz.dart';
 import 'package:student_union_app/screens/quiz/admin.dart';
+import 'package:student_union_app/screens/quiz/createQuiz.dart';
+import 'package:student_union_app/screens/quiz/editQuizzes.dart';
 import 'package:student_union_app/screens/quiz/myTeam.dart';
 import 'package:student_union_app/screens/quiz/quizAuth.dart';
 import 'package:student_union_app/screens/quiz/quizControl.dart';
@@ -22,6 +24,8 @@ Future<void> main() async {
       '/menu': (context) => const Menu(),
       '/quiz/activeQuiz': (context) => const ActiveQuiz(),
       '/quiz/admin': (context) => const QuizAdmin(),
+      '/quiz/admin/createQuiz': (context) => const CreateQuiz(),
+      '/quiz/admin/editQuizzes': (context) => const EditQuizzes(),
       '/quiz/admin/quizControl': (context) => const QuizControl(),
       '/quiz/quizAuth': (context) => const QuizAuth(),
       '/quiz/myTeam': (context) => const MyTeam(),
