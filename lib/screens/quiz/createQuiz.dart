@@ -94,7 +94,11 @@ class _CreateQuizState extends State<CreateQuiz> {
               ),
             ),
           ),
-          const SizedBox(height: 25.0),
+          // To create padding so the Return button is displayed at the bottom
+          // of the screen
+          Expanded(
+            child: Container(),
+          ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(200, 50),
@@ -107,6 +111,7 @@ class _CreateQuizState extends State<CreateQuiz> {
               Navigator.pop(context);
             },
           ),
+          const SizedBox(height: 25.0),
         ],
       ),
     );

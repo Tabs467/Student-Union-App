@@ -299,9 +299,7 @@ class DatabaseService {
   // Insert a new quiz document into the Quizzes collection
   Future createQuiz(String quizTitle) async {
 
-    print("caileb: " + quizTitle);
     String id = _generateID();
-    print("id: " + id);
 
     return await quizCollection.doc(id).set({
       'id': id,
