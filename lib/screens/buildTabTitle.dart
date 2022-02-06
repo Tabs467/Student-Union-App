@@ -16,13 +16,18 @@ Material buildTabTitle(String title) {
           )
       ),
 
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.bold,
-          fontSize: 40,
-          color: Colors.white,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+              fontSize: 40,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     ),

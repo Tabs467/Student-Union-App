@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
+import 'editQuestions.dart';
 
 class EditQuiz extends StatefulWidget {
   final String quizID;
@@ -135,14 +136,14 @@ class _EditQuizState extends State<EditQuiz> {
             // Pass the quiz title and id to the EditQuestions Widget and
             // navigate to it
             onPressed: () async {
-              /*Navigator.push(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
                       EditQuestions(quizID: widget.quizID,
                         quizTitle: widget.quizTitle,),
                 ),
-              );*/
+              );
             },
           ),
           // To create padding so the Return button is displayed at the bottom
