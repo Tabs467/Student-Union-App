@@ -187,7 +187,7 @@ class DatabaseService {
       querySnapshot.docs.forEach((doc) async {
         int totalQuestions = doc["questionCount"];
 
-        await questionCollection.doc(quizID).update({
+        await quizCollection.doc(quizID).update({
           "questionCount": (totalQuestions + 1),
         });
       })
@@ -256,7 +256,7 @@ class DatabaseService {
           querySnapshot.docs.forEach((doc) async {
             int totalQuestions = doc["questionCount"];
 
-            await questionCollection.doc(quizID).update({
+            await quizCollection.doc(quizID).update({
               "questionCount": (totalQuestions - 1),
             });
           })

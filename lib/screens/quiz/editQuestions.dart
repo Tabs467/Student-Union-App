@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
+import 'createQuestion.dart';
+import 'editQuestion.dart';
 
 class EditQuestions extends StatefulWidget {
   final String quizID;
   final String quizTitle;
+  final String questionCount;
 
-  const EditQuestions({Key? key, required this.quizID, required this.quizTitle})
+  const EditQuestions({Key? key, required this.quizID, required this.quizTitle,
+    required this.questionCount})
       : super(key: key);
 
   @override
@@ -24,11 +28,13 @@ class _EditQuestionsState extends State<EditQuestions> {
 
   String quizID = '';
   String quizTitle = '';
+  String questionCount = '';
 
   @override
   void initState() {
     quizID = widget.quizID;
     quizTitle = widget.quizTitle;
+    questionCount = widget.questionCount;
     super.initState();
   }
 
@@ -179,15 +185,20 @@ class _EditQuestionsState extends State<EditQuestions> {
                                   // Widget with the question's details being
                                   // passed as parameters
                                   onPressed: () async {
-                                    /*Navigator.push(
+                                    Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => EditQuestion(
                                               questionID: data['id'],
                                               questionText: data['questionText'],
+                                              answerA: data['answerA'],
+                                              answerB: data['answerB'],
+                                              answerC: data['answerC'],
+                                              answerD: data['answerD'],
+                                              correctAnswer: data['correctAnswer'],
                                             ),
                                           ),
-                                        );*/
+                                        );
                                   },
                                 ),
                               ),
@@ -205,7 +216,7 @@ class _EditQuestionsState extends State<EditQuestions> {
                                   // When tapped delete the question from the
                                   // quiz
                                   onPressed: () async {
-                                    //_database.deleteQuestion(data['id']);
+                                    _database.deleteQuestion(data['id']);
                                   },
                                 ),
                               ),
@@ -232,9 +243,16 @@ class _EditQuestionsState extends State<EditQuestions> {
                     primary: const Color.fromRGBO(22, 66, 139, 1),
                   ),
                   child: const Text('Create Question'),
-                  // When tapped navigate the user to the createQuestion screen
+                  // When tapped navigate the user to the createQuestion Widget
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/quiz/admin/createQuestion');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CreateQuestion(quizID: widget.quizID,
+                              questionCount: widget.questionCount,),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -248,8 +266,9 @@ class _EditQuestionsState extends State<EditQuestions> {
                     primary: const Color.fromRGBO(22, 66, 139, 1),
                   ),
                   child: const Text('Return'),
-                  // When tapped return the user back to the EditQuiz screen
+                  // When tapped return the user back to the EditQuizzes screen
                   onPressed: () async {
+                    Navigator.pop(context);
                     Navigator.pop(context);
                   },
                 ),

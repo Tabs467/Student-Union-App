@@ -34,16 +34,30 @@ class _EditQuizState extends State<EditQuiz> {
 
   // Text field state
   String quizTitle = '';
+  String questionCount = '';
+  String questionCountText = '';
   String error = '';
 
   @override
   void initState() {
     quizTitle = widget.quizTitle;
+    questionCount = widget.questionCount;
+    questionCountText = questionCount;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    // Concatenate singular or plural depending on whether
+    // there is one or multiple questions
+    if (questionCount == '1') {
+      questionCountText += " Question";
+    }
+    else {
+      questionCountText += " Questions";
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
       appBar: buildAppBar(context, 'Quiz'),
@@ -91,7 +105,7 @@ class _EditQuizState extends State<EditQuiz> {
                   ),
                   const SizedBox(height: 20.0),
                   TextFormField(
-                    initialValue: "Contains " +  widget.questionCount,
+                    initialValue: "Contains " +  questionCountText,
                     enabled: false,
                   ),
                   const SizedBox(height: 12.0),
@@ -141,7 +155,8 @@ class _EditQuizState extends State<EditQuiz> {
                 MaterialPageRoute(
                   builder: (context) =>
                       EditQuestions(quizID: widget.quizID,
-                        quizTitle: widget.quizTitle,),
+                        quizTitle: widget.quizTitle,
+                        questionCount: widget.questionCount,),
                 ),
               );
             },

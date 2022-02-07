@@ -15,6 +15,7 @@ class EditQuizzes extends StatefulWidget {
 // Widget to display the list of the quizzes stored in the Quizzes collection
 // ordered by most recent creationDate
 // Along with buttons to edit and delete them
+// (the delete button also has a confirmation pop-up)
 // And also a button that leads to a screen to create a new quiz
 class _EditQuizzesState extends State<EditQuizzes> {
   final DatabaseService _database = DatabaseService();
@@ -163,7 +164,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
                                                 EditQuiz(quizID: data['id'],
                                                   quizTitle: data['quizTitle'],
                                                     dateCreated: date,
-                                                    questionCount: questionCount),
+                                                    questionCount: data['questionCount'].toString()),
                                           ),
                                         );
                                       },
@@ -181,10 +182,9 @@ class _EditQuizzesState extends State<EditQuizzes> {
                                       ),
                                       child: const Text('Delete Quiz'),
                                       // If the delete quiz button is tapped
-                                      // delete all question documents related
-                                      // to the quiz and the quiz document
+                                      // display the deleteAlert pop-up
                                       onPressed: () async {
-                                        //_database.deleteQuiz(data['id']);
+                                        showDeleteAlertDialog(context, data['id']);
                                       },
                                     ),
                                   ),
@@ -219,4 +219,48 @@ class _EditQuizzesState extends State<EditQuizzes> {
           }),
     );
   }
+}
+
+// The delete quiz confirmation pop-up Widget
+showDeleteAlertDialog(context, id) {
+  final DatabaseService _database = DatabaseService();
+
+  // If the user taps "Yes", delete all question documents related to
+  // the quiz and the quiz document
+  // Then close the pop-up
+  Widget yesButton = TextButton(
+    child: const Text("Yes"),
+    onPressed: () async {
+      await _database.deleteQuiz(id);
+      Navigator.of(context).pop();
+    },
+  );
+
+  // If the user taps "Cancel", just close the pop-up
+  Widget cancelButton = TextButton(
+    child: const Text("Cancel"),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // The alert dialog box
+  AlertDialog alert = AlertDialog(
+    title: const Text("Warning!"),
+    content: const Text(
+        "Deleting this quiz will also delete all of the questions contained"
+            " within it! Are you sure you want to continue?"),
+    actions: [
+      yesButton,
+      cancelButton,
+    ],
+  );
+
+  // The function to build the delete alert dialog box
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
