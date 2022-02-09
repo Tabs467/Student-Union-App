@@ -12,6 +12,7 @@ import 'package:student_union_app/screens/quiz/editQuizzes.dart';
 import 'package:student_union_app/screens/quiz/myTeam.dart';
 import 'package:student_union_app/screens/quiz/quizAuth.dart';
 import 'package:student_union_app/screens/quiz/quizControl.dart';
+import 'package:student_union_app/screens/quiz/selectQuiz.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ Future<void> main() async {
       '/quiz/admin/createQuiz': (context) => const CreateQuiz(),
       '/quiz/admin/editQuizzes': (context) => const EditQuizzes(),
       '/quiz/admin/quizControl': (context) => const QuizControl(),
+      '/quiz/admin/selectQuiz': (context) => const SelectQuiz(),
       '/quiz/quizAuth': (context) => const QuizAuth(),
       '/quiz/myTeam': (context) => const MyTeam(),
       '/authentication/authenticate': (context) => const Authenticate(),

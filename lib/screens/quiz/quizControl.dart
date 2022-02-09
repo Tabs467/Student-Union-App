@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
-import 'package:student_union_app/screens/quiz/endLeaderboard.dart';
 import 'package:student_union_app/services/database.dart';
-
 import 'adminEndLeaderboard.dart';
 
 class QuizControl extends StatefulWidget {
@@ -35,13 +33,14 @@ class _QuizControlState extends State<QuizControl> {
       .where('isActive', isEqualTo: true)
       .snapshots();
 
-  // Rebuild the widget tree and update the current question number,
+  // Rebuild the widget tree and update the current quizID, question number,
   // question count and quiz ended variables to their current values in the
   // database
   retrieveCurrentQuestionNumber() {
     setState(() {
       _quizzes.forEach((field) {
         field.docs.asMap().forEach((index, data) {
+          quizID = data['id'];
           currentQuestionNumber = data['currentQuestion'];
           questionCount = data['questionCount'];
           quizEnded = data['quizEnded'];
@@ -75,10 +74,12 @@ class _QuizControlState extends State<QuizControl> {
                   }
 
                   // Add the retrieved quiz to a map and update the current
-                  // question number to reflect the value in the database
+                  // question number and other values to reflect the
+                  // values stored in the database
                   snapshot.data!.docs.map((DocumentSnapshot document) {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
+                    quizID = data['id'];
                     currentQuestionNumber = data['currentQuestion'];
                     quizEnded = data['quizEnded'];
                   });
