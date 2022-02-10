@@ -222,7 +222,7 @@ class _MenuState extends State<Menu> {
                 floatingActionButton: (_isAdmin)
                     ? SizedBox(
                         height: 200.0,
-                        width: 200.0,
+                        width: 150.0,
                         child: FittedBox(
                           child: FloatingActionButton.extended(
                             // When tapped, navigate the user to the Food/Drink
