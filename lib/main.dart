@@ -23,6 +23,7 @@ Future<void> main() async {
     initialRoute: '/menu',
     routes: {
       '/menu': (context) => const Menu(),
+      //'/menu/editMenuGroups': (context) => const MenuAdmin(),
       '/quiz/activeQuiz': (context) => const ActiveQuiz(),
       '/quiz/admin': (context) => const QuizAdmin(),
       '/quiz/admin/createQuiz': (context) => const CreateQuiz(),
