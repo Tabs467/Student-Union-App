@@ -51,7 +51,7 @@ class _QuizMainMenuState extends State<QuizMainMenu> {
                     Padding(
                       padding:
                           const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-                      child: buildTabTitle('Pub Quiz'),
+                      child: buildTabTitle('Pub Quiz', 40),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(4, 0.0, 4, 3.0),

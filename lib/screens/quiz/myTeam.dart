@@ -64,7 +64,7 @@ class _MyTeamState extends State<MyTeam> {
                     vertical: 20.0, horizontal: 50.0),
                 child: Column(
                   children: [
-                    buildTabTitle('My Team'),
+                    buildTabTitle('My Team', 40),
                     Form(
                       key: _formKey,
                       child: Column(

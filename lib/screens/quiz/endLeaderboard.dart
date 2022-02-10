@@ -101,7 +101,7 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                 const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
             child: Column(
               children: [
-                buildTabTitle("End of Quiz"),
+                buildTabTitle("End of Quiz", 40),
                 const SizedBox(height: 25.0),
                 // Display a list of each team name and score for each team
                 // that participated in the quiz in order of descending score

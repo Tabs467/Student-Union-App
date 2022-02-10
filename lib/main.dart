@@ -4,6 +4,8 @@ import 'package:student_union_app/screens/authentication/authenticate.dart';
 import 'package:student_union_app/screens/authentication/forgotPassword.dart';
 import 'package:student_union_app/screens/authentication/register.dart';
 import 'package:student_union_app/screens/authentication/signIn.dart';
+import 'package:student_union_app/screens/menu/createMenuGroup.dart';
+import 'package:student_union_app/screens/menu/editMenuGroups.dart';
 import 'package:student_union_app/screens/menu/menu.dart';
 import 'package:student_union_app/screens/quiz/activeQuiz.dart';
 import 'package:student_union_app/screens/quiz/admin.dart';
@@ -23,7 +25,8 @@ Future<void> main() async {
     initialRoute: '/menu',
     routes: {
       '/menu': (context) => const Menu(),
-      //'/menu/editMenuGroups': (context) => const MenuAdmin(),
+      '/menu/createMenuGroup': (context) => const CreateMenuGroup(),
+      '/menu/editMenuGroups': (context) => const EditMenuGroups(),
       '/quiz/activeQuiz': (context) => const ActiveQuiz(),
       '/quiz/admin': (context) => const QuizAdmin(),
       '/quiz/admin/createQuiz': (context) => const CreateQuiz(),

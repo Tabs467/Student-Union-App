@@ -46,7 +46,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 50.0),
-                    child: buildTabTitle('Edit Quizzes'),
+                    child: buildTabTitle('Edit Quizzes', 40),
                   ),
                   Flexible(
                     child: Padding(
@@ -224,7 +224,7 @@ showDeleteAlertDialog(context, id) {
   final DatabaseService _database = DatabaseService();
 
   // If the user taps "Yes", delete all question documents related to
-  // the quiz and the quiz document
+  // the quiz and the quiz document itself
   // Then close the pop-up
   Widget yesButton = TextButton(
     child: const Text("Yes"),

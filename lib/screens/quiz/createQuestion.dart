@@ -54,7 +54,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-              child: buildTabTitle('Create Question'),
+              child: buildTabTitle('Create Question', 40),
             ),
             Padding(
               padding:

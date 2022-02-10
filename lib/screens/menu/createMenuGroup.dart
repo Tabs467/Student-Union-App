@@ -3,28 +3,28 @@ import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
 
-class CreateQuiz extends StatefulWidget {
-  const CreateQuiz({Key? key}) : super(key: key);
+class CreateMenuGroup extends StatefulWidget {
+  const CreateMenuGroup({Key? key}) : super(key: key);
 
   @override
-  _CreateQuizState createState() => _CreateQuizState();
+  _CreateMenuGroupState createState() => _CreateMenuGroupState();
 }
 
-// Widget to display a form to create a new quiz
-class _CreateQuizState extends State<CreateQuiz> {
+// Widget to display a form to create a new Menu Group
+class _CreateMenuGroupState extends State<CreateMenuGroup> {
   final DatabaseService _database = DatabaseService();
 
   final _formKey = GlobalKey<FormState>();
 
   // Text field state
-  String quizTitle = '';
+  String menuGroupName = '';
   String error = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
-      appBar: buildAppBar(context, 'Quiz'),
+      appBar: buildAppBar(context, 'Menu'),
       resizeToAvoidBottomInset: false,
 
       body: Column(
@@ -32,7 +32,7 @@ class _CreateQuizState extends State<CreateQuiz> {
           Padding(
             padding: const EdgeInsets.symmetric(
                 vertical: 20.0, horizontal: 30.0),
-            child: buildTabTitle('Create New Quiz', 40),
+            child: buildTabTitle('Create Menu Group', 30),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -44,22 +44,22 @@ class _CreateQuizState extends State<CreateQuiz> {
                   const SizedBox(height: 20.0),
                   TextFormField(
                     decoration: const InputDecoration(
-                      hintText: 'Quiz Title',
+                      hintText: 'Menu Group Name',
                     ),
-                    // Quiz titles cannot be empty and must be
+                    // Menu Group Names cannot be empty and must be
                     // below 40 characters
                     validator: (String? value) {
                       if (value != null && value.isEmpty) {
-                        return "Quiz Title cannot be empty!";
+                        return "Menu Group Name cannot be empty!";
                       }
                       else if (value!.length > 40) {
-                        return "Quiz Title must be below 40 characters!";
+                        return "Menu Group Name must be below 40 characters!";
                       }
                       return null;
                     },
                     onChanged: (val) {
                       setState(() {
-                        quizTitle = val;
+                        menuGroupName = val;
                       });
                     },
                   ),
@@ -78,14 +78,14 @@ class _CreateQuizState extends State<CreateQuiz> {
                       maximumSize: const Size(200, 50),
                       primary: const Color.fromRGBO(22, 66, 139, 1),
                     ),
-                    child: const Text('Create Quiz'),
-                    // When the Create Quiz button is tapped check whether the
-                    // quiz name is valid and create a new quiz document
+                    child: const Text('Create Menu Group'),
+                    // When the Create Menu Group button is tapped check whether the
+                    // Menu Group name is valid and create a new MenuGroup document
                     // that contains the typed name
-                    // And return the user back to the EditQuizzes screen
+                    // And return the user back to the EditMenuGroups screen
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await _database.createQuiz(quizTitle);
+                        //await _database.createMenuGroup(menuGroupName);
                         Navigator.pop(context);
                       }
                     },
@@ -106,7 +106,7 @@ class _CreateQuizState extends State<CreateQuiz> {
               primary: const Color.fromRGBO(22, 66, 139, 1),
             ),
             child: const Text('Return'),
-            // Return the user back to the EditQuizzes screen
+            // Return the user back to the EditMenuGroups screen
             onPressed: () async {
               Navigator.pop(context);
             },

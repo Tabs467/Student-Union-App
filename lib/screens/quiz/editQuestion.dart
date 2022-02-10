@@ -74,7 +74,7 @@ class _EditQuestionState extends State<EditQuestion> {
             Padding(
               padding:
               const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-              child: buildTabTitle('Edit Question'),
+              child: buildTabTitle('Edit Question', 40),
             ),
             Padding(
               padding:

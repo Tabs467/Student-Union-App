@@ -46,7 +46,7 @@ class _SelectQuizState extends State<SelectQuiz> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 50.0),
-                    child: buildTabTitle('Select Quiz'),
+                    child: buildTabTitle('Select Quiz', 40),
                   ),
                   Flexible(
                     child: Padding(

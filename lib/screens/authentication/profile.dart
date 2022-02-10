@@ -74,7 +74,7 @@ class _ProfileState extends State<Profile> {
                     vertical: 20.0, horizontal: 50.0),
                 child: Column(
                   children: [
-                    buildTabTitle('Profile'),
+                    buildTabTitle('Profile', 40),
                     Form(
                       key: _formKey,
                       child: Column(

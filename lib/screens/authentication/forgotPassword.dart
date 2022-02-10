@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/services/authentication.dart';
 
+import '../buildTabTitle.dart';
+
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
 
@@ -32,6 +34,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child: Column(
               children: [
+                buildTabTitle('Password Reset', 30),
                 Form(
                   key: _formKey,
                   child: Column(

@@ -15,10 +15,9 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   final DatabaseService _database = DatabaseService();
 
-  // Default selected menu category is drinks
-  // Will need to update this in the future to allow users to remove the
-  // drinks category.
-  String selectedMenuGroupID = '2V7MRLZ9BzIjQXYfP8ug';
+  // Default selected menu category state
+  bool selectedMenuGroupIDSet = false;
+  String selectedMenuGroupID = '';
 
   bool _isAdmin = false;
 
@@ -58,157 +57,165 @@ class _MenuState extends State<Menu> {
                         return const Text('Loading Menu Groups...');
                       }
 
-                      return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20.0, horizontal: 10.0),
-                              child: buildTabTitle('Food/Drink Menu'),
-                            ),
+                      // Set the first menu group retrieved on the first build of
+                      // the Widget tree as the initially selected menu group
+                      if (snapshot.data!.docs.isNotEmpty && !selectedMenuGroupIDSet) {
+                        selectedMenuGroupIDSet = true;
+                        selectedMenuGroupID = snapshot.data!.docs[0]['id'];
+                      }
 
-                            ConstrainedBox(
-                              constraints:
-                                  const BoxConstraints(maxHeight: 60.0),
-                              child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: snapshot.data!.docs
-                                      .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> data = document.data()!
-                                        as Map<String, dynamic>;
-                                    return FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Card(
-                                        color: const Color.fromRGBO(
-                                            22, 66, 139, 1),
-                                        elevation: 20,
-                                        shape: RoundedRectangleBorder(
-                                          // If this Menu Group button is currently selected highlight its border
-                                          side: BorderSide(
-                                              color: (selectedMenuGroupID ==
-                                                      data['id'])
-                                                  ? Colors.yellow
-                                                  : Colors.black,
-                                              width: 3),
-                                          borderRadius:
-                                              BorderRadius.circular(0),
-                                        ),
-                                        child: InkWell(
-                                          // When the Menu Group button is tapped it becomes the new selected Menu Group
-                                          onTap: () {
-                                            setState(() {
-                                              selectedMenuGroupID = data['id'];
-                                            });
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              data['name'],
-                                              style: const TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 30,
-                                                color: Colors.white,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20.0, horizontal: 10.0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              buildTabTitle('Food/Drink Menu', 35),
+                              const SizedBox(height: 20.0),
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxHeight: 60.0),
+                                child: ListView(
+                                    key: const PageStorageKey<String>('horizontalPosition'),
+                                    scrollDirection: Axis.horizontal,
+                                    children: snapshot.data!.docs
+                                        .map((DocumentSnapshot document) {
+                                      Map<String, dynamic> data = document.data()!
+                                          as Map<String, dynamic>;
+                                      return FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Card(
+                                          color: const Color.fromRGBO(
+                                              22, 66, 139, 1),
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                            // If this Menu Group button is currently selected highlight its border
+                                            side: BorderSide(
+                                                color: (selectedMenuGroupID ==
+                                                        data['id'])
+                                                    ? Colors.yellow
+                                                    : Colors.black,
+                                                width: 1.5),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          child: InkWell(
+                                            // When the Menu Group button is tapped it becomes the new selected Menu Group
+                                            onTap: () {
+                                              setState(() {
+                                                selectedMenuGroupID = data['id'];
+                                              });
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(9.0),
+                                              child: Text(
+                                                data['name'],
+                                                style: const TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 30,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  }).toList()),
-                            ),
+                                      );
+                                    }).toList()),
+                              ),
+                              const SizedBox(height: 5.0),
+                              // Retrieve the Menu Sub Groups and Menu Items of the selected Menu Group
+                              StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('MenuSubGroup')
+                                      .where('MenuGroupID',
+                                          isEqualTo: selectedMenuGroupID)
+                                      .snapshots(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasError) {
+                                      return const Text(
+                                          'Something went wrong retrieving the menu groups');
+                                    }
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Text('Loading Menu Groups...');
+                                    }
 
-                            // Retrieve the Menu Sub Groups and Menu Items of the selected Menu Group
-                            StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('MenuSubGroup')
-                                    .where('MenuGroupID',
-                                        isEqualTo: selectedMenuGroupID)
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (snapshot.hasError) {
-                                    return const Text(
-                                        'Something went wrong retrieving the menu groups');
-                                  }
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Text('Loading Menu Groups...');
-                                  }
-
-                                  // Display each Menu Sub Group in an expanding box which expands to show
-                                  // the Menu Items contained within the Menu Sub Group
-                                  return Expanded(
-                                    child: ListView(
-                                        children: snapshot.data!.docs
-                                            .map((DocumentSnapshot document) {
-                                      Map<String, dynamic> data = document
-                                          .data()! as Map<String, dynamic>;
-                                      return SizedBox(
-                                          width: double.infinity,
-                                          child: Card(
-                                            color: const Color.fromRGBO(
-                                                255, 255, 255, 1.0),
-                                            elevation: 20,
-                                            shape: RoundedRectangleBorder(
-                                              side: const BorderSide(
-                                                  color: Colors.black,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(0),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: ExpansionTile(
-                                                title: Text(
-                                                  data['name'],
-                                                  style: const TextStyle(
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 30,
+                                    // Display each Menu Sub Group in an expanding box which expands to show
+                                    // the Menu Items contained within the Menu Sub Group
+                                    return Expanded(
+                                      child: ListView(
+                                          children: snapshot.data!.docs
+                                              .map((DocumentSnapshot document) {
+                                        Map<String, dynamic> data = document
+                                            .data()! as Map<String, dynamic>;
+                                        return SizedBox(
+                                            width: double.infinity,
+                                            child: Card(
+                                              color: const Color.fromRGBO(
+                                                  255, 255, 255, 1.0),
+                                              elevation: 5,
+                                              shape: RoundedRectangleBorder(
+                                                side: const BorderSide(
                                                     color: Colors.black,
+                                                    width: 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ExpansionTile(
+                                                  title: Text(
+                                                    data['name'],
+                                                    style: const TextStyle(
+                                                      fontStyle: FontStyle.italic,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 30,
+                                                      color: Colors.black,
+                                                    ),
                                                   ),
-                                                ),
-                                                children: <Widget>[
-                                                  // For each menu item in the Menu Items array in the
-                                                  // Menu Sub Group
-                                                  // Display the Menu Item's information and place a
-                                                  // divider under it
-                                                  for (var menuItem
-                                                      in data['MenuItems'])
-                                                    Column(
-                                                      children: [
-                                                        const Divider(
-                                                          thickness: 1.25,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Text(
-                                                            menuItem,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .italic,
-                                                              fontSize: 20,
-                                                              color:
-                                                                  Colors.black,
+                                                  children: <Widget>[
+                                                    // For each menu item in the Menu Items array in the
+                                                    // Menu Sub Group
+                                                    // Display the Menu Item's information and place a
+                                                    // divider under it
+                                                    for (var menuItem
+                                                        in data['MenuItems'])
+                                                      Column(
+                                                        children: [
+                                                          const Divider(
+                                                            thickness: 1.25,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Text(
+                                                              menuItem,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .italic,
+                                                                fontSize: 20,
+                                                                color:
+                                                                    Colors.black,
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                ],
+                                                        ],
+                                                      ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ));
-                                    }).toList()),
-                                  );
-                                }),
-                          ]);
+                                            ));
+                                      }).toList()),
+                                    );
+                                  }),
+                            ]),
+                      );
                     }),
                 // If the logged-in user is an admin display the admin
                 // floating action button

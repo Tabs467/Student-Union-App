@@ -67,7 +67,7 @@ class _EditQuizState extends State<EditQuiz> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-            child: buildTabTitle('Edit Quiz'),
+            child: buildTabTitle('Edit Quiz', 40),
           ),
           Padding(
             padding:

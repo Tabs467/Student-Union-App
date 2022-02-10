@@ -61,7 +61,7 @@ class _QuizAdminState extends State<QuizAdmin> {
                     Padding(
                       padding:
                           const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-                      child: buildTabTitle('Quiz Admin Panel'),
+                      child: buildTabTitle('Quiz Admin Panel', 40),
                     ),
                     // If there is no active quiz display the Start Quiz button
                     (noActiveQuiz)

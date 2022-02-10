@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Material buildTabTitle(String title) {
+Material buildTabTitle(String title, double fontSize) {
   return Material(
     elevation: 20,
     child: Container(
@@ -21,10 +21,10 @@ Material buildTabTitle(String title) {
           padding: const EdgeInsets.all(3.0),
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.bold,
-              fontSize: 40,
+              fontSize: fontSize,
               color: Colors.white,
             ),
           ),

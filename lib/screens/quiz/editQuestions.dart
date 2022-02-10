@@ -50,7 +50,7 @@ class _EditQuestionsState extends State<EditQuestions> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-            child: buildTabTitle(quizTitle),
+            child: buildTabTitle(quizTitle, 40),
           ),
 
           // Stream of questions contained within the quiz in order of
