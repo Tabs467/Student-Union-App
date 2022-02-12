@@ -3,22 +3,43 @@ import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
 
-class CreateMenuGroup extends StatefulWidget {
-  const CreateMenuGroup({Key? key}) : super(key: key);
+class CreateMenuItem extends StatefulWidget {
+  final String subGroupID;
+
+  const CreateMenuItem({Key? key, required this.subGroupID}) : super(key: key);
 
   @override
-  _CreateMenuGroupState createState() => _CreateMenuGroupState();
+  _CreateMenuItemState createState() => _CreateMenuItemState();
 }
 
-// Widget to display a form to create a new Menu Group
-class _CreateMenuGroupState extends State<CreateMenuGroup> {
+// Widget to display a form to create a new Menu Item
+class _CreateMenuItemState extends State<CreateMenuItem> {
   final DatabaseService _database = DatabaseService();
 
   final _formKey = GlobalKey<FormState>();
 
   // Text field state
-  String menuGroupName = '';
+  String menuItemName = '';
+  String menuItemPrice = '';
   String error = '';
+
+  String subGroupID = '';
+
+  @override
+  void initState() {
+    subGroupID = widget.subGroupID;
+
+    super.initState();
+  }
+
+  // Check whether a given string is a Numeric
+  bool _isNumeric(String str) {
+    if (str == null) {
+      return false;
+    }
+
+    return double.tryParse(str) != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +53,7 @@ class _CreateMenuGroupState extends State<CreateMenuGroup> {
           Padding(
             padding: const EdgeInsets.symmetric(
                 vertical: 20.0, horizontal: 30.0),
-            child: buildTabTitle('Create Menu Group', 30),
+            child: buildTabTitle('Create Menu Item', 30),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -44,22 +65,48 @@ class _CreateMenuGroupState extends State<CreateMenuGroup> {
                   const SizedBox(height: 20.0),
                   TextFormField(
                     decoration: const InputDecoration(
-                      hintText: 'Menu Group Name',
+                      hintText: 'Menu Item Name',
                     ),
-                    // Menu Group Names cannot be empty and must be
+                    // Menu Item Names cannot be empty and must be
                     // below 40 characters
+                    // And must not contain the '£' character
                     validator: (String? value) {
                       if (value != null && value.isEmpty) {
-                        return "Menu Group Name cannot be empty!";
+                        return "Menu Item Name cannot be empty!";
                       }
                       else if (value!.length > 40) {
-                        return "Menu Group Name must be below 40 characters!";
+                        return "Menu Item Name must be below 40 characters!";
+                      }
+                      else if (value.contains('£')) {
+                        return "Menu Item Name cannot contain the '£' symbol!";
                       }
                       return null;
                     },
                     onChanged: (val) {
                       setState(() {
-                        menuGroupName = val;
+                        menuItemName = val;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'Menu Item Price',
+                    ),
+                    // Menu Item Price cannot be empty and must be
+                    // a number
+                    validator: (String? value) {
+                      if (value != null && value.isEmpty) {
+                        return "Menu Item Price cannot be empty!";
+                      }
+                      else if (!_isNumeric(value!)) {
+                        return "Menu Item Price must be a number!";
+                      }
+                      return null;
+                    },
+                    onChanged: (val) {
+                      setState(() {
+                        menuItemPrice = val;
                       });
                     },
                   ),
@@ -78,14 +125,21 @@ class _CreateMenuGroupState extends State<CreateMenuGroup> {
                       maximumSize: const Size(200, 50),
                       primary: const Color.fromRGBO(22, 66, 139, 1),
                     ),
-                    child: const Text('Create Menu Group'),
-                    // When the Create Menu Group button is tapped check whether the
-                    // Menu Group name is valid and create a new MenuGroup document
+                    child: const Text('Create Menu Item'),
+                    // When the Create Menu Item button is tapped check whether the
+                    // Menu Item name and price are valid and create a new MenuItems
+                    // array entry in the given MenuSubGroup document
                     // that contains the typed name
-                    // And return the user back to the EditMenuGroups screen
+                    // And return the user back to the EditMenuItems screen
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await _database.createMenuGroup(menuGroupName);
+                        // Format MenuItem entry
+                        // Keep only up to two decimal places on the price
+                        menuItemPrice = double.parse((double.parse(menuItemPrice)).toStringAsFixed(2)).toString();
+
+                        String menuItem = menuItemName + " - £" + menuItemPrice;
+
+                        await _database.createMenuItem(subGroupID, menuItem);
                         Navigator.pop(context);
                       }
                     },
@@ -106,7 +160,7 @@ class _CreateMenuGroupState extends State<CreateMenuGroup> {
               primary: const Color.fromRGBO(22, 66, 139, 1),
             ),
             child: const Text('Return'),
-            // Return the user back to the EditMenuGroups screen
+            // Return the user back to the EditMenuItems screen
             onPressed: () async {
               Navigator.pop(context);
             },

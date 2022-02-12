@@ -15,6 +15,10 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Users');
   CollectionReference scoreCollection =
       FirebaseFirestore.instance.collection('Scores');
+  CollectionReference menuGroupCollection =
+      FirebaseFirestore.instance.collection('MenuGroup');
+  CollectionReference menuSubGroupCollection =
+      FirebaseFirestore.instance.collection('MenuSubGroup');
 
   // Some FireStore access requires the authentication service to determine
   // the currently logged-in user's UID
@@ -284,7 +288,7 @@ class DatabaseService {
       String correctAnswer,
       String questionText) async {
 
-    return questionCollection.doc(id).update({
+    return await questionCollection.doc(id).update({
       "answerA": answerA,
       "answerB": answerB,
       "answerC": answerC,
@@ -339,7 +343,7 @@ class DatabaseService {
   // Update a quiz document's quizTitle property inside of the
   // Quizzes collection
   Future updateQuiz(String id, String quizTitle) async {
-    return quizCollection.doc(id).update({"quizTitle": quizTitle});
+    return await quizCollection.doc(id).update({"quizTitle": quizTitle});
   }
 
 
@@ -604,5 +608,158 @@ class DatabaseService {
         });
       }
     }
+  }
+
+
+  // Insert a new Menu Group document into the MenuGroup collection
+  Future createMenuGroup(String name) async {
+    String id = _generateID();
+
+    // Create the MenuGroup document
+    return await menuGroupCollection.doc(id).set({
+      'id': id,
+      'name': name,
+    });
+  }
+
+
+  // Update a Menu Group's document's name property inside of the
+  // MenuGroup collection
+  Future updateMenuGroup(String id, String name) async {
+    return await menuGroupCollection.doc(id).update({"name": name});
+  }
+
+
+  // Delete a Menu Group document along with all the MenuSubGroup documents
+  // related to it
+  Future deleteMenuGroup(String id) async {
+
+    // Delete all related MenuSubGroup documents
+    await menuSubGroupCollection
+        .where('MenuGroupID', isEqualTo: id)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+        String subGroupID = doc["id"];
+        await menuSubGroupCollection
+            .doc(subGroupID)
+            .delete();
+      })
+    });
+
+    // Delete the MenuGroup document itself
+    return menuGroupCollection.doc(id).delete();
+  }
+
+
+  // Insert a new Menu Sub Group document into the MenuSubGroup collection
+  Future createMenuSubGroup(String menuGroupID, String name) async {
+    String id = _generateID();
+
+    // Create the MenuSubGroup document
+    return await menuSubGroupCollection.doc(id).set({
+      'MenuGroupID': menuGroupID,
+      'name': name,
+      'id': id,
+      'MenuItems': <String>[],
+    });
+  }
+
+
+  // Update a Menu Sub Group's document's name property inside of the
+  // MenuSubGroup collection
+  Future updateMenuSubGroup(String id, String name) async {
+    return await menuSubGroupCollection.doc(id).update({"name": name});
+  }
+
+
+  // Delete a MenuSubGroup document including it's MenuItems array
+  Future deleteMenuSubGroup(String id) async {
+    return menuSubGroupCollection.doc(id).delete();
+  }
+
+
+  // Add a new Menu Item to the given Menu Sub Group's MenuItems array inside
+  // of the MenuSubGroup document
+  // Duplicate Menu Items will not be added to the same Menu Sub Group
+  Future createMenuItem(String subGroupID, String itemDetails) async {
+
+    // Retrieve the MenuSubGroup document
+    await menuSubGroupCollection
+        .where('id', isEqualTo: subGroupID)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Create a list containing one element that describes the new item to
+        // be added
+        var newItem = [itemDetails];
+
+        // Add this new item to the array by conducting a union between to the
+        // two lists
+        // This implicitly stops duplicate items from being added to sub groups
+        // And if the array doesn't already exist, it will be created
+        menuSubGroupCollection.doc(subGroupID).update({"MenuItems": FieldValue.arrayUnion(newItem)});
+      })
+    });
+  }
+
+
+  // Update a MenuItems array element, this array is stored in the given Menu Sub Group document
+  Future updateMenuItem(String subGroupID, String oldItemDetails, String newItemDetails) async {
+
+    // Retrieve the MenuSubGroup document
+    await menuSubGroupCollection
+        .where('id', isEqualTo: subGroupID)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the existing array from the document
+        var updatedArray = doc['MenuItems'];
+
+        // Update the array
+        // Do not need to worry about duplicates being renamed here as duplicates
+        // cannot be created within Sub Groups in the first place
+        for (var itemIndex = 0 ; itemIndex < updatedArray.length; itemIndex++) {
+          if (updatedArray[itemIndex] == oldItemDetails) {
+            updatedArray[itemIndex] = newItemDetails;
+          }
+        }
+
+        // Write the updated array to the document
+        menuSubGroupCollection.doc(subGroupID).update({"MenuItems": updatedArray});
+      })
+    });
+  }
+
+
+  // Delete a MenuItems array element, this array is stored in the given Menu Sub Group document
+  Future deleteMenuItem(String subGroupID, String itemDetails) async {
+
+    // Retrieve the MenuSubGroup document
+    await menuSubGroupCollection
+        .where('id', isEqualTo: subGroupID)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Create a list containing one element that describes the item to be
+        // deleted
+        var deletedItem = [itemDetails];
+
+        // Delete this item from the array
+        // Do not need to worry about duplicates being deleted here as duplicates
+        // cannot be created within Sub Groups in the first place
+        menuSubGroupCollection.doc(subGroupID).update({"MenuItems": FieldValue.arrayRemove(deletedItem)});
+      })
+    });
   }
 }

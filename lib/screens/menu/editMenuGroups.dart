@@ -4,6 +4,8 @@ import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
 
+import 'editMenuGroup.dart';
+
 class EditMenuGroups extends StatefulWidget {
   const EditMenuGroups({Key? key}) : super(key: key);
 
@@ -95,13 +97,16 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                                           // Menu Group ID passed as
                                           // a parameter
                                           onPressed: () async {
-                                            /*Navigator.push(
+                                            Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    EditMenuGroup(menuGroupID: data['id'],
-                                              ),
-                                            );*/
+                                                    EditMenuGroup(
+                                                      menuGroupID: data['id'],
+                                                      name: data['name'],
+                                                    ),
+                                              )
+                                            );
                                           },
                                         ),
                                       ),
@@ -141,7 +146,7 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                         primary: const Color.fromRGBO(22, 66, 139, 1),
                       ),
                       child: const Text('Create New Menu Group'),
-                      // When tapped navigate the user to the createMenuGroup screen
+                      // When tapped navigate the user to the CreateMenuGroup screen
                       onPressed: () async {
                         Navigator.pushNamed(context, '/menu/createMenuGroup');
                       },
@@ -163,7 +168,7 @@ showDeleteAlertDialog(context, id) {
   Widget yesButton = TextButton(
     child: const Text("Yes"),
     onPressed: () async {
-      //await _database.deleteMenuGroup(id);
+      await _database.deleteMenuGroup(id);
       Navigator.of(context).pop();
     },
   );
