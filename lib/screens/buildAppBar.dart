@@ -40,7 +40,7 @@ AppBar buildAppBar(BuildContext context, String selectedTab) {
                   tooltip: 'Bandaoke',
                   color: (selectedTab == 'Bandaoke') ? const Color.fromRGBO(244, 175, 20, 1) : Colors.white,
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/menu');
+                    Navigator.pushReplacementNamed(context, '/bandaoke/bandaokeAuth');
                   },
                 ),
 

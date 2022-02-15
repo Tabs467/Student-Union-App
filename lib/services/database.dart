@@ -19,6 +19,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('MenuGroup');
   CollectionReference menuSubGroupCollection =
       FirebaseFirestore.instance.collection('MenuSubGroup');
+  CollectionReference bandaokeQueueCollection =
+  FirebaseFirestore.instance.collection('BandaokeQueue');
 
   // Some FireStore access requires the authentication service to determine
   // the currently logged-in user's UID
@@ -694,11 +696,11 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
-        // Create a list containing one element that describes the new item to
+        // Create a list containing one-element that describes the new item to
         // be added
         var newItem = [itemDetails];
 
-        // Add this new item to the array by conducting a union between to the
+        // Add this new item to the array by conducting a union between the
         // two lists
         // This implicitly stops duplicate items from being added to sub groups
         // And if the array doesn't already exist, it will be created
@@ -751,14 +753,181 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
-        // Create a list containing one element that describes the item to be
+        // Create a list containing one-element that describes the item to be
         // deleted
         var deletedItem = [itemDetails];
 
         // Delete this item from the array
         // Do not need to worry about duplicates being deleted here as duplicates
         // cannot be created within Sub Groups in the first place
-        menuSubGroupCollection.doc(subGroupID).update({"MenuItems": FieldValue.arrayRemove(deletedItem)});
+        menuSubGroupCollection.doc(subGroupID).update(
+            {"MenuItems": FieldValue.arrayRemove(deletedItem)}
+            );
+      })
+    });
+  }
+
+
+  // Add a new entry to the bandaoke queue
+  Future queue(String uid, String songTitle) async {
+    // Add the queue entry details to a map
+    var newEntryMap = {'uid':uid, 'songTitle':songTitle};
+
+    // Create a one-element array containing the map
+    // (Since the queuedMembers property in the document is an array of maps)
+    var newEntryArray = [newEntryMap];
+
+    // Add this new item to the array in the document by conducting a union
+    // between the two arrays
+    bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update(
+        {"queuedMembers": FieldValue.arrayUnion(newEntryArray)}
+        );
+  }
+
+
+  // Remove a specific entry from the bandaoke queue
+  Future dequeue(String uid, String songTitle) async {
+    // Add the queue entry details to a map
+    var entryMap = {'uid':uid, 'songTitle':songTitle};
+
+    // Create a one-element array containing the map
+    // (Since the queuedMembers property in the document is an array of maps)
+    var entryArray = [entryMap];
+
+    // Delete this map from the array
+    bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update(
+        {"queuedMembers": FieldValue.arrayRemove(entryArray)}
+        );
+  }
+
+
+  // Advance the bandaoke queue
+  Future nextSinger() async {
+    // Retrieve the array to obtain the details in the first element
+    // so it can be deleted
+    // Retrieve the BandaokeQueue document
+    await bandaokeQueueCollection
+        .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // If there are any queued members
+        if (doc['queuedMembers'].length != 0) {
+          // Create a one-element array containing the map that describes the
+          // item to be deleted
+          var deletedItem = [doc['queuedMembers'][0]];
+
+          // Delete this item from the array
+          bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update(
+              {"queuedMembers": FieldValue.arrayRemove(deletedItem)}
+          );
+        }
+      })
+    });
+  }
+
+
+  // Clear the bandaoke queue
+  Future clearQueue() async {
+    // Set the queuedMembers array to be an empty array
+    bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update(
+        {"queuedMembers": []}
+        );
+  }
+
+
+  // Retrieve the position of a user in the bandaoke queue
+  Future retrievePosition(String uid) async {
+    int position = 0;
+
+    // Retrieve the bandaoke queue document
+    await bandaokeQueueCollection
+        .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // If there are any queued members
+        if (doc['queuedMembers'].length != 0) {
+
+          for (int index = 0; index < doc['queuedMembers'].length; index++) {
+            // Find the user's map in the array
+            if (doc['queuedMembers'][index]['uid'] == uid) {
+              // The position in the queue is the map's index plus 1
+              position = index + 1;
+            }
+          }
+
+        }
+      })
+    });
+
+    return position;
+  }
+
+
+  // Retrieve a user's chosen song in the bandaoke queue
+  Future retrieveChosenSong(String uid) async {
+    String chosenSong = '';
+
+    // Retrieve the bandaoke queue document
+    await bandaokeQueueCollection
+        .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // If there are any queued members
+        if (doc['queuedMembers'].length != 0) {
+
+          for (int index = 0; index < doc['queuedMembers'].length; index++) {
+            // Find the user's map in the array
+            if (doc['queuedMembers'][index]['uid'] == uid) {
+              // Retrieve the user's chosen song from this map
+              chosenSong = doc['queuedMembers'][index]['songTitle'];
+            }
+          }
+
+        }
+      })
+    });
+
+    return chosenSong;
+  }
+
+
+  // Update a song title in the bandaoke queue
+  Future changeSong(String uid, String newSongTitle) async {
+    // Retrieve the Bandaoke Queue document
+    await bandaokeQueueCollection
+        .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the existing array from the document
+        var updatedArray = doc['queuedMembers'];
+
+        // Update the array
+        // Do not need to worry about duplicates being renamed here as duplicates
+        // cannot be created in the first place
+        for (var itemIndex = 0 ; itemIndex < updatedArray.length; itemIndex++) {
+          if (updatedArray[itemIndex]['uid'] == uid) {
+            updatedArray[itemIndex]['songTitle'] = newSongTitle;
+          }
+        }
+
+        // Write the updated array to the document
+        bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update({"queuedMembers": updatedArray});
       })
     });
   }
