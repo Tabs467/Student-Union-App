@@ -49,7 +49,7 @@ AppBar buildAppBar(BuildContext context, String selectedTab) {
                   tooltip: 'Comedy Night',
                   color: (selectedTab == 'Comedy') ? const Color.fromRGBO(244, 175, 20, 1) : Colors.white,
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/menu');
+                    Navigator.pushReplacementNamed(context, '/comedy/comedyNight');
                   },
                 ),
 

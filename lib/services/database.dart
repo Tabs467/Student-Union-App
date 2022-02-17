@@ -20,7 +20,9 @@ class DatabaseService {
   CollectionReference menuSubGroupCollection =
       FirebaseFirestore.instance.collection('MenuSubGroup');
   CollectionReference bandaokeQueueCollection =
-  FirebaseFirestore.instance.collection('BandaokeQueue');
+      FirebaseFirestore.instance.collection('BandaokeQueue');
+  CollectionReference comedyNightScheduleCollection =
+      FirebaseFirestore.instance.collection('ComedyNightSchedule');
 
   // Some FireStore access requires the authentication service to determine
   // the currently logged-in user's UID
@@ -930,5 +932,129 @@ class DatabaseService {
         bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update({"queuedMembers": updatedArray});
       })
     });
+  }
+
+
+  // Create a new comedian inside of the "comedians" array of maps inside of the
+  // ComedyNightSchedule collection document
+  Future createComedian(
+      String name,
+      DateTime startTime,
+      DateTime endTime,
+      String facebook,
+      String instagram,
+      String twitter,
+      String snapchat) async {
+
+    // Add the comedian's details to a map
+    var newEntryMap = {
+      'name': name,
+      'startTime': startTime,
+      'endTime': endTime,
+      'facebook': facebook,
+      'instagram': instagram,
+      'twitter': twitter,
+      'snapchat': snapchat
+    };
+
+    // Create a one-element array containing the map
+    // (Since the comedians property in the document is an array of maps)
+    var newEntryArray = [newEntryMap];
+
+    // Add this new item to the array in the document by conducting a union
+    // between the two arrays
+    comedyNightScheduleCollection.doc('cdw979CbT0Uo5QKDejsh').update(
+        {"comedians": FieldValue.arrayUnion(newEntryArray)}
+    );
+  }
+
+
+  // Edit a comedian's details inside of the "comedians" array of maps inside of
+  // the ComedyNightSchedule collection document
+  Future editComedian(
+      String id,
+      String name,
+      DateTime startTime,
+      DateTime endTime,
+      String facebook,
+      String instagram,
+      String twitter,
+      String snapchat) async {
+
+    // Retrieve the ComedyNightSchedule document
+    await comedyNightScheduleCollection
+        .where('id', isEqualTo: 'cdw979CbT0Uo5QKDejsh')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the existing array from the document
+        var updatedArray = doc['comedians'];
+
+        // Update the array
+        // Do not need to worry about duplicates being renamed here as duplicates
+        // cannot be created in the first place
+        for (var itemIndex = 0 ; itemIndex < updatedArray.length; itemIndex++) {
+          if (updatedArray[itemIndex]['id'] == id) {
+            updatedArray[itemIndex]['name'] = name;
+            updatedArray[itemIndex]['startTime'] = startTime;
+            updatedArray[itemIndex]['endTime'] = endTime;
+            updatedArray[itemIndex]['facebook'] = facebook;
+            updatedArray[itemIndex]['instagram'] = instagram;
+            updatedArray[itemIndex]['twitter'] = twitter;
+            updatedArray[itemIndex]['snapchat'] = snapchat;
+          }
+        }
+
+        // Write the updated array to the document
+        comedyNightScheduleCollection.doc('cdw979CbT0Uo5QKDejsh').update({"comedians": updatedArray});
+      })
+    });
+
+  }
+
+
+  // Delete a comedian inside of the "comedians" array of maps inside of the
+  // ComedyNightSchedule collection document
+  Future deleteComedian(
+      String id,
+      String name,
+      DateTime startTime,
+      DateTime endTime,
+      String facebook,
+      String instagram,
+      String twitter,
+      String snapchat) async {
+
+    // Add the comedian's details to a map
+    var entryMap = {
+      'id': id,
+      'name': name,
+      'startTime': startTime,
+      'endTime': endTime,
+      'facebook': facebook,
+      'instagram': instagram,
+      'twitter': twitter,
+      'snapchat': snapchat
+    };
+
+    // Create a one-element array containing the map
+    // (Since the comedians property in the document is an array of maps)
+    var entryArray = [entryMap];
+
+    // Delete this map from the array
+    comedyNightScheduleCollection.doc('cdw979CbT0Uo5QKDejsh').update(
+        {"comedians": FieldValue.arrayRemove(entryArray)}
+    );
+  }
+
+
+  // Update the Comedy Night's scheduled DateTime
+  Future updateComedyDate(DateTime newDate) async {
+    comedyNightScheduleCollection.doc('cdw979CbT0Uo5QKDejsh').update(
+        {"date": newDate}
+    );
   }
 }

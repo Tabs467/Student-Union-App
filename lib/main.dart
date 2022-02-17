@@ -5,6 +5,7 @@ import 'package:student_union_app/screens/authentication/forgotPassword.dart';
 import 'package:student_union_app/screens/authentication/register.dart';
 import 'package:student_union_app/screens/authentication/signIn.dart';
 import 'package:student_union_app/screens/bandaoke/bandaokeAuth.dart';
+import 'package:student_union_app/screens/comedy/ComedyNight.dart';
 import 'package:student_union_app/screens/menu/createMenuGroup.dart';
 import 'package:student_union_app/screens/menu/editMenuGroups.dart';
 import 'package:student_union_app/screens/menu/menu.dart';
@@ -41,6 +42,7 @@ Future<void> main() async {
       '/authentication/signIn': (context) => const SignIn(),
       '/authentication/forgotPassword': (context) => const ForgotPassword(),
       '/bandaoke/bandaokeAuth': (context) => const BandaokeAuth(),
+      '/comedy/comedyNight': (context) => const ComedyNight(),
     },
   ));
 }
