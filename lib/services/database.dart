@@ -948,6 +948,7 @@ class DatabaseService {
 
     // Add the comedian's details to a map
     var newEntryMap = {
+      'id': _generateID(),
       'name': name,
       'startTime': startTime,
       'endTime': endTime,
@@ -974,8 +975,8 @@ class DatabaseService {
   Future editComedian(
       String id,
       String name,
-      DateTime startTime,
-      DateTime endTime,
+      Timestamp startTime,
+      Timestamp endTime,
       String facebook,
       String instagram,
       String twitter,
@@ -1021,8 +1022,8 @@ class DatabaseService {
   Future deleteComedian(
       String id,
       String name,
-      DateTime startTime,
-      DateTime endTime,
+      Timestamp startTime,
+      Timestamp endTime,
       String facebook,
       String instagram,
       String twitter,
