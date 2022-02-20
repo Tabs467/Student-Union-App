@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:student_union_app/screens/authentication/authenticate.dart';
 import 'package:student_union_app/screens/authentication/forgotPassword.dart';
 import 'package:student_union_app/screens/authentication/register.dart';
@@ -22,6 +23,10 @@ import 'package:student_union_app/screens/quiz/selectQuiz.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Disable landscape mode
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   // Default route is to the Food/Drink Menu
   runApp(MaterialApp(
