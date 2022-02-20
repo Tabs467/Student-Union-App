@@ -57,7 +57,7 @@ class _MyTeamState extends State<MyTeam> {
 
           return Scaffold(
             backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
-            appBar: buildAppBar(context, 'Login'),
+            appBar: buildAppBar(context, 'Quiz'),
             body: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.symmetric(
