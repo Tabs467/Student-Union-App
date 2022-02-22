@@ -1,4 +1,4 @@
-// Model for the currently logged-in user
+// Model for users
 class CurrentUser {
 
   final String uid;

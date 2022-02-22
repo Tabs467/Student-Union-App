@@ -50,7 +50,7 @@ class _ComedyNightState extends State<ComedyNight> {
 
     // URLs to launch Facebook profile in the Facebook app and on the default
     // web browser are different
-    // So create a backup URL to launch the profile in the default web browser
+    // So create a backup URL to launch the profiles in the default web browser
     // in case the user does not have the Facebook app installed
     String backUpFacebookURL = '';
 
