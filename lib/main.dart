@@ -11,6 +11,7 @@ import 'package:student_union_app/screens/comedy/ComedyNightAdmin.dart';
 import 'package:student_union_app/screens/menu/createMenuGroup.dart';
 import 'package:student_union_app/screens/menu/editMenuGroups.dart';
 import 'package:student_union_app/screens/menu/menu.dart';
+import 'package:student_union_app/screens/news/news.dart';
 import 'package:student_union_app/screens/quiz/activeQuiz.dart';
 import 'package:student_union_app/screens/quiz/admin.dart';
 import 'package:student_union_app/screens/quiz/createQuiz.dart';
@@ -50,6 +51,7 @@ Future<void> main() async {
       '/bandaoke/bandaokeAuth': (context) => const BandaokeAuth(),
       '/comedy/comedyNight': (context) => const ComedyNight(),
       '/comedy/comedyNightAdmin': (context) => const ComedyNightAdmin(),
+      '/news/news': (context) => const News(),
     },
   ));
 }

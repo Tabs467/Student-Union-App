@@ -47,10 +47,35 @@ class _ComedyNightState extends State<ComedyNight> {
 
   // Launch a url in the user's default app or browser
   _launchURL(String url) async {
+
+    // URLs to launch Facebook profile in the Facebook app and on the default
+    // web browser are different
+    // So create a backup URL to launch the profile in the default web browser
+    // in case the user does not have the Facebook app installed
+    String backUpFacebookURL = '';
+
+    // If the inputted URL is a Facebook profile link
+    if (url.substring(0, 25) == "fb://facewebmodal/f?href=") {
+      // Remove extra characters at the start of the string to launch the
+      // profile in the default web browser
+      backUpFacebookURL = url.substring(25);
+    }
+
     if (await canLaunch(url)) {
       await launch(url);
-    }else {
-      throw "Could not launch " + url;
+    } else {
+      // If the URL can't be launched and it is a Facebook URL
+      if (backUpFacebookURL != null) {
+        // Check whether the Facebook URL can be launched in the default web
+        // browser rather than the Facebook app
+        if (await canLaunch(backUpFacebookURL)) {
+          await launch(backUpFacebookURL);
+        }
+        else {
+          throw "Could not launch: " + url;
+        }
+      }
+      throw "Could not launch: " + url;
     }
   }
 
