@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -68,7 +69,10 @@ class _EditQuestionsState extends State<EditQuestions> {
                       'Something went wrong retrieving the questions');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading Questions...');
+                  return const SpinKitRing(
+                    color: Colors.white,
+                    size: 150.0,
+                  );
                 }
 
                 return Flexible(

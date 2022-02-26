@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -62,7 +63,10 @@ class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
                       'Something went wrong retrieving the Sub Groups');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading Sub Groups...');
+                  return const SpinKitRing(
+                    color: Colors.white,
+                    size: 50.0,
+                  );
                 }
 
                 return Flexible(

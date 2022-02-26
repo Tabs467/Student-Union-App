@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
@@ -12,6 +13,9 @@ class BandaokeAdmin extends StatefulWidget {
   _BandaokeAdminState createState() => _BandaokeAdminState();
 }
 
+// Widget to display the the Bandaoke queue with buttons to enter the queue,
+// leave the queue, and the change the song that is queued by the user
+// Along with admin controls to advance the queue and clear the queue
 class _BandaokeAdminState extends State<BandaokeAdmin> {
   final DatabaseService _database = DatabaseService();
 
@@ -64,7 +68,7 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
         children: [
           Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+            const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
             child: buildTabTitle('Bandaoke', 40),
           ),
           // Listen to the stream containing snapshots of the bandaoke queue
@@ -80,7 +84,10 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
                       'Something went wrong retrieving the queue');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading Queue...');
+                  return const SpinKitRing(
+                    color: Colors.white,
+                    size: 50.0,
+                  );
                 }
 
                 // Determine the length of the queuedMembers array in the
@@ -95,121 +102,124 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
 
                 return Flexible(
                     child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 0.0, horizontal: 25.0),
-                  child: ListView.builder(
-                      itemCount: itemCount,
-                      itemBuilder: (BuildContext context, int arrayIndex) {
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 25.0),
+                      child: ListView.builder(
+                          itemCount: itemCount,
+                          itemBuilder: (BuildContext context, int arrayIndex) {
 
-                        // Check a BandaokeQueue snapshot has been returned
-                        // (If not, just return an empty Container)
-                        if (snapshot.data!.docs.isNotEmpty) {
+                            // Check a BandaokeQueue snapshot has been returned
+                            // (If not, just return an empty Container)
+                            if (snapshot.data!.docs.isNotEmpty) {
 
-                          // Check the queuedMembers array is not empty
-                          // (If it is, just return an empty Container)
-                          var queuedMembers =
+                              // Check the queuedMembers array is not empty
+                              // (If it is, just return an empty Container)
+                              var queuedMembers =
                               snapshot.data!.docs[0]['queuedMembers'];
-                          if (queuedMembers.isNotEmpty) {
+                              if (queuedMembers.isNotEmpty) {
 
-                            // Check whether the currently logged-in user has
-                            // already entered the queue
-                            if (currentUID ==
-                                queuedMembers[arrayIndex]['uid']) {
-                              userAlreadyQueued = true;
-                            }
+                                // Check whether the currently logged-in user has
+                                // already entered the queue
+                                if (currentUID ==
+                                    queuedMembers[arrayIndex]['uid']) {
+                                  userAlreadyQueued = true;
+                                }
 
-                            // Each row in the list is a FutureBuilder since a
-                            // Loading Widget needs to be displayed on each row
-                            // until the user's name for that row is retrieved
-                            // from the database with the UID stored in the
-                            // queuedMembers array element
-                            return FutureBuilder(
-                                future: _retrieveName(
-                                    queuedMembers[arrayIndex]['uid']),
-                                builder: (context, snapshot) {
+                                // Each row in the list is a FutureBuilder since a
+                                // Loading Widget needs to be displayed on each row
+                                // until the user's name for that row is retrieved
+                                // from the database with the UID stored in the
+                                // queuedMembers array element
+                                return FutureBuilder(
+                                    future: _retrieveName(
+                                        queuedMembers[arrayIndex]['uid']),
+                                    builder: (context, snapshot) {
 
-                                  // Check whether the row entry's name has
-                                  // been returned
-                                  // (If it hasn't, display a Loading Widget)
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
+                                      // Check whether the row entry's name has
+                                      // been returned
+                                      // (If it hasn't, display a Loading Widget)
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
 
-                                    // The row entry's name
-                                    String name = snapshot.data as String;
+                                        // The row entry's name
+                                        String name = snapshot.data as String;
 
-                                    // Display the entry in the queue
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 1.0, horizontal: 0.0),
-                                      child: Card(
-                                        // Highlight the currently logged-in
-                                        // user's queue entry
-                                        color: (currentUID ==
+                                        // Display the entry in the queue
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 1.0, horizontal: 0.0),
+                                          child: Card(
+                                            // Highlight the currently logged-in
+                                            // user's queue entry
+                                            color: (currentUID ==
                                                 queuedMembers[arrayIndex]
-                                                    ['uid'])
-                                            ? Colors.yellowAccent
-                                            : Colors.white,
-                                        elevation: 20,
-                                        child: Column(
-                                          children: [
-                                            const SizedBox(height: 5.0),
-                                            Row(
+                                                ['uid'])
+                                                ? Colors.yellowAccent
+                                                : Colors.white,
+                                            elevation: 20,
+                                            child: Column(
                                               children: [
-                                                Padding(
-                                                  padding: const EdgeInsets
+                                                const SizedBox(height: 5.0),
+                                                Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
                                                           .symmetric(
-                                                      vertical: 5.0,
-                                                      horizontal: 20.0),
-                                                  child: Text(
-                                                    (arrayIndex + 1).toString(),
-                                                    style: const TextStyle(
-                                                      fontStyle:
+                                                          vertical: 5.0,
+                                                          horizontal: 20.0),
+                                                      child: Text(
+                                                        (arrayIndex + 1).toString(),
+                                                        style: const TextStyle(
+                                                          fontStyle:
                                                           FontStyle.italic,
-                                                      fontWeight:
+                                                          fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 15,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
+                                                    Padding(
+                                                      padding: const EdgeInsets
                                                           .symmetric(
-                                                      vertical: 5.0,
-                                                      horizontal: 5.0),
-                                                  child: Text(
-                                                    name +
-                                                        "\n" +
-                                                        queuedMembers[
-                                                                arrayIndex]
+                                                          vertical: 5.0,
+                                                          horizontal: 5.0),
+                                                      child: Text(
+                                                        name +
+                                                            "\n" +
+                                                            queuedMembers[
+                                                            arrayIndex]
                                                             ['songTitle'],
-                                                    style: const TextStyle(
-                                                      fontStyle:
+                                                        style: const TextStyle(
+                                                          fontStyle:
                                                           FontStyle.italic,
-                                                      fontWeight:
+                                                          fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 15,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
+                                                const SizedBox(height: 5.0),
                                               ],
                                             ),
-                                            const SizedBox(height: 5.0),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return const Text('Loading...');
-                                  }
-                                });
-                          } else {
-                            return Container();
-                          }
-                        } else {
-                          return Container();
-                        }
-                      }),
-                ));
+                                          ),
+                                        );
+                                      } else {
+                                        return const SpinKitRing(
+                                          color: Colors.white,
+                                          size: 50.0,
+                                        );
+                                      }
+                                    });
+                              } else {
+                                return Container();
+                              }
+                            } else {
+                              return Container();
+                            }
+                          }),
+                    ));
               }),
           const SizedBox(height: 10.0),
 
@@ -239,7 +249,10 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text('Loading Queue...');
+                          return const SpinKitRing(
+                            color: Colors.white,
+                            size: 50.0,
+                          );
                         }
 
                         // FutureBuilder used inside the StreamBuilder since
@@ -304,7 +317,7 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 50),
@@ -331,7 +344,7 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 50),
@@ -364,7 +377,7 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(305, 50),
@@ -397,7 +410,7 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 50),
@@ -414,7 +427,7 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 2.5),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 50),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/authentication.dart';
@@ -66,7 +67,10 @@ class _AdminEndLeaderboardState extends State<AdminEndLeaderboard> {
           // If the stream has not fully returned any data yet display a
           // loading Widget
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading the leaderboard...');
+            return const SpinKitRing(
+              color: Colors.white,
+              size: 150.0,
+            );
           }
 
           // Set the list of scores to a List filled with 0s that is the
@@ -187,7 +191,10 @@ class _AdminEndLeaderboardState extends State<AdminEndLeaderboard> {
                                 // Whilst the user data query is still being
                                 // carried out display a loading Widget
                               } else {
-                                return const Text('Loading...');
+                                return const SpinKitRing(
+                                  color: Colors.white,
+                                  size: 50.0,
+                                );
                               }
                             },
                           );

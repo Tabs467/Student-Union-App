@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/quiz/quizMainMenu.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
+import '../buildAppBar.dart';
+import '../buildTabTitle.dart';
 import 'adminQuizMainMenu.dart';
 import 'anonQuizMainMenu.dart';
 
@@ -56,7 +59,23 @@ class _QuizAuthState extends State<QuizAuth> {
         // Return a loading widget whilst the asynchronous function takes
         // time to complete
         else {
-          return const Text('Loading...');
+          return Scaffold(
+            backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
+            appBar: buildAppBar(context, 'Quiz'),
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
+                  child: buildTabTitle('Pub Quiz', 40),
+                ),
+                const SizedBox(height: 20.0),
+                const SpinKitRing(
+                  color: Colors.white,
+                  size: 150.0,
+                ),
+              ],
+            ),
+          );
         }
       });
 }

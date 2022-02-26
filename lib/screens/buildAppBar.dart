@@ -9,14 +9,16 @@ AppBar buildAppBar(BuildContext context, String selectedTab) {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(width: 15.0),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 24.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                 child: Image.asset(
                   'assets/us_su_logo.jpg',
                   fit: BoxFit.contain,
                   height: 100,
                 ),
               ),
+              const Spacer(),
               Row(
                 children: [
 

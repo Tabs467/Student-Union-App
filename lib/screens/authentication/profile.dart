@@ -1,3 +1,4 @@
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/services/database.dart';
@@ -207,7 +208,25 @@ class _ProfileState extends State<Profile> {
           // Return a loading widget whilst the asynchronous function takes
           // time to complete
         } else {
-          return const Text('Loading...');
+          return Scaffold(
+            backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
+            appBar: buildAppBar(context, 'Login'),
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 50.0
+                  ),
+                  child: buildTabTitle('Profile', 40),
+                ),
+                const SizedBox(height: 20.0),
+                const SpinKitRing(
+                  color: Colors.white,
+                  size: 150.0,
+                ),
+              ],
+            ),
+          );
         }
       });
 }

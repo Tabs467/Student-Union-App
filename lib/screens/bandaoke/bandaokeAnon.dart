@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
@@ -12,6 +13,7 @@ class BandaokeAnon extends StatefulWidget {
   _BandaokeAnonState createState() => _BandaokeAnonState();
 }
 
+// Widget to display the the Bandaoke queue without any buttons to enter it
 class _BandaokeAnonState extends State<BandaokeAnon> {
   final DatabaseService _database = DatabaseService();
 
@@ -47,7 +49,10 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                       'Something went wrong retrieving the queue');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading Queue...');
+                  return const SpinKitRing(
+                    color: Colors.white,
+                    size: 50.0,
+                  );
                 }
 
                 // Determine the length of the queuedMembers array in the
@@ -92,7 +97,7 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                                           ConnectionState.done) {
 
                                         // The row entry's name
-                                        String name = snapshot.data as String;
+                                        String name = snapshot.data.toString();
 
                                         // Display the entry in the queue
                                         return Padding(
@@ -150,7 +155,10 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                                           ),
                                         );
                                       } else {
-                                        return const Text('Loading...');
+                                        return const SpinKitRing(
+                                          color: Colors.white,
+                                          size: 50.0,
+                                        );
                                       }
                                     });
                               } else {
@@ -162,31 +170,6 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                           }),
                     ));
               }),
-          const SizedBox(height: 10.0),
-          // Display a card informing the user to log-in, which when tapped,
-          // navigates the user to the Sign-in screen
-          Card(
-            elevation: 20,
-            child: InkWell(
-            splashColor: Colors.black.withOpacity(.3),
-            onTap: () {
-              Navigator.pushNamed(context, '/authentication/authenticate');
-            },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 10.0),
-
-                child: Text(
-                  'Sign-in to join the queue!',
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                  ),
-                )
-              ),
-            ),
-          ),
           const SizedBox(height: 25.0),
         ],
       ),

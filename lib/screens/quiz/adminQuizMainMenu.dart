@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 
@@ -38,7 +39,10 @@ class _AdminQuizMainMenuState extends State<AdminQuizMainMenu> {
                   'Something went wrong whilst checking whether a quiz is currently active');
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Checking for active quiz...');
+              return const SpinKitRing(
+                color: Colors.white,
+                size: 150.0,
+              );
             }
 
             return RawScrollbar(

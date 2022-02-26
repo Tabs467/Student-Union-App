@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/services/database.dart';
 import 'endLeaderboard.dart';
 import 'package:flutter/material.dart';
@@ -60,14 +61,22 @@ class _ActiveQuizState extends State<ActiveQuiz> {
   // Rebuild the widget tree and update the current question number,
   // question count and quiz ended variables to their current values in the
   // database
+  // And reset the user's selected answer if the question number
+  // increases
   retrieveCurrentQuestionNumber() {
     setState(() {
       _quizzes.forEach((field) {
         field.docs.asMap().forEach((index, data) {
-          currentQuestionNumber = data['currentQuestion'];
           questionCount = data['questionCount'];
           quizEnded = data['quizEnded'];
           quizID = data['id'];
+
+          // Reset selected answer each time a new question is loaded
+          if (currentQuestionNumber < data['currentQuestion']) {
+            selectedAnswer = Answer.none;
+          }
+
+          currentQuestionNumber = data['currentQuestion'];
         });
       });
     });
@@ -92,18 +101,29 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                   'Something went wrong retrieving the quiz');
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading the quiz...');
+              return const SpinKitRing(
+                color: Colors.white,
+                size: 50.0,
+              );
             }
 
             // Add the retrieved quiz to a map and update the current
             // question number to reflect the value in the database
+            // And reset the user's selected answer if the question number
+            // increases
             snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
               document.data()! as Map<String, dynamic>;
-              currentQuestionNumber = data['currentQuestion'];
               quizEnded = data['quizEnded'];
               quizID = data['id'];
               questionCount = data['questionCount'];
+
+              // Reset selected answer each time a new question is loaded
+              if (currentQuestionNumber < data['currentQuestion']) {
+                selectedAnswer = Answer.none;
+              }
+
+              currentQuestionNumber = data['currentQuestion'];
             });
 
             // If all the quizzes questions have been displayed
@@ -126,7 +146,10 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                     }
                     if (snapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return const Text('Loading the question...');
+                      return const SpinKitRing(
+                        color: Colors.white,
+                        size: 50.0,
+                      );
                     }
 
                     // Build the question and answer Widgets depending on

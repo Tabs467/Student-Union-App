@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -64,7 +65,10 @@ class _EditMenuItemsState extends State<EditMenuItems> {
                       'Something went wrong retrieving the Menu Items');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading Menu Items...');
+                  return const SpinKitRing(
+                    color: Colors.white,
+                    size: 50.0,
+                  );
                 }
 
                 // Determine the length of the MenuItems array for the

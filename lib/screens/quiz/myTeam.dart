@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/services/database.dart';
 
@@ -136,7 +137,20 @@ class _MyTeamState extends State<MyTeam> {
           // Return a loading widget whilst the asynchronous function takes
           // time to complete
         } else {
-          return const Text('Loading...');
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 50.0),
+                child: buildTabTitle('My Team', 40),
+              ),
+              const SizedBox(height: 20.0),
+              const SpinKitRing(
+                color: Colors.white,
+                size: 50.0,
+              ),
+            ],
+          );
         }
       });
 }

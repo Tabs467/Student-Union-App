@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -37,7 +38,20 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
               return const Text('Something went wrong retrieving the Menu Groups');
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading Menu Groups...');
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 50.0),
+                    child: buildTabTitle('Edit Menu Groups', 30),
+                  ),
+                  const SizedBox(height: 20.0),
+                  const SpinKitRing(
+                    color: Colors.white,
+                    size: 50.0,
+                  ),
+                ],
+              );
             }
 
             return Column(

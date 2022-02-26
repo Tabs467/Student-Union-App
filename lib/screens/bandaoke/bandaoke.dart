@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
@@ -12,6 +13,8 @@ class Bandaoke extends StatefulWidget {
   _BandaokeState createState() => _BandaokeState();
 }
 
+// Widget to display the the Bandaoke queue with buttons to enter the queue,
+// leave the queue, and the change the song that is queued by the user
 class _BandaokeState extends State<Bandaoke> {
   final DatabaseService _database = DatabaseService();
 
@@ -80,7 +83,10 @@ class _BandaokeState extends State<Bandaoke> {
                       'Something went wrong retrieving the queue');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading Queue...');
+                  return const SpinKitRing(
+                    color: Colors.white,
+                    size: 50.0,
+                  );
                 }
 
                 // Determine the length of the queuedMembers array in the
@@ -199,7 +205,10 @@ class _BandaokeState extends State<Bandaoke> {
                                           ),
                                         );
                                       } else {
-                                        return const Text('Loading...');
+                                        return const SpinKitRing(
+                                          color: Colors.white,
+                                          size: 50.0,
+                                        );
                                       }
                                     });
                               } else {
@@ -239,7 +248,10 @@ class _BandaokeState extends State<Bandaoke> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text('Loading Queue...');
+                          return const SpinKitRing(
+                            color: Colors.white,
+                            size: 50.0,
+                          );
                         }
 
                         // FutureBuilder used inside the StreamBuilder since

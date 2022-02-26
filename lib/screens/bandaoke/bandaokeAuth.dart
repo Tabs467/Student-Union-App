@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/bandaoke/bandaoke.dart';
 import 'package:student_union_app/screens/bandaoke/bandaokeAdmin.dart';
 import 'package:student_union_app/screens/bandaoke/bandaokeAnon.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
+
+import '../buildAppBar.dart';
+import '../buildTabTitle.dart';
 
 class BandaokeAuth extends StatefulWidget {
   const BandaokeAuth({Key? key}) : super(key: key);
@@ -54,7 +58,25 @@ class _BandaokeAuthState extends State<BandaokeAuth> {
         // Return a loading widget whilst the asynchronous function takes
         // time to complete
         else {
-          return const Text('Loading...');
+          return Scaffold(
+            backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
+            appBar: buildAppBar(context, 'Bandaoke'),
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20.0, horizontal: 30.0
+                  ),
+                  child: buildTabTitle('Bandaoke', 40),
+                ),
+                const SizedBox(height: 20.0),
+                const SpinKitRing(
+                  color: Colors.white,
+                  size: 150.0,
+                ),
+              ],
+            ),
+          );
         }
       });
 }

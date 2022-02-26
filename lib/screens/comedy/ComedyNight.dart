@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -113,7 +114,10 @@ class _ComedyNightState extends State<ComedyNight> {
                       }
                       if (snapshot.connectionState ==
                           ConnectionState.waiting) {
-                        return const Text('Loading Schedule...');
+                        return const SpinKitRing(
+                          color: Colors.white,
+                          size: 150.0,
+                        );
                       }
 
 
@@ -412,7 +416,10 @@ class _ComedyNightState extends State<ComedyNight> {
                           vertical: 20.0, horizontal: 30.0),
                       child: buildTabTitle('Comedy Night', 40),
                     ),
-                    const Text('Loading...'),
+                    const SpinKitRing(
+                      color: Colors.white,
+                      size: 150.0,
+                    ),
                   ],
                 ));
           }

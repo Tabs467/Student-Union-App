@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/services/database.dart';
 import 'adminEndLeaderboard.dart';
@@ -70,7 +71,10 @@ class _QuizControlState extends State<QuizControl> {
                     return const Text('Something went wrong loading the quiz');
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text('Loading the quiz...');
+                    return const SpinKitRing(
+                      color: Colors.white,
+                      size: 50.0,
+                    );
                   }
 
                   // Add the retrieved quiz to a map and update the current
@@ -102,7 +106,10 @@ class _QuizControlState extends State<QuizControl> {
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Text('Loading the question...');
+                          return const SpinKitRing(
+                            color: Colors.white,
+                            size: 50.0,
+                          );
                         }
 
                         // If all the quizzes questions have been displayed
