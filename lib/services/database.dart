@@ -31,13 +31,12 @@ class DatabaseService {
 
   // Create or update user information into the Users collection
   // in the database
-  Future updateUser(String uid, String email, String name, String teamName,
+  Future updateUser(String uid, String name, String teamName,
       int wins, bool admin) async {
     // If a document with the given uid doesn't exist yet in the database
     // it will be created
     return await userCollection.doc(uid).set({
       'uid': uid,
-      'email': email,
       'name': name,
       'teamName': teamName,
       'wins': wins,
@@ -63,7 +62,7 @@ class DatabaseService {
   // Query to return the logged-in user's data
   Future getLoggedInUserData() async {
     String uid = _auth.currentUID()!;
-    String email = '';
+    String email = _auth.currentEmail()!;
     String name = '';
     String teamName = '';
     int wins = 0;
@@ -74,7 +73,6 @@ class DatabaseService {
         .get()
         .then((QuerySnapshot querySnapshot) => {
               querySnapshot.docs.forEach((doc) {
-                email = doc["email"];
                 name = doc["name"];
                 teamName = doc["teamName"];
                 wins = doc["wins"];
@@ -88,7 +86,10 @@ class DatabaseService {
 
   // Query to return a user's data
   Future getUserData(uid) async {
-    String email = '';
+    // No reason to return a non-currently logged-in user's email for security
+    // purposes
+    String email = 'Private';
+
     String name = '';
     String teamName = '';
     int wins = 0;
@@ -99,7 +100,6 @@ class DatabaseService {
         .get()
         .then((QuerySnapshot querySnapshot) => {
       querySnapshot.docs.forEach((doc) {
-        email = doc["email"];
         name = doc["name"];
         teamName = doc["teamName"];
         wins = doc["wins"];

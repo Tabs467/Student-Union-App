@@ -26,9 +26,14 @@ class AuthenticationService {
     return _auth.currentUser != null;
   }
 
-  // Return the currently logged in user's UID
+  // Return the UID of the currently logged in user
   String? currentUID() {
     return _auth.currentUser?.uid;
+  }
+
+  // Return the email of the currently logged in user
+  String? currentEmail() {
+    return _auth.currentUser?.email;
   }
 
   // Sign in anonymously (without an account) and return a CurrentUser
@@ -76,7 +81,7 @@ class AuthenticationService {
 
       // Create a Google Firebase entry into the Users collection of the new
       // user
-      await DatabaseService().updateUser(uid!, email, name, teamName, 0, false);
+      await DatabaseService().updateUser(uid!, name, teamName, 0, false);
 
       return _userFromFirebase(user);
 
