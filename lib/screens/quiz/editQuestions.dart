@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -81,6 +82,8 @@ class _EditQuestionsState extends State<EditQuestions> {
                       Map<String, dynamic> data =
                           document.data()! as Map<String, dynamic>;
 
+                      Question question = _database.questionFromSnapshot(data);
+
                       // Display each question's number, text, and answers
                       // Also, highlight the correct answer in green
                       return Padding(
@@ -96,9 +99,9 @@ class _EditQuestionsState extends State<EditQuestions> {
                                     vertical: 5.0, horizontal: 5.0),
                                 child: Text(
                                   'Q' +
-                                      data['questionNumber'].toString() +
+                                      question.questionNumber!.toString() +
                                       ': ' +
-                                      data['questionText'],
+                                      question.questionText!,
                                   style: const TextStyle(
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.bold,
@@ -111,11 +114,11 @@ class _EditQuestionsState extends State<EditQuestions> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5.0, horizontal: 5.0),
                                 child: Text(
-                                  'A: ' + data['answerA'].toString(),
+                                  'A: ' + question.answerA!.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
-                                    color: (data['correctAnswer'] == 'a')
+                                    color: (question.correctAnswer! == 'a')
                                         ? Colors.green
                                         : Colors.black,
                                   ),
@@ -126,11 +129,11 @@ class _EditQuestionsState extends State<EditQuestions> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5.0, horizontal: 5.0),
                                 child: Text(
-                                  'B: ' + data['answerB'].toString(),
+                                  'B: ' + question.answerB!.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
-                                    color: (data['correctAnswer'] == 'b')
+                                    color: (question.correctAnswer! == 'b')
                                         ? Colors.green
                                         : Colors.black,
                                   ),
@@ -141,11 +144,11 @@ class _EditQuestionsState extends State<EditQuestions> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5.0, horizontal: 5.0),
                                 child: Text(
-                                  'C: ' + data['answerC'].toString(),
+                                  'C: ' + question.answerC!.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
-                                    color: (data['correctAnswer'] == 'c')
+                                    color: (question.correctAnswer! == 'c')
                                         ? Colors.green
                                         : Colors.black,
                                   ),
@@ -156,11 +159,11 @@ class _EditQuestionsState extends State<EditQuestions> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5.0, horizontal: 0.0),
                                 child: Text(
-                                  'D: ' + data['answerD'].toString(),
+                                  'D: ' + question.answerD!.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
-                                    color: (data['correctAnswer'] == 'd')
+                                    color: (question.correctAnswer! == 'd')
                                         ? Colors.green
                                         : Colors.black,
                                   ),
@@ -183,19 +186,13 @@ class _EditQuestionsState extends State<EditQuestions> {
                                   child: const Text('Edit Question'),
                                   // When tapped, navigate to the EditQuestion
                                   // Widget with the question's details being
-                                  // passed as parameters
+                                  // passed as a parameter
                                   onPressed: () async {
                                     Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => EditQuestion(
-                                              questionID: data['id'],
-                                              questionText: data['questionText'],
-                                              answerA: data['answerA'],
-                                              answerB: data['answerB'],
-                                              answerC: data['answerC'],
-                                              answerD: data['answerD'],
-                                              correctAnswer: data['correctAnswer'],
+                                              question: question
                                             ),
                                           ),
                                         );

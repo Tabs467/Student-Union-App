@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Comedian.dart';
+import 'package:student_union_app/models/ComedyNightSchedule.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -108,12 +110,14 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
               );
             }
 
+            ComedyNightSchedule comedyNightSchedule =
+            _database.comedyNightScheduleFromSnapshot(snapshot.data!.docs[0]);
+
             // Calculate DateTime of the Comedy Night from the
             // TimeStamp stored in the ComedyNightSchedule document
-            DateTime defaultDate = DateTime.parse(snapshot
-                .data!.docs[0]['date']
-                .toDate()
-                .toString());
+            DateTime defaultDate = DateTime.parse(
+                comedyNightSchedule.date!.toDate().toString()
+            );
 
 
             // Create the local comedians array and determine the
@@ -124,10 +128,9 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
             if (snapshot.data!.docs[0]['comedians'] != null) {
 
               // Calculate the document's comedians array length
-              itemCount = snapshot.data!.docs[0]['comedians'].length;
+              itemCount = comedyNightSchedule.comedians!.length;
 
-              // Create a local copy of the array
-              comediansArray = snapshot.data!.docs[0]['comedians'];
+              comediansArray = comedyNightSchedule.comedians!;
 
               // If the arrays are not empty
               if (comediansArray.isNotEmpty) {
@@ -401,18 +404,24 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
                                                   // Widget with the comedian's details being
                                                   // passed as parameters
                                                   onPressed: () async {
+
+                                                    Comedian comedian = Comedian(
+                                                        id: comediansArray[arrayIndex]['id'],
+                                                        name: comediansArray[arrayIndex]['name'],
+                                                        startTime: comediansArray[arrayIndex]['startTime'],
+                                                        endTime: comediansArray[arrayIndex]['endTime'],
+                                                        facebook: comediansArray[arrayIndex]['facebook'],
+                                                        instagram: comediansArray[arrayIndex]['instagram'],
+                                                        twitter: comediansArray[arrayIndex]['twitter'],
+                                                        snapchat: comediansArray[arrayIndex]['snapchat']
+                                                    );
+
                                                     Navigator.push(
                                                       context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
-                                                              EditComedian(comedianID: comediansArray[arrayIndex]['id'],
-                                                                  comedianName: comediansArray[arrayIndex]['name'],
-                                                                  startDateTime: comediansArray[arrayIndex]['startTime'],
-                                                                  endDateTime: comediansArray[arrayIndex]['endTime'],
-                                                                  facebook: comediansArray[arrayIndex]['facebook'],
-                                                                  instagram: comediansArray[arrayIndex]['instagram'],
-                                                                  twitter: comediansArray[arrayIndex]['twitter'],
-                                                                  snapchat: comediansArray[arrayIndex]['snapchat']
+                                                              EditComedian(
+                                                                  comedian: comedian
                                                         ),
                                                       )
                                                     );
@@ -434,16 +443,21 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
                                                   // pop-up dialogue box - passing the
                                                   // comedian's details as parameters
                                                   onPressed: () async {
+
+                                                    Comedian comedian = Comedian(
+                                                      id: comediansArray[arrayIndex]['id'],
+                                                      name: comediansArray[arrayIndex]['name'],
+                                                      startTime: comediansArray[arrayIndex]['startTime'],
+                                                      endTime: comediansArray[arrayIndex]['endTime'],
+                                                      facebook: comediansArray[arrayIndex]['facebook'],
+                                                      instagram: comediansArray[arrayIndex]['instagram'],
+                                                      twitter: comediansArray[arrayIndex]['twitter'],
+                                                      snapchat: comediansArray[arrayIndex]['snapchat']
+                                                    );
+
                                                     showDeleteAlertDialog(
                                                       context,
-                                                      comediansArray[arrayIndex]['id'],
-                                                      comediansArray[arrayIndex]['name'],
-                                                      comediansArray[arrayIndex]['startTime'],
-                                                      comediansArray[arrayIndex]['endTime'],
-                                                      comediansArray[arrayIndex]['facebook'],
-                                                      comediansArray[arrayIndex]['instagram'],
-                                                      comediansArray[arrayIndex]['twitter'],
-                                                      comediansArray[arrayIndex]['snapchat'],
+                                                      comedian
                                                     );
                                                   },
                                                 ),
@@ -501,17 +515,7 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
 }
 
 // The delete comedian confirmation pop-up Widget
-showDeleteAlertDialog(
-    context,
-    id,
-    name,
-    startTime,
-    endTime,
-    facebook,
-    instagram,
-    twitter,
-    snapchat
-    ) {
+showDeleteAlertDialog(context, comedian) {
 
   final DatabaseService _database = DatabaseService();
 
@@ -521,16 +525,7 @@ showDeleteAlertDialog(
   Widget yesButton = TextButton(
     child: const Text("Yes"),
     onPressed: () async {
-      await _database.deleteComedian(
-        id,
-        name,
-        startTime,
-        endTime,
-        facebook,
-        instagram,
-        twitter,
-        snapchat
-      );
+      await _database.deleteComedian(comedian);
       Navigator.of(context).pop();
     },
   );

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/MenuGroup.dart';
+import 'package:student_union_app/models/MenuSubGroup.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -126,7 +128,12 @@ class _MenuState extends State<Menu> {
                       // the Widget tree as the initially selected menu group
                       if (snapshot.data!.docs.isNotEmpty && !selectedMenuGroupIDSet) {
                         selectedMenuGroupIDSet = true;
-                        selectedMenuGroupID = snapshot.data!.docs[0]['id'];
+
+                        MenuGroup selectedMenuGroup = _database.menuGroupFromSnapshot(
+                            snapshot.data!.docs[0]
+                        );
+
+                        selectedMenuGroupID = selectedMenuGroup.id!;
                       }
 
                       return SingleChildScrollView(
@@ -202,6 +209,10 @@ class _MenuState extends State<Menu> {
                                           .map((DocumentSnapshot document) {
                                         Map<String, dynamic> data = document.data()!
                                             as Map<String, dynamic>;
+
+                                        // Create a MenuGroup object per retrieved MenuGroup
+                                        MenuGroup menuGroup = _database.menuGroupFromSnapshot(data);
+
                                         return FittedBox(
                                           fit: BoxFit.scaleDown,
                                           child: Card(
@@ -212,7 +223,7 @@ class _MenuState extends State<Menu> {
                                               // If this Menu Group button is currently selected highlight its border
                                               side: BorderSide(
                                                   color: (selectedMenuGroupID ==
-                                                          data['id'])
+                                                          menuGroup.id)
                                                       ? Colors.yellow
                                                       : Colors.black,
                                                   width: 1.5),
@@ -223,13 +234,13 @@ class _MenuState extends State<Menu> {
                                               // When the Menu Group button is tapped it becomes the new selected Menu Group
                                               onTap: () {
                                                 setState(() {
-                                                  selectedMenuGroupID = data['id'];
+                                                  selectedMenuGroupID = menuGroup.id!;
                                                 });
                                               },
                                               child: Padding(
                                                 padding: const EdgeInsets.all(9.0),
                                                 child: Text(
-                                                  data['name'],
+                                                  menuGroup.name!,
                                                   style: const TextStyle(
                                                     fontStyle: FontStyle.italic,
                                                     fontWeight: FontWeight.bold,
@@ -272,6 +283,10 @@ class _MenuState extends State<Menu> {
                                                 .map((DocumentSnapshot document) {
                                           Map<String, dynamic> data = document
                                               .data()! as Map<String, dynamic>;
+
+                                          // Create a MenuSubGroup object per retrieved MenuSubGroup
+                                          MenuSubGroup menuSubGroup = _database.menuSubGroupFromSnapshot(data);
+
                                           return SizedBox(
                                               width: double.infinity,
                                               child: Card(
@@ -290,7 +305,7 @@ class _MenuState extends State<Menu> {
                                                       const EdgeInsets.all(8.0),
                                                   child: ExpansionTile(
                                                     title: Text(
-                                                      data['name'],
+                                                      menuSubGroup.name!,
                                                       style: const TextStyle(
                                                         fontStyle: FontStyle.italic,
                                                         fontWeight: FontWeight.bold,
@@ -304,7 +319,7 @@ class _MenuState extends State<Menu> {
                                                       // Display the Menu Item's information and place a
                                                       // divider under it
                                                       for (var menuItem
-                                                          in data['MenuItems'])
+                                                          in menuSubGroup.menuItems!)
                                                         Column(
                                                           children: [
                                                             const Divider(

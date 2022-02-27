@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -263,15 +264,22 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           int questionNumber = int.parse(questionCount) + 1;
-                          await _database.createQuestion(
-                              quizID,
-                              questionNumber,
-                              questionText,
-                              correctAnswer,
-                              answerA,
-                              answerB,
-                              answerC,
-                              answerD);
+
+                          // Question ID is handled by the database service
+                          // class so it is not set here
+                          Question newQuestion = Question(
+                            id: 'Not Set',
+                            answerA: answerA,
+                            answerB: answerB,
+                            answerC: answerC,
+                            answerD: answerD,
+                            correctAnswer: correctAnswer,
+                            questionNumber: questionNumber,
+                            questionText: questionText,
+                            quizID: quizID,
+                          );
+
+                          await _database.createQuestion(newQuestion);
                           Navigator.pop(context);
                         }
                       },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -85,7 +86,13 @@ class _CreateMenuGroupState extends State<CreateMenuGroup> {
                     // And return the user back to the EditMenuGroups screen
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await _database.createMenuGroup(menuGroupName);
+
+                        // Database Service handles generation of IDs
+                        MenuGroup newMenuGroup = MenuGroup(
+                            id: 'NotSet', name: menuGroupName
+                        );
+
+                        await _database.createMenuGroup(newMenuGroup);
                         Navigator.pop(context);
                       }
                     },

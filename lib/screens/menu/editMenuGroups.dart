@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -71,6 +72,8 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                             Map<String, dynamic> data =
                             document.data()! as Map<String, dynamic>;
 
+                              // Create a MenuGroup object per retrieved MenuGroup
+                              MenuGroup menuGroup = _database.menuGroupFromSnapshot(data);
 
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -84,7 +87,7 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5.0, horizontal: 0.0),
                                         child: Text(
-                                          data['name'],
+                                          menuGroup.name!,
                                           style: const TextStyle(
                                             fontStyle: FontStyle.italic,
                                             fontWeight: FontWeight.bold,
@@ -115,8 +118,8 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     EditMenuGroup(
-                                                      menuGroupID: data['id'],
-                                                      name: data['name'],
+                                                      menuGroupID: menuGroup.id!,
+                                                      name: menuGroup.name!,
                                                     ),
                                               )
                                             );
@@ -137,7 +140,7 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                                           // If the delete group button is tapped
                                           // display the deleteAlert pop-up
                                           onPressed: () async {
-                                            showDeleteAlertDialog(context, data['id']);
+                                            showDeleteAlertDialog(context, menuGroup.id!);
                                           },
                                         ),
                                       ),

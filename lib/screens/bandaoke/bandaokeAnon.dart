@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/BandaokeQueue.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
@@ -56,7 +57,11 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                 // BandaokeQueue document for the ListView Builder
                 var itemCount = 0;
                 if (snapshot.data!.docs[0]['queuedMembers'] != null) {
-                  itemCount = snapshot.data!.docs[0]['queuedMembers'].length;
+
+                  BandaokeQueue bandaokeQueue =
+                  _database.bandaokeQueueFromSnapshot(snapshot.data!.docs[0]);
+
+                  itemCount = bandaokeQueue.queuedMembers!.length;
                 }
 
                 return Flexible(
@@ -71,11 +76,12 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                             // (If not, just return an empty Container)
                             if (snapshot.data!.docs.isNotEmpty) {
 
+                              BandaokeQueue bandaokeQueue =
+                              _database.bandaokeQueueFromSnapshot(snapshot.data!.docs[0]);
+
                               // Check the queuedMembers array is not empty
                               // (If it is, just return an empty Container)
-                              var queuedMembers =
-                              snapshot.data!.docs[0]['queuedMembers'];
-                              if (queuedMembers.isNotEmpty) {
+                              if (bandaokeQueue.queuedMembers!.isNotEmpty) {
 
                                 // Each row in the list is a FutureBuilder since a
                                 // Loading Widget needs to be displayed on each row
@@ -84,7 +90,7 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                                 // queuedMembers array element
                                 return FutureBuilder(
                                     future: _retrieveName(
-                                        queuedMembers[arrayIndex]['uid']),
+                                        bandaokeQueue.queuedMembers![arrayIndex]['uid']),
                                     builder: (context, snapshot) {
 
                                       // Check whether the row entry's name has
@@ -132,7 +138,7 @@ class _BandaokeAnonState extends State<BandaokeAnon> {
                                                       child: Text(
                                                         name +
                                                             "\n" +
-                                                            queuedMembers[
+                                                            bandaokeQueue.queuedMembers![
                                                             arrayIndex]
                                                             ['songTitle'],
                                                         style: const TextStyle(

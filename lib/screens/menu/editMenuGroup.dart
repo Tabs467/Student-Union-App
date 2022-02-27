@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -99,7 +100,10 @@ class _EditMenuGroupState extends State<EditMenuGroup> {
                     // And return the user back to the EditMenuGroups screen
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await _database.updateMenuGroup(menuGroupID, name);
+
+                        MenuGroup menuGroup = MenuGroup(id: menuGroupID, name: name);
+
+                        await _database.updateMenuGroup(menuGroup);
                         Navigator.pop(context);
                       }
                     },

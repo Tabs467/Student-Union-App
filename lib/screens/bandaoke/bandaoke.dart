@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/BandaokeQueue.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
@@ -90,7 +91,11 @@ class _BandaokeState extends State<Bandaoke> {
                 // BandaokeQueue document for the ListView Builder
                 var itemCount = 0;
                 if (snapshot.data!.docs[0]['queuedMembers'] != null) {
-                  itemCount = snapshot.data!.docs[0]['queuedMembers'].length;
+
+                  BandaokeQueue bandaokeQueue =
+                  _database.bandaokeQueueFromSnapshot(snapshot.data!.docs[0]);
+
+                  itemCount = bandaokeQueue.queuedMembers!.length;
                 }
 
                 // Logged-in user state
@@ -108,16 +113,17 @@ class _BandaokeState extends State<Bandaoke> {
                             // (If not, just return an empty Container)
                             if (snapshot.data!.docs.isNotEmpty) {
 
+                              BandaokeQueue bandaokeQueue =
+                              _database.bandaokeQueueFromSnapshot(snapshot.data!.docs[0]);
+
                               // Check the queuedMembers array is not empty
                               // (If it is, just return an empty Container)
-                              var queuedMembers =
-                              snapshot.data!.docs[0]['queuedMembers'];
-                              if (queuedMembers.isNotEmpty) {
+                              if (bandaokeQueue.queuedMembers!.isNotEmpty) {
 
                                 // Check whether the currently logged-in user has
                                 // already entered the queue
                                 if (currentUID ==
-                                    queuedMembers[arrayIndex]['uid']) {
+                                    bandaokeQueue.queuedMembers![arrayIndex]['uid']) {
                                   userAlreadyQueued = true;
                                 }
 
@@ -128,7 +134,7 @@ class _BandaokeState extends State<Bandaoke> {
                                 // queuedMembers array element
                                 return FutureBuilder(
                                     future: _retrieveName(
-                                        queuedMembers[arrayIndex]['uid']),
+                                        bandaokeQueue.queuedMembers![arrayIndex]['uid']),
                                     builder: (context, snapshot) {
 
                                       // Check whether the row entry's name has
@@ -148,7 +154,7 @@ class _BandaokeState extends State<Bandaoke> {
                                             // Highlight the currently logged-in
                                             // user's queue entry
                                             color: (currentUID ==
-                                                queuedMembers[arrayIndex]
+                                                bandaokeQueue.queuedMembers![arrayIndex]
                                                 ['uid'])
                                                 ? Colors.yellowAccent
                                                 : Colors.white,
@@ -182,7 +188,7 @@ class _BandaokeState extends State<Bandaoke> {
                                                       child: Text(
                                                         name +
                                                             "\n" +
-                                                            queuedMembers[
+                                                            bandaokeQueue.queuedMembers![
                                                             arrayIndex]
                                                             ['songTitle'],
                                                         style: const TextStyle(

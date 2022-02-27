@@ -1,27 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
 
 class EditQuestion extends StatefulWidget {
-  final String questionID;
-  final String questionText;
-  final String answerA;
-  final String answerB;
-  final String answerC;
-  final String answerD;
-  final String correctAnswer;
+  final Question question;
 
-  const EditQuestion(
-      {Key? key,
-      required this.questionID,
-      required this.questionText,
-      required this.answerA,
-      required this.answerB,
-      required this.answerC,
-      required this.answerD,
-      required this.correctAnswer})
-      : super(key: key);
+  const EditQuestion({Key? key, required this.question}) : super(key: key);
 
   @override
   _EditQuestionState createState() => _EditQuestionState();
@@ -50,14 +36,16 @@ class _EditQuestionState extends State<EditQuestion> {
   // passed to this Widget
   @override
   void initState() {
-    questionID = widget.questionID;
+    Question question = widget.question;
 
-    questionText = widget.questionText;
-    answerA = widget.answerA;
-    answerB = widget.answerB;
-    answerC = widget.answerC;
-    answerD = widget.answerD;
-    correctAnswer = widget.correctAnswer;
+    questionID = question.id!;
+
+    questionText = question.questionText!;
+    answerA = question.answerA!;
+    answerB = question.answerB!;
+    answerC = question.answerC!;
+    answerD = question.answerD!;
+    correctAnswer = question.correctAnswer!;
 
     super.initState();
   }
@@ -286,14 +274,23 @@ class _EditQuestionState extends State<EditQuestion> {
                       // And return the user back to the EditQuiz screen
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          await _database.updateQuestion(
-                              questionID,
-                              answerA,
-                              answerB,
-                              answerC,
-                              answerD,
-                              correctAnswer,
-                              questionText,);
+
+                          // Question number is not updated or retrieved here so
+                          // setting it to 0 is fine
+                          // The same goes for the quizID being set to 'Not Set'
+                          Question question = Question(
+                            id: questionID,
+                            answerA: answerA,
+                            answerB: answerB,
+                            answerC: answerC,
+                            answerD: answerD,
+                            correctAnswer: correctAnswer,
+                            questionNumber: 0,
+                            questionText: questionText,
+                            quizID: 'Not Set',
+                          );
+
+                          await _database.updateQuestion(question);
                           Navigator.pop(context);
                         }
                       },

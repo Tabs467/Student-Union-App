@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -70,9 +71,11 @@ class _QuizMainMenuState extends State<QuizMainMenu> {
                             Map<String, dynamic> data =
                                 document.data()! as Map<String, dynamic>;
 
+                            Quiz quiz = _database.quizFromSnapshot(data);
+
                             // If the active quiz is currently the Quiz document
                             // that is used to mark that there isn't a quiz currently active
-                            if (data['id'] == 'cy7RWIJ3VGIXlHSM1Il8') {
+                            if (quiz.id == 'cy7RWIJ3VGIXlHSM1Il8') {
                               // Then no quiz is currently active
                               noActiveQuiz = true;
                             }

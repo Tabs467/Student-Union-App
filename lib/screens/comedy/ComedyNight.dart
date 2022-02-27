@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/ComedyNightSchedule.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -118,13 +119,14 @@ class _ComedyNightState extends State<ComedyNight> {
                         );
                       }
 
+                      ComedyNightSchedule comedyNightSchedule =
+                      _database.comedyNightScheduleFromSnapshot(snapshot.data!.docs[0]);
 
                       // Calculate DateTime of the Comedy Night from the
                       // TimeStamp stored in the ComedyNightSchedule document
-                      DateTime unformattedDate = DateTime.parse(snapshot
-                          .data!.docs[0]['date']
-                          .toDate()
-                          .toString());
+                      DateTime unformattedDate = DateTime.parse(
+                          comedyNightSchedule.date!.toDate().toString()
+                      );
 
                       // Format DateTime for output
                       String date =
@@ -151,10 +153,9 @@ class _ComedyNightState extends State<ComedyNight> {
                       if (snapshot.data!.docs[0]['comedians'] != null) {
 
                         // Calculate the document's comedians array length
-                        itemCount = snapshot.data!.docs[0]['comedians'].length;
+                        itemCount = comedyNightSchedule.comedians!.length;
 
-                        // Create a local copy of the array
-                        comediansArray = snapshot.data!.docs[0]['comedians'];
+                        comediansArray = comedyNightSchedule.comedians!;
 
                         // If the arrays are not empty
                         if (comediansArray.isNotEmpty) {

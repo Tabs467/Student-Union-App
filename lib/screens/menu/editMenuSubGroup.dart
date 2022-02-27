@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/MenuSubGroup.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -112,7 +113,18 @@ class _EditMenuSubGroupState extends State<EditMenuSubGroup> {
                       // And return the user back to the EditMenuSubGroups screen
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          await _database.updateMenuSubGroup(subGroupID, subGroupName);
+
+                          // MenuGroupID and MenuItems are not needed in the
+                          // updateMenuSubGroup function
+                          MenuSubGroup menuSubGroup = MenuSubGroup(
+                              id: subGroupID,
+                              name: subGroupName,
+                              menuGroupID: 'Not Set',
+                              menuItems: <String>[]
+                          );
+
+
+                          await _database.updateMenuSubGroup(menuSubGroup);
                           Navigator.pop(context);
                         }
                       },

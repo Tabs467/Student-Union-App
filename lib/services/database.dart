@@ -1,3 +1,11 @@
+import 'package:student_union_app/models/BandaokeQueue.dart';
+import 'package:student_union_app/models/Comedian.dart';
+import 'package:student_union_app/models/ComedyNightSchedule.dart';
+import 'package:student_union_app/models/MenuGroup.dart';
+import 'package:student_union_app/models/MenuSubGroup.dart';
+import 'package:student_union_app/models/Question.dart';
+import 'package:student_union_app/models/Quiz.dart';
+import 'package:student_union_app/models/Score.dart';
 import 'authentication.dart';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +14,7 @@ import 'package:student_union_app/models/CurrentUser.dart';
 // Database Service class to provide Google FireStore data and services
 // to the Views
 class DatabaseService {
+
   // Google FireStore collection references
   CollectionReference quizCollection =
       FirebaseFirestore.instance.collection('Quizzes');
@@ -253,31 +262,42 @@ class DatabaseService {
   }
 
 
+  // Return a Question Model object from a given Question snapshot
+  Question questionFromSnapshot(var snapshotList) {
+    return Question(
+      id: snapshotList['id'],
+      answerA: snapshotList['answerA'],
+      answerB: snapshotList['answerB'],
+      answerC: snapshotList['answerC'],
+      answerD: snapshotList['answerD'],
+      correctAnswer: snapshotList['correctAnswer'],
+      questionNumber: snapshotList['questionNumber'],
+      questionText: snapshotList['questionText'],
+      quizID: snapshotList['quizID'],
+    );
+  }
+
+
   // Insert a new question document into the Questions collection
   // Whilst also incrementing the total number of questions contained within
   // the new question's quiz
-  Future createQuestion(
-      String quizID,
-      int questionNumber,
-      String questionText,
-      String correctAnswer,
-      String answerA,
-      String answerB,
-      String answerC,
-      String answerD) async {
+  Future createQuestion(Question question) async {
 
     String id = _generateID();
 
     // Increment total questions in the new questions' quiz by one
     await quizCollection
-        .where('id', isEqualTo: quizID)
+        .where('id', isEqualTo: question.quizID)
         .get()
         .then((QuerySnapshot querySnapshot) =>
     {
       querySnapshot.docs.forEach((doc) async {
-        int totalQuestions = doc["questionCount"];
 
-        await quizCollection.doc(quizID).update({
+        Quiz quiz = quizFromSnapshot(doc);
+
+        int totalQuestions = quiz.questionCount!;
+
+        await quizCollection.doc(question.quizID).update({
           "questionCount": (totalQuestions + 1),
         });
       })
@@ -286,14 +306,14 @@ class DatabaseService {
     // Create the question document
     return await questionCollection.doc(id).set({
       'id': id,
-      'quizID': quizID,
-      'questionNumber': questionNumber,
-      'questionText': questionText,
-      'correctAnswer': correctAnswer,
-      'answerA': answerA,
-      'answerB': answerB,
-      'answerC': answerC,
-      'answerD': answerD,
+      'quizID': question.quizID,
+      'questionNumber': question.questionNumber,
+      'questionText': question.questionText,
+      'correctAnswer': question.correctAnswer,
+      'answerA': question.answerA,
+      'answerB': question.answerB,
+      'answerC': question.answerC,
+      'answerD': question.answerD,
     });
   }
 
@@ -315,8 +335,10 @@ class DatabaseService {
         // Fetch the question document's question number and quiz id
         // So that all questions after the deleted question can have their
         // question number in the quiz moved down by one
-        int questionNumber = doc["questionNumber"];
-        String quizID = doc["quizID"];
+        Question question = questionFromSnapshot(doc);
+
+        int questionNumber = question.questionNumber!;
+        String quizID = question.quizID!;
 
         // Fetch all questions after the deleted question in the quiz
         await questionCollection
@@ -327,9 +349,11 @@ class DatabaseService {
         {
           querySnapshot.docs.forEach((doc) async {
 
+            Question furtherQuestion = questionFromSnapshot(doc);
+
             // Decrement their question number by one
-            String questionID = doc["id"];
-            int currentQuestionNumber = doc["questionNumber"];
+            String questionID = furtherQuestion.id!;
+            int currentQuestionNumber = furtherQuestion.questionNumber!;
             await questionCollection.doc(questionID).update({
               "questionNumber": (currentQuestionNumber - 1),
             });
@@ -344,7 +368,10 @@ class DatabaseService {
             .then((QuerySnapshot querySnapshot) =>
         {
           querySnapshot.docs.forEach((doc) async {
-            int totalQuestions = doc["questionCount"];
+
+            Quiz quiz = quizFromSnapshot(doc);
+
+            int totalQuestions = quiz.questionCount!;
 
             await quizCollection.doc(quizID).update({
               "questionCount": (totalQuestions - 1),
@@ -365,24 +392,31 @@ class DatabaseService {
 
 
   // Update a question document in the Questions collection
-  Future updateQuestion(
-      String id,
-      String answerA,
-      String answerB,
-      String answerC,
-      String answerD,
-      String correctAnswer,
-      String questionText) async {
+  Future updateQuestion(Question question) async {
 
-    return await questionCollection.doc(id).update({
-      "answerA": answerA,
-      "answerB": answerB,
-      "answerC": answerC,
-      "answerD": answerD,
-      "correctAnswer": correctAnswer,
-      "questionText": questionText
+    return await questionCollection.doc(question.id).update({
+      "answerA": question.answerA,
+      "answerB": question.answerB,
+      "answerC": question.answerC,
+      "answerD": question.answerD,
+      "correctAnswer": question.correctAnswer,
+      "questionText": question.questionText
     });
 
+  }
+
+
+  // Return a Quiz Model object from a given Quiz snapshot
+  Quiz quizFromSnapshot(var snapshotList) {
+    return Quiz(
+      id: snapshotList['id'],
+      quizTitle: snapshotList['quizTitle'],
+      quizEnded: snapshotList['quizEnded'],
+      questionCount: snapshotList['questionCount'],
+      isActive: snapshotList['isActive'],
+      currentQuestion: snapshotList['currentQuestion'],
+      creationDate: snapshotList['creationDate'],
+    );
   }
 
 
@@ -422,6 +456,7 @@ class DatabaseService {
       })
     });
 
+    // Delete the quiz document itself
     return quizCollection.doc(id).delete();
   }
 
@@ -476,7 +511,10 @@ class DatabaseService {
         // For each winning user add one win to their User document in the
         // Users collection
         querySnapshot.docs.forEach((doc) async {
-          String userID = doc["userID"];
+
+          Score score = scoreFromSnapshot(doc);
+
+          String userID = score.userID!;
           await addWin(userID);
         })
       });
@@ -491,12 +529,28 @@ class DatabaseService {
         .get()
         .then((QuerySnapshot querySnapshot) => {
       querySnapshot.docs.forEach((doc) async {
-        String scoreID = doc["id"];
+
+        Score score = scoreFromSnapshot(doc);
+
+        String scoreID = score.id!;
+
         await scoreCollection
             .doc(scoreID)
             .update({'currentQuestionCorrect': false});
       })
     });
+  }
+
+
+  // Return a Score Model object from a given Score snapshot
+  Score scoreFromSnapshot(var snapshotList) {
+    return Score(
+      id: snapshotList['id'],
+      currentQuestionCorrect: snapshotList['currentQuestionCorrect'],
+      quizID: snapshotList['quizID'],
+      userID: snapshotList['userID'],
+      score: snapshotList['score'],
+    );
   }
 
 
@@ -511,7 +565,9 @@ class DatabaseService {
   // This function also resets each score to zero if it is the start of the
   // quiz in case this quiz has been played before by the users taking part
   Future nextQuestion(
-      String quizID, int currentQuestionNumber, int questionCount) async {
+      String quizID,
+      int currentQuestionNumber,
+      int questionCount) async {
 
     currentQuestionNumber++;
 
@@ -525,7 +581,11 @@ class DatabaseService {
           .then((QuerySnapshot querySnapshot) =>
       {
         querySnapshot.docs.forEach((doc) async {
-          String scoreID = doc["id"];
+
+          Score score = scoreFromSnapshot(doc);
+
+          String scoreID = score.id!;
+
           await scoreCollection
               .doc(scoreID)
               .update({'score': 0});
@@ -560,9 +620,12 @@ class DatabaseService {
         // Retrieve the document's id, whether the user tied to the document
         // has the previous question correct, and their overall score for the
         // currently active quiz
-        String scoreID = doc["id"];
-        bool answerCorrect = doc["currentQuestionCorrect"];
-        int currentScore = doc["score"];
+
+        Score score = scoreFromSnapshot(doc);
+
+        String scoreID = score.id!;
+        bool answerCorrect = score.currentQuestionCorrect!;
+        int currentScore = score.score!;
 
         // If the user tied to this Score document got the previous question
         // correct
@@ -662,45 +725,54 @@ class DatabaseService {
       // Create a score doc with an auto generated id of 20 characters
       scoreID = _generateID();
 
+      Score newScore = Score(
+        id: scoreID,
+        currentQuestionCorrect: false,
+        quizID: quizID,
+        userID: userID,
+        score: 0
+      );
+
       // Create the Score document with the currentQuestionCorrect boolean
       // storing whether the user has the correct answer currently selected
       if (answerCorrect) {
-        await scoreCollection.doc(scoreID).set({
-          'id': scoreID,
-          'quizID': quizID,
-          'userID': userID,
-          'score': 0,
-          'currentQuestionCorrect': true
-        });
-      } else {
-        await scoreCollection.doc(scoreID).set({
-          'id': scoreID,
-          'quizID': quizID,
-          'userID': userID,
-          'score': 0,
-          'currentQuestionCorrect': false
-        });
+        newScore.currentQuestionCorrect = true;
       }
+
+      await scoreCollection.doc(scoreID).set({
+        'id': newScore.id,
+        'quizID': newScore.quizID,
+        'userID': newScore.userID,
+        'score': newScore.score,
+        'currentQuestionCorrect': newScore.currentQuestionCorrect
+      });
     }
   }
 
 
+  // Return a MenuGroup Model object from a given MenuGroup snapshot
+  MenuGroup menuGroupFromSnapshot(var snapshotList) {
+    return MenuGroup(id: snapshotList['id'], name: snapshotList['name']);
+  }
+
+
   // Insert a new Menu Group document into the MenuGroup collection
-  Future createMenuGroup(String name) async {
+  Future createMenuGroup(MenuGroup newMenuGroup) async {
     String id = _generateID();
 
     // Create the MenuGroup document
     return await menuGroupCollection.doc(id).set({
       'id': id,
-      'name': name,
+      'name': newMenuGroup.name,
     });
   }
 
 
   // Update a Menu Group's document's name property inside of the
   // MenuGroup collection
-  Future updateMenuGroup(String id, String name) async {
-    return await menuGroupCollection.doc(id).update({"name": name});
+  Future updateMenuGroup(MenuGroup menuGroup) async {
+    return await menuGroupCollection.doc(menuGroup.id)
+        .update({"name": menuGroup.name});
   }
 
 
@@ -727,14 +799,25 @@ class DatabaseService {
   }
 
 
+  // Return a MenuSubGroup Model object from a given MenuSubGroup snapshot
+  MenuSubGroup menuSubGroupFromSnapshot(var snapshotList) {
+    return MenuSubGroup(
+        id: snapshotList['id'],
+        name: snapshotList['name'],
+        menuGroupID: snapshotList['MenuGroupID'],
+        menuItems: snapshotList['MenuItems'],
+    );
+  }
+
+
   // Insert a new Menu Sub Group document into the MenuSubGroup collection
-  Future createMenuSubGroup(String menuGroupID, String name) async {
+  Future createMenuSubGroup(MenuSubGroup newMenuSubGroup) async {
     String id = _generateID();
 
     // Create the MenuSubGroup document
     return await menuSubGroupCollection.doc(id).set({
-      'MenuGroupID': menuGroupID,
-      'name': name,
+      'MenuGroupID': newMenuSubGroup.menuGroupID,
+      'name': newMenuSubGroup.name,
       'id': id,
       'MenuItems': <String>[],
     });
@@ -743,8 +826,9 @@ class DatabaseService {
 
   // Update a Menu Sub Group's document's name property inside of the
   // MenuSubGroup collection
-  Future updateMenuSubGroup(String id, String name) async {
-    return await menuSubGroupCollection.doc(id).update({"name": name});
+  Future updateMenuSubGroup(MenuSubGroup menuSubGroup) async {
+    return await menuSubGroupCollection.doc(menuSubGroup.id)
+        .update({"name": menuSubGroup.name});
   }
 
 
@@ -840,6 +924,15 @@ class DatabaseService {
   }
 
 
+  // Return a BandaokeQueue Model object from a given BandaokeQueue snapshot
+  BandaokeQueue bandaokeQueueFromSnapshot(var snapshotList) {
+    return BandaokeQueue(
+      id: snapshotList['id'],
+      queuedMembers: snapshotList['queuedMembers'],
+    );
+  }
+
+
   // Add a new entry to the bandaoke queue
   Future queue(String uid, String songTitle) async {
     // Add the queue entry details to a map
@@ -886,11 +979,13 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
+        BandaokeQueue bandaokeQueue = bandaokeQueueFromSnapshot(doc);
+
         // If there are any queued members
-        if (doc['queuedMembers'].length != 0) {
+        if (bandaokeQueue.queuedMembers!.isNotEmpty) {
           // Create a one-element array containing the map that describes the
           // item to be deleted
-          var deletedItem = [doc['queuedMembers'][0]];
+          var deletedItem = [bandaokeQueue.queuedMembers![0]];
 
           // Delete this item from the array
           bandaokeQueueCollection.doc('Z4NtbE7IQ2vp32WHkpYY').update(
@@ -924,12 +1019,14 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
-        // If there are any queued members
-        if (doc['queuedMembers'].length != 0) {
+        BandaokeQueue bandaokeQueue = bandaokeQueueFromSnapshot(doc);
 
-          for (int index = 0; index < doc['queuedMembers'].length; index++) {
+        // If there are any queued members
+        if (bandaokeQueue.queuedMembers!.isNotEmpty) {
+
+          for (int index = 0; index < bandaokeQueue.queuedMembers!.length; index++) {
             // Find the user's map in the array
-            if (doc['queuedMembers'][index]['uid'] == uid) {
+            if (bandaokeQueue.queuedMembers![index]['uid'] == uid) {
               // The position in the queue is the map's index plus 1
               position = index + 1;
             }
@@ -956,14 +1053,16 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
-        // If there are any queued members
-        if (doc['queuedMembers'].length != 0) {
+        BandaokeQueue bandaokeQueue = bandaokeQueueFromSnapshot(doc);
 
-          for (int index = 0; index < doc['queuedMembers'].length; index++) {
+        // If there are any queued members
+        if (bandaokeQueue.queuedMembers!.isNotEmpty) {
+
+          for (int index = 0; index < bandaokeQueue.queuedMembers!.length; index++) {
             // Find the user's map in the array
-            if (doc['queuedMembers'][index]['uid'] == uid) {
+            if (bandaokeQueue.queuedMembers![index]['uid'] == uid) {
               // Retrieve the user's chosen song from this map
-              chosenSong = doc['queuedMembers'][index]['songTitle'];
+              chosenSong = bandaokeQueue.queuedMembers![index]['songTitle'];
             }
           }
 
@@ -986,8 +1085,10 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
+        BandaokeQueue bandaokeQueue = bandaokeQueueFromSnapshot(doc);
+
         // Retrieve the existing array from the document
-        var updatedArray = doc['queuedMembers'];
+        var updatedArray = bandaokeQueue.queuedMembers!;
 
         // Update the array
         // Do not need to worry about duplicates being renamed here as duplicates
@@ -1005,27 +1106,31 @@ class DatabaseService {
   }
 
 
+  // Return a ComedyNightSchedule Model object from a given
+  // ComedyNightSchedule snapshot
+  ComedyNightSchedule comedyNightScheduleFromSnapshot(var snapshotList) {
+    return ComedyNightSchedule(
+      id: snapshotList['id'],
+      date: snapshotList['date'],
+      comedians: snapshotList['comedians'],
+    );
+  }
+
+
   // Create a new comedian inside of the "comedians" array of maps inside of the
   // ComedyNightSchedule collection document
-  Future createComedian(
-      String name,
-      DateTime startTime,
-      DateTime endTime,
-      String facebook,
-      String instagram,
-      String twitter,
-      String snapchat) async {
+  Future createComedian(Comedian comedian) async {
 
     // Add the comedian's details to a map
     var newEntryMap = {
       'id': _generateID(),
-      'name': name,
-      'startTime': startTime,
-      'endTime': endTime,
-      'facebook': facebook,
-      'instagram': instagram,
-      'twitter': twitter,
-      'snapchat': snapchat
+      'name': comedian.name,
+      'startTime': comedian.startTime,
+      'endTime': comedian.endTime,
+      'facebook': comedian.facebook,
+      'instagram': comedian.instagram,
+      'twitter': comedian.twitter,
+      'snapchat': comedian.snapchat
     };
 
     // Create a one-element array containing the map
@@ -1042,15 +1147,7 @@ class DatabaseService {
 
   // Edit a comedian's details inside of the "comedians" array of maps inside of
   // the ComedyNightSchedule collection document
-  Future editComedian(
-      String id,
-      String name,
-      Timestamp startTime,
-      Timestamp endTime,
-      String facebook,
-      String instagram,
-      String twitter,
-      String snapchat) async {
+  Future editComedian(Comedian comedian) async {
 
     // Retrieve the ComedyNightSchedule document
     await comedyNightScheduleCollection
@@ -1061,21 +1158,24 @@ class DatabaseService {
       // For the found document,
       querySnapshot.docs.forEach((doc) async {
 
+        ComedyNightSchedule comedyNightSchedule =
+                                          comedyNightScheduleFromSnapshot(doc);
+
         // Retrieve the existing array from the document
-        var updatedArray = doc['comedians'];
+        var updatedArray = comedyNightSchedule.comedians!;
 
         // Update the array
         // Do not need to worry about duplicates being renamed here as duplicates
         // cannot be created in the first place
         for (var itemIndex = 0 ; itemIndex < updatedArray.length; itemIndex++) {
-          if (updatedArray[itemIndex]['id'] == id) {
-            updatedArray[itemIndex]['name'] = name;
-            updatedArray[itemIndex]['startTime'] = startTime;
-            updatedArray[itemIndex]['endTime'] = endTime;
-            updatedArray[itemIndex]['facebook'] = facebook;
-            updatedArray[itemIndex]['instagram'] = instagram;
-            updatedArray[itemIndex]['twitter'] = twitter;
-            updatedArray[itemIndex]['snapchat'] = snapchat;
+          if (updatedArray[itemIndex]['id'] == comedian.id) {
+            updatedArray[itemIndex]['name'] = comedian.name;
+            updatedArray[itemIndex]['startTime'] = comedian.startTime;
+            updatedArray[itemIndex]['endTime'] = comedian.endTime;
+            updatedArray[itemIndex]['facebook'] = comedian.facebook;
+            updatedArray[itemIndex]['instagram'] = comedian.instagram;
+            updatedArray[itemIndex]['twitter'] = comedian.twitter;
+            updatedArray[itemIndex]['snapchat'] = comedian.snapchat;
           }
         }
 
@@ -1089,26 +1189,18 @@ class DatabaseService {
 
   // Delete a comedian inside of the "comedians" array of maps inside of the
   // ComedyNightSchedule collection document
-  Future deleteComedian(
-      String id,
-      String name,
-      Timestamp startTime,
-      Timestamp endTime,
-      String facebook,
-      String instagram,
-      String twitter,
-      String snapchat) async {
+  Future deleteComedian(Comedian comedian) async {
 
     // Add the comedian's details to a map
     var entryMap = {
-      'id': id,
-      'name': name,
-      'startTime': startTime,
-      'endTime': endTime,
-      'facebook': facebook,
-      'instagram': instagram,
-      'twitter': twitter,
-      'snapchat': snapchat
+      'id': comedian.id,
+      'name': comedian.name,
+      'startTime': comedian.startTime,
+      'endTime': comedian.endTime,
+      'facebook': comedian.facebook,
+      'instagram': comedian.instagram,
+      'twitter': comedian.twitter,
+      'snapchat': comedian.snapchat
     };
 
     // Create a one-element array containing the map

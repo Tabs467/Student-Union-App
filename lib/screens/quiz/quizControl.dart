@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Question.dart';
+import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/services/database.dart';
 import 'adminEndLeaderboard.dart';
@@ -15,11 +17,16 @@ class QuizControl extends StatefulWidget {
 class _QuizControlState extends State<QuizControl> {
   final DatabaseService _database = DatabaseService();
 
-  // Initialise quiz variables to standard values
-  String quizID = 'i0VXURC5VW3DATZpge1T';
-  int currentQuestionNumber = 1;
-  int questionCount = 10;
-  bool quizEnded = false;
+  // Initialise quiz properties to default values
+  Quiz currentQuiz = Quiz(
+    id: '',
+    quizTitle: '',
+    quizEnded: false,
+    questionCount: 10,
+    isActive: true,
+    currentQuestion: 1,
+    creationDate: Timestamp(0, 0),
+  );
 
 
   // The stream that will listen to the Quiz document that is marked as
@@ -46,10 +53,13 @@ class _QuizControlState extends State<QuizControl> {
     setState(() {
       _quizzes.forEach((field) {
         field.docs.asMap().forEach((index, data) {
-          quizID = data['id'];
-          currentQuestionNumber = data['currentQuestion'];
-          questionCount = data['questionCount'];
-          quizEnded = data['quizEnded'];
+
+          Quiz retrievedQuiz = _database.quizFromSnapshot(data);
+
+          currentQuiz.questionCount = retrievedQuiz.questionCount;
+          currentQuiz.quizEnded = retrievedQuiz.quizEnded;
+          currentQuiz.id = retrievedQuiz.id;
+          currentQuiz.currentQuestion = retrievedQuiz.currentQuestion;
         });
       });
     });
@@ -85,16 +95,22 @@ class _QuizControlState extends State<QuizControl> {
                   snapshot.data!.docs.map((DocumentSnapshot document) {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
-                    quizID = data['id'];
-                    currentQuestionNumber = data['currentQuestion'];
-                    quizEnded = data['quizEnded'];
+
+                    Quiz retrievedQuiz = _database.quizFromSnapshot(data);
+
+                    currentQuiz.id = retrievedQuiz.id;
+                    currentQuiz.currentQuestion = retrievedQuiz.currentQuestion;
+                    currentQuiz.quizEnded = retrievedQuiz.quizEnded;
                   });
 
                   return StreamBuilder<QuerySnapshot>(
                       // Set the stream to listen to the Question document whose
                       // contained question is part of the current quiz and
                       // whose question number is the current position in the quiz
-                      stream: _database.getCurrentQuestion(quizID, currentQuestionNumber),
+                      stream: _database.getCurrentQuestion(
+                          currentQuiz.id!,
+                          currentQuiz.currentQuestion!
+                      ),
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {
@@ -109,8 +125,8 @@ class _QuizControlState extends State<QuizControl> {
                           );
                         }
 
-                        // If all the quizzes questions have been displayed
-                        if (currentQuestionNumber <= questionCount) {
+                        // If all the quizzes questions have not been displayed
+                        if (currentQuiz.currentQuestion! <= currentQuiz.questionCount!) {
                           // Display the current question along with its answers
                           // and correct answer
                           // Also display the End Quiz and Next Question buttons
@@ -120,7 +136,7 @@ class _QuizControlState extends State<QuizControl> {
                         else {
                           // Display the End of Quiz Leaderboard along with an
                           // extra button that ends the quiz
-                          return AdminEndLeaderboard(quizID: quizID);
+                          return AdminEndLeaderboard(quizID: currentQuiz.id!);
                         }
                       });
                 }),
@@ -147,6 +163,9 @@ class _QuizControlState extends State<QuizControl> {
                 children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
+
+              Question currentQuestion = _database.questionFromSnapshot(data);
+
               return Container(
                 color: const Color.fromRGBO(244, 175, 20, 1.0),
                 child: IntrinsicWidth(
@@ -168,9 +187,9 @@ class _QuizControlState extends State<QuizControl> {
                             child: Center(
                               child: Text(
                                 'Q' +
-                                    data['questionNumber'].toString() +
+                                    currentQuestion.questionNumber.toString() +
                                     ': ' +
-                                    data['questionText'],
+                                    currentQuestion.questionText!,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
@@ -195,7 +214,7 @@ class _QuizControlState extends State<QuizControl> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'A: ' + data['answerA'],
+                              'A: ' + currentQuestion.answerA!,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30,
@@ -219,7 +238,7 @@ class _QuizControlState extends State<QuizControl> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'B: ' + data['answerB'],
+                              'B: ' + currentQuestion.answerB!,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30,
@@ -243,7 +262,7 @@ class _QuizControlState extends State<QuizControl> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'C: ' + data['answerC'],
+                              'C: ' + currentQuestion.answerC!,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30,
@@ -267,7 +286,7 @@ class _QuizControlState extends State<QuizControl> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'D: ' + data['answerD'],
+                              'D: ' + currentQuestion.answerD!,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30,
@@ -292,7 +311,7 @@ class _QuizControlState extends State<QuizControl> {
                             child: Center(
                               child: Text(
                                 'Correct Answer: ' +
-                                    data['correctAnswer'].toUpperCase(),
+                                    currentQuestion.correctAnswer!.toUpperCase(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
@@ -321,7 +340,7 @@ class _QuizControlState extends State<QuizControl> {
                 // In this case the quiz would be ending early so there is no
                 // winning score to put into the endQuiz function
                 onTap: () {
-                  DatabaseService().endQuiz(quizID, 0);
+                  DatabaseService().endQuiz(currentQuiz.id!, 0);
                   Navigator.pushReplacementNamed(context, '/quiz/admin');
                 },
                 child: Row(
@@ -355,7 +374,9 @@ class _QuizControlState extends State<QuizControl> {
                   setState(() {
                     retrieveCurrentQuestionNumber();
                     DatabaseService().nextQuestion(
-                        quizID, currentQuestionNumber, questionCount);
+                        currentQuiz.id!,
+                        currentQuiz.currentQuestion!,
+                        currentQuiz.questionCount!);
                   });
                 },
                 child: Row(

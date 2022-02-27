@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Question.dart';
+import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/services/database.dart';
 import 'endLeaderboard.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +16,17 @@ class ActiveQuiz extends StatefulWidget {
 }
 
 class _ActiveQuizState extends State<ActiveQuiz> {
-  // Initialise quiz variables to standard values
-  String quizID = '';
-  int currentQuestionNumber = 1;
-  int questionCount = 10;
-  bool quizEnded = false;
-  bool anyQuizActive = false;
+
+  // Initialise quiz properties to default values
+  Quiz currentQuiz = Quiz(
+    id: '',
+    quizTitle: '',
+    quizEnded: false,
+    questionCount: 10,
+    isActive: true,
+    currentQuestion: 1,
+    creationDate: Timestamp(0, 0),
+  );
 
   // Selected answer state
   Answer selectedAnswer = Answer.none;
@@ -70,16 +77,19 @@ class _ActiveQuizState extends State<ActiveQuiz> {
     setState(() {
       _quizzes.forEach((field) {
         field.docs.asMap().forEach((index, data) {
-          questionCount = data['questionCount'];
-          quizEnded = data['quizEnded'];
-          quizID = data['id'];
+
+          Quiz retrievedQuiz = _database.quizFromSnapshot(data);
+
+          currentQuiz.questionCount = retrievedQuiz.questionCount;
+          currentQuiz.quizEnded = retrievedQuiz.quizEnded;
+          currentQuiz.id = retrievedQuiz.id;
 
           // Reset selected answer each time a new question is loaded
-          if (currentQuestionNumber < data['currentQuestion']) {
+          if (currentQuiz.currentQuestion! < retrievedQuiz.currentQuestion!) {
             selectedAnswer = Answer.none;
           }
 
-          currentQuestionNumber = data['currentQuestion'];
+          currentQuiz.currentQuestion = retrievedQuiz.currentQuestion;
         });
       });
     });
@@ -107,32 +117,38 @@ class _ActiveQuizState extends State<ActiveQuiz> {
               );
             }
 
-            // Add the retrieved quiz to a map and update the current
-            // question number to reflect the value in the database
+            // Add the retrieved quiz to a Quiz object and update the current
+            // Quiz object to reflect the values in the database
             // And reset the user's selected answer if the question number
             // increases
             snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
               document.data()! as Map<String, dynamic>;
-              quizEnded = data['quizEnded'];
-              quizID = data['id'];
-              questionCount = data['questionCount'];
+
+              Quiz retrievedQuiz = _database.quizFromSnapshot(data);
+
+              currentQuiz.quizEnded = retrievedQuiz.quizEnded;
+              currentQuiz.id = retrievedQuiz.id;
+              currentQuiz.questionCount = retrievedQuiz.questionCount;
 
               // Reset selected answer each time a new question is loaded
-              if (currentQuestionNumber < data['currentQuestion']) {
+              if (currentQuiz.currentQuestion! < retrievedQuiz.currentQuestion!) {
                 selectedAnswer = Answer.none;
               }
 
-              currentQuestionNumber = data['currentQuestion'];
+              currentQuiz.currentQuestion = retrievedQuiz.currentQuestion;
             });
 
-            // If all the quizzes questions have been displayed
-            if (currentQuestionNumber <= questionCount) {
+            // If all the quizzes questions have not been displayed
+            if (currentQuiz.currentQuestion! <= currentQuiz.questionCount!) {
               return StreamBuilder<QuerySnapshot>(
                 // Set the stream to listen to the Question document whose
                 // contained question is part of the current quiz and
                 // whose question number is the current position in the quiz
-                  stream: _database.getCurrentQuestion(quizID, currentQuestionNumber),
+                  stream: _database.getCurrentQuestion(
+                      currentQuiz.id!,
+                      currentQuiz.currentQuestion!
+                  ),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -155,7 +171,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
             }
             // If the quiz has ended display the end of quiz leaderboard
             else {
-              return EndLeaderboard(quizID: quizID);
+              return EndLeaderboard(quizID: currentQuiz.id!);
             }
           }),
     );
@@ -178,6 +194,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                 snapshot.data!.docs.map((DocumentSnapshot document) {
                   Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
+
+                  Question currentQuestion = _database.questionFromSnapshot(data);
+
                   return Container(
                     color: const Color.fromRGBO(244, 175, 20, 1.0),
                     child: IntrinsicWidth(
@@ -198,9 +217,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
                                   'Q' +
-                                      data['questionNumber'].toString() +
+                                      currentQuestion.questionNumber.toString() +
                                       ': ' +
-                                      data['questionText'],
+                                      currentQuestion.questionText!,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -232,7 +251,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(30.0),
                                   child: Text(
-                                    'A: ' + data['answerA'],
+                                    'A: ' + currentQuestion.answerA!,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 30,
@@ -265,7 +284,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(30.0),
                                   child: Text(
-                                    'B: ' + data['answerB'],
+                                    'B: ' + currentQuestion.answerB!,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 30,
@@ -298,7 +317,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(30.0),
                                   child: Text(
-                                    'C: ' + data['answerC'],
+                                    'C: ' + currentQuestion.answerC!,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 30,
@@ -331,7 +350,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(30.0),
                                   child: Text(
-                                    'D: ' + data['answerD'],
+                                    'D: ' + currentQuestion.answerD!,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 30,

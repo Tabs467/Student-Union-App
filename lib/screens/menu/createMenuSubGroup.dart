@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/MenuSubGroup.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -96,7 +97,16 @@ class _CreateMenuSubGroupState extends State<CreateMenuSubGroup> {
                     // And return the user back to the EditMenuSubGroups screen
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await _database.createMenuSubGroup(menuGroupID, subGroupName);
+
+                        // Database Service handles generation of IDs
+                        MenuSubGroup newMenuSubGroup = MenuSubGroup(
+                            id: 'NotSet',
+                            name: subGroupName,
+                            menuGroupID: menuGroupID,
+                            menuItems: <String>[]
+                        );
+
+                        await _database.createMenuSubGroup(newMenuSubGroup);
                         Navigator.pop(context);
                       }
                     },

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -61,10 +62,12 @@ class _EditQuizzesState extends State<EditQuizzes> {
                         Map<String, dynamic> data =
                             document.data()! as Map<String, dynamic>;
 
+                        Quiz quiz = _database.quizFromSnapshot(data);
+
                         // Calculate DateTime from TimeStamp stored in the
                         // quiz document
                         DateTime unformattedDate = DateTime.parse(
-                            data['creationDate'].toDate().toString());
+                            quiz.creationDate!.toDate().toString());
 
                         // Format DateTime for output
                         String date =
@@ -85,8 +88,8 @@ class _EditQuizzesState extends State<EditQuizzes> {
 
                         // Concatenate singular or plural depending on whether
                         // there is one or multiple questions
-                        String questionCount = data['questionCount'].toString();
-                        if (data['questionCount'] == 1) {
+                        String questionCount = quiz.questionCount!.toString();
+                        if (quiz.questionCount == 1) {
                           questionCount += " Question";
                         } else {
                           questionCount += " Questions";
@@ -96,7 +99,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
                         // Display the quiz if the quiz document is not the one
                         // used to represent that there are no
                         // quizzes currently active
-                        if (data['id'] != "cy7RWIJ3VGIXlHSM1Il8") {
+                        if (quiz.id != "cy7RWIJ3VGIXlHSM1Il8") {
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 3.0, horizontal: 0.0),
@@ -109,7 +112,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 5.0, horizontal: 0.0),
                                     child: Text(
-                                      data['quizTitle'],
+                                      quiz.quizTitle!,
                                       style: const TextStyle(
                                         fontStyle: FontStyle.italic,
                                         fontWeight: FontWeight.bold,
@@ -162,10 +165,10 @@ class _EditQuizzesState extends State<EditQuizzes> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                EditQuiz(quizID: data['id'],
-                                                  quizTitle: data['quizTitle'],
+                                                EditQuiz(quizID: quiz.id!,
+                                                  quizTitle: quiz.quizTitle!,
                                                     dateCreated: date,
-                                                    questionCount: data['questionCount'].toString()),
+                                                    questionCount: quiz.questionCount!.toString()),
                                           ),
                                         );
                                       },
@@ -185,7 +188,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
                                       // If the delete quiz button is tapped
                                       // display the deleteAlert pop-up
                                       onPressed: () async {
-                                        showDeleteAlertDialog(context, data['id']);
+                                        showDeleteAlertDialog(context, quiz.id!);
                                       },
                                     ),
                                   ),

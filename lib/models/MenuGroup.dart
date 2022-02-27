@@ -1,10 +1,9 @@
-import 'package:student_union_app/Models/MenuSubGroup.dart';
-
+// Model for Menu Groups on the Food/Drink Menu
 class MenuGroup {
 
+  String? id;
   String? name;
-  List<MenuSubGroup>? menuSubGroups = [];
 
-  MenuGroup({this.name, this.menuSubGroups});
+  MenuGroup({this.id, this.name});
 
 }

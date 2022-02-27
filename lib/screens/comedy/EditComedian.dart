@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/Comedian.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -7,25 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class EditComedian extends StatefulWidget {
-  final String comedianID;
-  final String comedianName;
-  final Timestamp startDateTime;
-  final Timestamp endDateTime;
-  final String facebook;
-  final String instagram;
-  final String twitter;
-  final String snapchat;
+  final Comedian comedian;
 
   const EditComedian(
       {Key? key,
-        required this.comedianID,
-        required this.comedianName,
-        required this.startDateTime,
-        required this.endDateTime,
-        required this.facebook,
-        required this.instagram,
-        required this.twitter,
-        required this.snapchat})
+        required this.comedian,
+      })
       : super(key: key);
 
   @override
@@ -54,44 +42,47 @@ class _EditComedianState extends State<EditComedian> {
   // and prepare them for display
   @override
   void initState() {
-    comedianID = widget.comedianID;
-    comedianName = widget.comedianName;
+
+    Comedian comedian = widget.comedian;
+
+    comedianID = comedian.id!;
+    comedianName = comedian.name!;
 
     // Convert the passed Timestamps to DateTime objects
-    startDateTime = widget.startDateTime.toDate();
-    endDateTime = widget.endDateTime.toDate();
+    startDateTime = comedian.startTime!.toDate();
+    endDateTime = comedian.endTime!.toDate();
 
     // If a social media link has not been set just display an empty string
     // rather than the "Not Set" string
-    if (widget.facebook == "Not Set") {
+    if (comedian.facebook == "Not Set") {
       facebook = '';
     }
     else {
       // Substring to remove the extra characters at the start of the link
       // that allows it to be opened in the Facebook app
       // As the user does not type these in
-      facebook = widget.facebook.substring(25);
+      facebook = comedian.facebook!.substring(25);
     }
 
-    if (widget.twitter == "Not Set") {
+    if (comedian.twitter == "Not Set") {
       twitter = '';
     }
     else {
-      twitter = widget.twitter;
+      twitter = comedian.twitter!;
     }
 
-    if (widget.instagram == "Not Set") {
+    if (comedian.instagram == "Not Set") {
       instagram = '';
     }
     else {
-      instagram = widget.instagram;
+      instagram = comedian.instagram!;
     }
 
-    if (widget.snapchat == "Not Set") {
+    if (comedian.snapchat == "Not Set") {
       snapchat = '';
     }
     else {
-      snapchat = widget.snapchat;
+      snapchat = comedian.snapchat!;
     }
     super.initState();
   }
@@ -479,17 +470,20 @@ class _EditComedianState extends State<EditComedian> {
                           Timestamp startTimeStamp = Timestamp.fromDate(startDateTime);
                           Timestamp endTimeStamp = Timestamp.fromDate(endDateTime);
 
+                          Comedian comedian = Comedian(
+                              id: comedianID,
+                              name: comedianName,
+                              startTime: startTimeStamp,
+                              endTime: endTimeStamp,
+                              facebook: facebook,
+                              instagram: instagram,
+                              twitter: twitter,
+                              snapchat: snapchat
+                          );
+
                           // Update the comedian in the comedians array in the
                           // ComedyNightSchedule document
-                          await _database.editComedian(
-                            comedianID,
-                            comedianName,
-                            startTimeStamp,
-                            endTimeStamp,
-                            facebook,
-                            instagram,
-                            twitter,
-                            snapchat,);
+                          await _database.editComedian(comedian);
 
                           // Return the user to the ComedyNightAdmin Widget
                           Navigator.pop(context);

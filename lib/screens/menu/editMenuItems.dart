@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/MenuSubGroup.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -70,9 +71,13 @@ class _EditMenuItemsState extends State<EditMenuItems> {
 
                 // Determine the length of the MenuItems array for the
                 // ListView Builder
-                var itemCount = 0;
+                int itemCount = 0;
                 if (snapshot.data!.docs[0]['MenuItems'] != null) {
-                  itemCount = snapshot.data!.docs[0]['MenuItems'].length;
+
+                  MenuSubGroup retrievedSubGroup =
+                    _database.menuSubGroupFromSnapshot(snapshot.data!.docs[0]);
+
+                  itemCount = retrievedSubGroup.menuItems!.length;
                 }
 
                 return Flexible(
@@ -87,9 +92,12 @@ class _EditMenuItemsState extends State<EditMenuItems> {
                         // (If not, just return an empty Container)
                         if (snapshot.data!.docs.isNotEmpty) {
 
+                          MenuSubGroup retrievedSubGroup =
+                          _database.menuSubGroupFromSnapshot(snapshot.data!.docs[0]);
+
                             // Check the MenuItems array is not empty
                             // (If it is, just return an empty Container)
-                            var menuItemsArray = snapshot.data!.docs[0]['MenuItems'];
+                            var menuItemsArray = retrievedSubGroup.menuItems!;
                             if (menuItemsArray.isNotEmpty) {
                               // Display each Menu Item
                               return Padding(

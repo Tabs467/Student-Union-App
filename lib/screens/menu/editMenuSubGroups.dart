@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/MenuSubGroup.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -78,8 +79,15 @@ class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
                           Map<String, dynamic> data =
                           document.data()! as Map<String, dynamic>;
 
+                          MenuSubGroup menuSubGroup = MenuSubGroup(
+                            id: data['id'],
+                            menuGroupID: data['MenuGroupID'],
+                            name: data['name'],
+                            menuItems: data['MenuItems']
+                          );
+
                           // Format the MenuItems array for output to the user
-                          var menuItems = data['MenuItems'];
+                          var menuItems = menuSubGroup.menuItems!;
                           String menuItemsOutput = '';
                           if (menuItems.isNotEmpty) {
                             // Display each Menu Item in a vertical list
@@ -104,7 +112,7 @@ class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 5.0, horizontal: 5.0),
                                     child: Text(
-                                          data['name'],
+                                          menuSubGroup.name!,
                                       style: const TextStyle(
                                         fontStyle: FontStyle.italic,
                                         fontWeight: FontWeight.bold,
@@ -147,8 +155,8 @@ class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => EditMenuSubGroup(
-                                              subGroupID: data['id'],
-                                              subGroupName: data['name'],
+                                              subGroupID: menuSubGroup.id!,
+                                              subGroupName: menuSubGroup.name!,
                                               formattedMenuItems: menuItemsOutput,
                                             ),
                                           ),
@@ -170,7 +178,7 @@ class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
                                       // If the delete Sub Group button is tapped
                                       // display the deleteAlert pop-up
                                       onPressed: () async {
-                                        showDeleteAlertDialog(context, data['id']);
+                                        showDeleteAlertDialog(context, menuSubGroup.id!);
                                       },
                                     ),
                                   ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/Quiz.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -59,10 +60,12 @@ class _SelectQuizState extends State<SelectQuiz> {
                             Map<String, dynamic> data =
                             document.data()! as Map<String, dynamic>;
 
+                            Quiz quiz = _database.quizFromSnapshot(data);
+
                             // Calculate DateTime from TimeStamp stored in the
                             // quiz document
                             DateTime unformattedDate = DateTime.parse(
-                                data['creationDate'].toDate().toString());
+                                quiz.creationDate!.toDate().toString());
 
                             // Format DateTime for output
                             String date =
@@ -83,8 +86,8 @@ class _SelectQuizState extends State<SelectQuiz> {
 
                             // Concatenate singular or plural depending on whether
                             // there is one or multiple questions
-                            String questionCount = data['questionCount'].toString();
-                            if (data['questionCount'] == 1) {
+                            String questionCount = quiz.questionCount.toString();
+                            if (quiz.questionCount == 1) {
                               questionCount += " Question";
                             } else {
                               questionCount += " Questions";
@@ -95,7 +98,7 @@ class _SelectQuizState extends State<SelectQuiz> {
                             // used to represent that there are no quizzes
                             // currently active
                             // And if the quiz has more than one question
-                            if (data['id'] != "cy7RWIJ3VGIXlHSM1Il8" && data['questionCount'] > 0) {
+                            if (quiz.id != "cy7RWIJ3VGIXlHSM1Il8" && quiz.questionCount! > 0) {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 3.0, horizontal: 0.0),
@@ -108,7 +111,7 @@ class _SelectQuizState extends State<SelectQuiz> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5.0, horizontal: 0.0),
                                         child: Text(
-                                          data['quizTitle'],
+                                          quiz.quizTitle!,
                                           style: const TextStyle(
                                             fontStyle: FontStyle.italic,
                                             fontWeight: FontWeight.bold,
@@ -156,7 +159,7 @@ class _SelectQuizState extends State<SelectQuiz> {
                                           // and navigate to the QuizControl
                                           // Widget
                                           onPressed: () async {
-                                            await _database.startQuiz(data['id']);
+                                            await _database.startQuiz(quiz.id!);
                                             Navigator.pushNamed(context,
                                                 '/quiz/admin/quizControl');
                                           },

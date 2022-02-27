@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:student_union_app/models/Comedian.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
@@ -398,16 +400,29 @@ class _CreateComedianState extends State<CreateComedian> {
                             snapchat = "Not Set";
                           }
 
+
+                          // Convert the DateTimes to Timestamps as they are
+                          // stored as Timestamps in the database
+                          Timestamp startTimeStamp = Timestamp.fromDate(startDateTime);
+                          Timestamp endTimeStamp = Timestamp.fromDate(endDateTime);
+
+
+                          // Database service class handles the ID of the new
+                          // Comedian
+                          Comedian comedian = Comedian(
+                              id: 'Not Set',
+                              name: comedianName,
+                              startTime: startTimeStamp,
+                              endTime: endTimeStamp,
+                              facebook: facebook,
+                              instagram: instagram,
+                              twitter: twitter,
+                              snapchat: snapchat
+                          );
+
                           // Add the comedian to the comedians array in the
                           // ComedyNightSchedule document
-                          await _database.createComedian(
-                              comedianName,
-                              startDateTime,
-                              endDateTime,
-                              facebook,
-                              instagram,
-                              twitter,
-                              snapchat,);
+                          await _database.createComedian(comedian);
 
                           // Return the user to the ComedyNightAdmin Widget
                           Navigator.pop(context);

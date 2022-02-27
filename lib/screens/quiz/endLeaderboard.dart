@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
+import 'package:student_union_app/models/Score.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
@@ -73,6 +74,7 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
           for (var scoreIndex = 0;
               scoreIndex < snapshot.data!.docs.length;
               scoreIndex++) {
+
             // If the score field in the Score document is not null
             if (snapshot.data!.docs[scoreIndex]['score'] != null) {
               // Add the score field's value to the List of scores
@@ -119,8 +121,10 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                           Map<String, dynamic> data =
                               document.data()! as Map<String, dynamic>;
 
+                          Score score = _database.scoreFromSnapshot(data);
+
                           // Retrieve the user id of the Score document
-                          String uid = data['userID'];
+                          String uid = score.userID!;
 
                           // FutureBuilder to display another loading Widget until
                           // _getTeamName returns the user data from the user id of
@@ -153,11 +157,11 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                                     // bronze
                                     // If the currently logged-in user's score is not
                                     // in the top three it will be coloured pink
-                                    color: (data['score'] == firstHighestScore)
+                                    color: (score.score! == firstHighestScore)
                                         ? Colors.yellow
-                                        : (data['score'] == secondHighestScore)
+                                        : (score.score! == secondHighestScore)
                                             ? Colors.blueGrey
-                                            : (data['score'] == thirdHighestScore)
+                                            : (score.score! == thirdHighestScore)
                                                 ? Colors.deepOrangeAccent
                                                 : (loggedInUser)
                                                     ? Colors.pink
@@ -170,7 +174,7 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
                                       child: Text(
                                         returnedUser.teamName +
                                             " - " +
-                                            data['score'].toString(),
+                                            score.score!.toString(),
                                         style: const TextStyle(
                                           fontStyle: FontStyle.italic,
                                           fontWeight: FontWeight.bold,
