@@ -29,6 +29,88 @@ class DatabaseService {
   final AuthenticationService _auth = AuthenticationService();
 
 
+  // Return a stream of the MenuGroups
+  Stream<QuerySnapshot> getMenuGroups() {
+    return menuGroupCollection.snapshots();
+  }
+
+
+  // Return a stream of the MenuSubGroups inside of a MenuGroup
+  Stream<QuerySnapshot> getMenuSubGroups(String selectedMenuGroupID) {
+    return menuSubGroupCollection
+        .where('MenuGroupID', isEqualTo: selectedMenuGroupID)
+        .snapshots();
+  }
+
+
+  // Return a stream of the selected MenuSubGroup
+  Stream<QuerySnapshot> getMenuSubGroup(String selectedSubGroupID) {
+    return menuSubGroupCollection
+        .where('id', isEqualTo: selectedSubGroupID)
+        .snapshots();
+  }
+
+
+  // Return a stream of the currently active quiz
+  Stream<QuerySnapshot> getActiveQuiz() {
+    return quizCollection.where('isActive', isEqualTo: true).snapshots();
+  }
+
+
+  // Return a stream of the currently active question in the pub quiz
+  Stream<QuerySnapshot> getCurrentQuestion(
+      String quizID, int questionNumber
+      ) {
+
+    return questionCollection
+        .where('quizID', isEqualTo: quizID)
+        .where('questionNumber', isEqualTo: questionNumber)
+        .snapshots();
+  }
+
+
+  // Return a stream of all the score documents for a given quiz in order of
+  // descending score
+  Stream<QuerySnapshot> getLeaderboardScores(String quizID) {
+
+    return scoreCollection
+        .orderBy('score', descending: true)
+        .where('quizID', isEqualTo: quizID)
+        .snapshots();
+  }
+
+
+  // Return a stream of all the quiz documents inside the Quizzes collection
+  // ordered by the most recent creationDate
+  Stream<QuerySnapshot> getOrderedQuizzes() {
+    return quizCollection.orderBy('creationDate', descending: true).snapshots();
+  }
+
+
+  // Return a stream of the questions inside of a quiz ordered by
+  // ascending question numbers
+  Stream<QuerySnapshot> getOrderedQuestions(String quizID) {
+    return questionCollection
+        .where('quizID', isEqualTo: quizID)
+        .orderBy('questionNumber')
+        .snapshots();
+  }
+
+
+  // Return a stream containing the snapshots of the bandaoke queue
+  Stream<QuerySnapshot> getBandaokeQueue() {
+    return bandaokeQueueCollection
+        .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
+        .snapshots();
+  }
+
+
+  // Return a stream containing the snapshots of the comedy night schedule
+  Stream<QuerySnapshot> getComedyNightSchedule() {
+    return comedyNightScheduleCollection.snapshots();
+  }
+
+
   // Create or update user information into the Users collection
   // in the database
   Future updateUser(String uid, String name, String teamName,
@@ -348,18 +430,6 @@ class DatabaseService {
   // Quizzes collection
   Future updateQuiz(String id, String quizTitle) async {
     return await quizCollection.doc(id).update({"quizTitle": quizTitle});
-  }
-
-
-  // Return a stream of the quizzes inside the Quizzes collection
-  Stream<QuerySnapshot> get quizzes {
-    return quizCollection.snapshots();
-  }
-
-
-  // Return a stream of the questions inside the Questions collection
-  Stream<QuerySnapshot> get questions {
-    return questionCollection.snapshots();
   }
 
 

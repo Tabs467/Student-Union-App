@@ -72,10 +72,7 @@ class _BandaokeState extends State<Bandaoke> {
           ),
           // Listen to the stream containing snapshots of the bandaoke queue
           StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('BandaokeQueue')
-                  .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
-                  .snapshots(),
+              stream: _database.getBandaokeQueue(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -236,10 +233,7 @@ class _BandaokeState extends State<Bandaoke> {
                   // StreamBuilder used here since the card needs to react to
                   // live changes to the queuedMembers array in the database
                   child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('BandaokeQueue')
-                          .where('id', isEqualTo: 'Z4NtbE7IQ2vp32WHkpYY')
-                          .snapshots(),
+                      stream: _database.getBandaokeQueue(),
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {

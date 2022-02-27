@@ -54,10 +54,7 @@ class _EditMenuItemsState extends State<EditMenuItems> {
 
           // Stream of the Menu Sub Group that contains the Menu Items
           StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('MenuSubGroup')
-                  .where('id', isEqualTo: subGroupID)
-                  .snapshots(),
+              stream: _database.getMenuSubGroup(subGroupID),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {

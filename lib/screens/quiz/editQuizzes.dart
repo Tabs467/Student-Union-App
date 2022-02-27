@@ -19,6 +19,8 @@ class EditQuizzes extends StatefulWidget {
 // (the delete button also has a confirmation pop-up)
 // And also a button that leads to a screen to create a new quiz
 class _EditQuizzesState extends State<EditQuizzes> {
+  final DatabaseService _database = DatabaseService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +30,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
       // Set up the stream that retrieves and listens to all the quiz documents
       // inside the Quizzes collection ordered by the most recent creationDate
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Quizzes')
-              .orderBy('creationDate', descending: true)
-              .snapshots(),
+          stream: _database.getOrderedQuizzes(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {

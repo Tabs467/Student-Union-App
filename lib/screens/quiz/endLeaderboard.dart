@@ -48,11 +48,7 @@ class _EndLeaderboardState extends State<EndLeaderboard> {
     return StreamBuilder<QuerySnapshot>(
         // Stream returns all the Score documents for the given quiz in
         // order of descending score
-        stream: FirebaseFirestore.instance
-            .collection('Scores')
-            .orderBy('score', descending: true)
-            .where('quizID', isEqualTo: quizID)
-            .snapshots(),
+        stream: _database.getLeaderboardScores(quizID),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           // Error message
           if (snapshot.hasError) {

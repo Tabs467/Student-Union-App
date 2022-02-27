@@ -43,20 +43,23 @@ class _ActiveQuizState extends State<ActiveQuiz> {
     await _database.submitAnswer(answer);
   }
 
+  // The stream that will listen to the Quiz document that is marked as
+  // currently active
+  late Stream<QuerySnapshot> _quizzes;
+
   // On the first build of the widget tree retrieve the current question's
   // number, question count and whether the quiz has ended
   @override
   initState() {
     super.initState();
+
+    // Set the stream to listen to the Quiz document that is marked as
+    // currently active
+    _quizzes = _database.getActiveQuiz();
+
     retrieveCurrentQuestionNumber();
   }
 
-  // Set the stream to listen to the Quiz document that is marked as
-  // currently active
-  final Stream<QuerySnapshot> _quizzes = FirebaseFirestore.instance
-      .collection('Quizzes')
-      .where('isActive', isEqualTo: true)
-      .snapshots();
 
   // Rebuild the widget tree and update the current question number,
   // question count and quiz ended variables to their current values in the
@@ -90,10 +93,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
       body: StreamBuilder<QuerySnapshot>(
         // Set the stream to listen to the Quiz document that is marked as
         // currently active
-          stream: FirebaseFirestore.instance
-              .collection('Quizzes')
-              .where('isActive', isEqualTo: true)
-              .snapshots(),
+          stream: _database.getActiveQuiz(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
@@ -132,12 +132,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                 // Set the stream to listen to the Question document whose
                 // contained question is part of the current quiz and
                 // whose question number is the current position in the quiz
-                  stream: FirebaseFirestore.instance
-                      .collection('Questions')
-                      .where('quizID', isEqualTo: quizID)
-                      .where('questionNumber',
-                      isEqualTo: currentQuestionNumber)
-                      .snapshots(),
+                  stream: _database.getCurrentQuestion(quizID, currentQuestionNumber),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {

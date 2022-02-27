@@ -28,10 +28,7 @@ class _SelectQuizState extends State<SelectQuiz> {
       // Set up the stream that retrieves and listens to all the quiz documents
       // inside the Quizzes collection ordered by the most recent creationDate
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Quizzes')
-              .orderBy('creationDate', descending: true)
-              .snapshots(),
+          stream: _database.getOrderedQuizzes(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {

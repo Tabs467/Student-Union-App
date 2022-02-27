@@ -45,9 +45,7 @@ class _MenuState extends State<Menu> {
                 // Set up the stream that retrieves and listens to the food/drink menu groups
                 // that appear in the top horizontal scrolling menu.
                 body: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('MenuGroup')
-                        .snapshots(),
+                    stream: _database.getMenuGroups(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasError) {
@@ -248,11 +246,7 @@ class _MenuState extends State<Menu> {
                                 const SizedBox(height: 5.0),
                                 // Retrieve the Menu Sub Groups and Menu Items of the selected Menu Group
                                 StreamBuilder<QuerySnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('MenuSubGroup')
-                                        .where('MenuGroupID',
-                                            isEqualTo: selectedMenuGroupID)
-                                        .snapshots(),
+                                    stream: _database.getMenuSubGroups(selectedMenuGroupID),
                                     builder: (BuildContext context,
                                         AsyncSnapshot<QuerySnapshot> snapshot) {
                                       if (snapshot.hasError) {

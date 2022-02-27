@@ -93,9 +93,7 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
       body: StreamBuilder<QuerySnapshot>(
 
           // Stream of snapshots of the ComedyNightSchedule document
-          stream: FirebaseFirestore.instance
-              .collection('ComedyNightSchedule')
-              .snapshots(),
+          stream: _database.getComedyNightSchedule(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {

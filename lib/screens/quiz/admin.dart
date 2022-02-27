@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
+import 'package:student_union_app/services/database.dart';
 
 class QuizAdmin extends StatefulWidget {
   const QuizAdmin({Key? key}) : super(key: key);
@@ -13,6 +14,8 @@ class QuizAdmin extends StatefulWidget {
 // Widget to display buttons to start or continue a pub quiz and a button to
 // open the quiz editor Widget
 class _QuizAdminState extends State<QuizAdmin> {
+  final DatabaseService _database = DatabaseService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,10 +28,7 @@ class _QuizAdminState extends State<QuizAdmin> {
           // This will only ever return one document which is either
           // an active quiz or the Quiz document that is used to mark that
           // there isn't a quiz currently active
-          stream: FirebaseFirestore.instance
-              .collection('Quizzes')
-              .where('isActive', isEqualTo: true)
-              .snapshots(),
+          stream: _database.getActiveQuiz(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {

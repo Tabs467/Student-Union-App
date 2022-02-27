@@ -25,6 +25,8 @@ class EditMenuSubGroups extends StatefulWidget {
 // Menu Sub Group
 // Also a 'Create Sub Group' button is displayed at the bottom of the screen
 class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
+  final DatabaseService _database = DatabaseService();
+  
   String menuGroupID = '';
   String menuGroupName = '';
 
@@ -52,10 +54,7 @@ class _EditMenuSubGroupsState extends State<EditMenuSubGroups> {
 
           // Stream of Sub Groups contained within the Menu Group
           StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('MenuSubGroup')
-                  .where('MenuGroupID', isEqualTo: menuGroupID)
-                  .snapshots(),
+              stream: _database.getMenuSubGroups(menuGroupID),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {

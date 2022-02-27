@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
+import 'package:student_union_app/services/database.dart';
 
 class AdminQuizMainMenu extends StatefulWidget {
   const AdminQuizMainMenu({Key? key}) : super(key: key);
@@ -16,6 +17,8 @@ bool noActiveQuiz = true;
 // Widget to display the Quiz Main Menu screen including the admin floating
 // action button
 class _AdminQuizMainMenuState extends State<AdminQuizMainMenu> {
+  final DatabaseService _database = DatabaseService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +31,7 @@ class _AdminQuizMainMenuState extends State<AdminQuizMainMenu> {
           // This will only ever return one document which is either
           // an active quiz or the Quiz document that is used to mark that
           // there isn't a quiz currently active
-          stream: FirebaseFirestore.instance
-              .collection('Quizzes')
-              .where('isActive', isEqualTo: true)
-              .snapshots(),
+          stream: _database.getActiveQuiz(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {

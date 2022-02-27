@@ -4,7 +4,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
-
 import 'editMenuGroup.dart';
 
 class EditMenuGroups extends StatefulWidget {
@@ -20,6 +19,8 @@ class EditMenuGroups extends StatefulWidget {
 // (the delete button also has a confirmation pop-up)
 // And also a button that leads to a screen to create a new Menu Group
 class _EditMenuGroupsState extends State<EditMenuGroups> {
+  final DatabaseService _database = DatabaseService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,9 +30,7 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
       // Set up the stream that retrieves and listens to all the Menu Group
       // documents inside the MenuGroup collection
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('MenuGroup')
-              .snapshots(),
+          stream: _database.getMenuGroups(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {

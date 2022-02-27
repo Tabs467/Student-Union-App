@@ -57,11 +57,7 @@ class _EditQuestionsState extends State<EditQuestions> {
           // Stream of questions contained within the quiz in order of
           // ascending question numbers
           StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Questions')
-                  .where('quizID', isEqualTo: quizID)
-                  .orderBy('questionNumber')
-                  .snapshots(),
+              stream: _database.getOrderedQuestions(quizID),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
