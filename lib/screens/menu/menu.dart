@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/models/MenuSubGroup.dart';
@@ -304,6 +305,28 @@ class _MenuState extends State<Menu> {
                                                   padding:
                                                       const EdgeInsets.all(8.0),
                                                   child: ExpansionTile(
+                                                    // When the tile is either opened or closed
+                                                    onExpansionChanged: (bool isExpanded) {
+
+                                                      // If a screen reader is active read out the name
+                                                      // of the tapped Menu Sub Group along with it's
+                                                      // contained Menu Items
+
+                                                      String menuItems = menuSubGroup.name! + " contains: ";
+
+                                                      int menuItemCount = menuSubGroup.menuItems!.length;
+                                                      for (int menuItemIndex = 0; menuItemIndex < menuItemCount; menuItemIndex++) {
+
+                                                        // Remove the hyphens from the Menu Items since
+                                                        // screen readers can read this out as "minus"
+                                                        String removedHyphenItem = menuSubGroup.menuItems![menuItemIndex];
+                                                        removedHyphenItem = removedHyphenItem.replaceAll('-', '');
+
+                                                        menuItems += " " + removedHyphenItem;
+                                                      }
+
+                                                      SemanticsService.announce(menuItems, TextDirection.ltr);
+                                                    },
                                                     title: Text(
                                                       menuSubGroup.name!,
                                                       style: const TextStyle(
