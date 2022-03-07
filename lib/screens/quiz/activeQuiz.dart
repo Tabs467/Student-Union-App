@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/services/database.dart';
+import 'activeQuizLeaderboard.dart';
 import 'endLeaderboard.dart';
 import 'package:flutter/material.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
@@ -15,6 +16,9 @@ class ActiveQuiz extends StatefulWidget {
   _ActiveQuizState createState() => _ActiveQuizState();
 }
 
+// Widget to display the currently active question in the quiz
+// (along with answer buttons) or the end leaderboard of the
+// currently active quiz
 class _ActiveQuizState extends State<ActiveQuiz> {
 
   // Initialise quiz properties to default values
@@ -97,84 +101,155 @@ class _ActiveQuizState extends State<ActiveQuiz> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
-      appBar: buildAppBar(context, 'Quiz'),
-      body: StreamBuilder<QuerySnapshot>(
-        // Set the stream to listen to the Quiz document that is marked as
-        // currently active
-          stream: _database.getActiveQuiz(),
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return const Text(
-                  'Something went wrong retrieving the quiz');
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SpinKitRing(
-                color: Colors.white,
-                size: 50.0,
-              );
-            }
-
-            // Add the retrieved quiz to a Quiz object and update the current
-            // Quiz object to reflect the values in the database
-            // And reset the user's selected answer if the question number
-            // increases
-            snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
-
-              Quiz retrievedQuiz = _database.quizFromSnapshot(data);
-
-              currentQuiz.quizEnded = retrievedQuiz.quizEnded;
-              currentQuiz.id = retrievedQuiz.id;
-              currentQuiz.questionCount = retrievedQuiz.questionCount;
-
-              // Reset selected answer each time a new question is loaded
-              if (currentQuiz.currentQuestion! < retrievedQuiz.currentQuestion!) {
-                selectedAnswer = Answer.none;
+    return StreamBuilder<QuerySnapshot>(
+          // Set the stream to listen to the Quiz document that is marked as
+          // currently active
+            stream: _database.getActiveQuiz(),
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text(
+                    'Something went wrong retrieving the quiz');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SpinKitRing(
+                  color: Colors.white,
+                  size: 50.0,
+                );
               }
 
-              currentQuiz.currentQuestion = retrievedQuiz.currentQuestion;
-            });
+              // Add the retrieved quiz to a Quiz object and update the current
+              // Quiz object to reflect the values in the database
+              // And reset the user's selected answer if the question number
+              // increases
+              snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
 
-            // If all the quizzes questions have not been displayed
-            if (currentQuiz.currentQuestion! <= currentQuiz.questionCount!) {
-              return StreamBuilder<QuerySnapshot>(
-                // Set the stream to listen to the Question document whose
-                // contained question is part of the current quiz and
-                // whose question number is the current position in the quiz
-                  stream: _database.getCurrentQuestion(
-                      currentQuiz.id!,
-                      currentQuiz.currentQuestion!
-                  ),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text(
-                          'Something went wrong retrieving the question');
-                    }
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const SpinKitRing(
-                        color: Colors.white,
-                        size: 50.0,
+                Quiz retrievedQuiz = _database.quizFromSnapshot(data);
+
+                currentQuiz.quizEnded = retrievedQuiz.quizEnded;
+                currentQuiz.id = retrievedQuiz.id;
+                currentQuiz.questionCount = retrievedQuiz.questionCount;
+
+                // Reset selected answer each time a new question is loaded
+                if (currentQuiz.currentQuestion! < retrievedQuiz.currentQuestion!) {
+                  selectedAnswer = Answer.none;
+                }
+
+                currentQuiz.currentQuestion = retrievedQuiz.currentQuestion;
+              });
+
+              // If all the quizzes questions have not been displayed
+              if (currentQuiz.currentQuestion! <= currentQuiz.questionCount!) {
+
+                // Return the Scaffold that contains the Leaderboard floating
+                // action button
+                // And contains the ActiveQuizLeaderboard Drawer
+                // Since the Active Leaderboard should only available during the
+                // quiz
+                return Scaffold(
+                  backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
+                  appBar: buildAppBar(context, 'Quiz'),
+                  body: StreamBuilder<QuerySnapshot>(
+                    // Set the stream to listen to the Question document whose
+                    // contained question is part of the current quiz and
+                    // whose question number is the current position in the quiz
+                      stream: _database.getCurrentQuestion(
+                          currentQuiz.id!,
+                          currentQuiz.currentQuestion!
+                      ),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text(
+                              'Something went wrong retrieving the question');
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SpinKitRing(
+                            color: Colors.white,
+                            size: 50.0,
+                          );
+                        }
+
+                        // Build the question and answer Widgets depending on
+                        // which answer the user has currently selected
+                        // So that the currently selected answer is highlighted
+                        return _buildAnswers(snapshot);
+                      }),
+
+
+                    // Drawer contains the leaderboard of the active quiz
+                    // StreamBuilder used here since the quiz ID needs to be passed to the
+                    // ActiveQuizLeaderboard Widget
+                    drawer: StreamBuilder<QuerySnapshot>(
+                      // Set the stream to listen to the Quiz document that is marked as
+                      // currently active
+                        stream: _database.getActiveQuiz(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text(
+                                'Something went wrong retrieving the quiz');
+                          }
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const SpinKitRing(
+                              color: Colors.white,
+                              size: 50.0,
+                            );
+                          }
+
+                          // Add the retrieved quiz to a Quiz object and update the current
+                          // Quiz object to reflect the values in the database
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+
+                            Quiz retrievedQuiz = _database.quizFromSnapshot(data);
+
+                            currentQuiz.id = retrievedQuiz.id;
+                            currentQuiz.questionCount = retrievedQuiz.questionCount;
+                          });
+
+
+                          return ActiveQuizLeaderboard(quizID: currentQuiz.id!);
+                        }),
+
+
+                    // Drawer can also be opened by swiping to the right
+                    // And closed by swiping to the left
+                    drawerEdgeDragWidth: 500.0,
+
+                    // Floating action button at the bottom center of the screen to open the
+                    // Active Quiz Leaderboard
+                    floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
+                    // Floating action button does not appear on the End of Quiz Leaderboard
+                    floatingActionButton: Builder(builder: (context) {
+                      return FloatingActionButton.extended(
+                        // When tapped, open the Drawer containing the Active Quiz Leaderboard
+                        onPressed: () =>
+                            Scaffold.of(context).openDrawer(),
+                        backgroundColor:
+                        const Color.fromRGBO(22, 66, 139, 1),
+                        label: const Text('Leaderboard'),
+                        icon: const Icon(Icons.table_rows),
                       );
-                    }
-
-                    // Build the question and answer Widgets depending on
-                    // which answer the user has currently selected
-                    // So that the currently selected answer is highlighted
-                    return _buildAnswers(snapshot);
-                  });
-            }
-            // If the quiz has ended display the end of quiz leaderboard
-            else {
-              return EndLeaderboard(quizID: currentQuiz.id!);
-            }
-          }),
-    );
+                    })
+                );
+              }
+              // If the quiz has ended, display the end of quiz leaderboard
+              else {
+                // And use the Scaffold that does not contain the Active Quiz
+                // Leaderboard Drawer or the Floating Action Button
+                return Scaffold(
+                    backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
+                    appBar: buildAppBar(context, 'Quiz'),
+                    body: EndLeaderboard(quizID: currentQuiz.id!)
+                );
+              }
+            });
   }
 
 
