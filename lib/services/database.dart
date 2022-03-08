@@ -902,6 +902,12 @@ class DatabaseService {
                 .doc(scoreID)
                 .update({'currentQuestionCorrect': false});
           }
+
+          // Reset each user's currentQuestionAnswer field so no buttons are
+          // remained selected on the next question
+          await scoreCollection
+              .doc(scoreID)
+              .update({'currentQuestionAnswer': ''});
         })
       });
     }
@@ -976,11 +982,11 @@ class DatabaseService {
       if (answerCorrect) {
         await scoreCollection
             .doc(scoreID)
-            .update({'currentQuestionCorrect': true});
+            .update({'currentQuestionCorrect': true, 'currentQuestionAnswer': answer});
       } else {
         await scoreCollection
             .doc(scoreID)
-            .update({'currentQuestionCorrect': false});
+            .update({'currentQuestionCorrect': false, 'currentQuestionAnswer': answer});
       }
     }
     // Otherwise, if creating a new Score document
@@ -1125,10 +1131,10 @@ class DatabaseService {
   }
 
 
-  // Retrieve the logged-in user's possibly submitted nearest wins answer
-  // for the current question in the active quiz
+  // Retrieve the logged-in user's possibly submitted answer for the
+  // current question in the active quiz
   // If no answer was submitted then "No Answer Submitted" is returned.
-  Future retrieveSubmittedNearestWinsAnswer() async {
+  Future retrieveSubmittedAnswer() async {
 
     // Retrieve the currently active quiz id and current question number
     String quizID = "Not Set";
