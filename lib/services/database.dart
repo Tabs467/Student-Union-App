@@ -3,6 +3,8 @@ import 'package:student_union_app/models/Comedian.dart';
 import 'package:student_union_app/models/ComedyNightSchedule.dart';
 import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/models/MenuSubGroup.dart';
+import 'package:student_union_app/models/MultipleChoiceQuestion.dart';
+import 'package:student_union_app/models/NearestWinsQuestion.dart';
 import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/models/Score.dart';
@@ -264,12 +266,37 @@ class DatabaseService {
 
   // Return a Question Model object from a given Question snapshot
   Question questionFromSnapshot(var snapshotList) {
-    return Question(
+      return Question(
+        id: snapshotList['id'],
+        correctAnswer: snapshotList['correctAnswer'],
+        questionNumber: snapshotList['questionNumber'],
+        questionText: snapshotList['questionText'],
+        quizID: snapshotList['quizID'],
+        questionType: snapshotList['questionType']
+      );
+  }
+
+
+  // Return a Multiple Choice Question Model object from a given Question snapshot
+  MultipleChoiceQuestion multipleChoiceQuestionFromSnapshot(var snapshotList) {
+      return MultipleChoiceQuestion(
+        id: snapshotList['id'],
+        answerA: snapshotList['answerA'],
+        answerB: snapshotList['answerB'],
+        answerC: snapshotList['answerC'],
+        answerD: snapshotList['answerD'],
+        correctAnswer: snapshotList['correctAnswer'],
+        questionNumber: snapshotList['questionNumber'],
+        questionText: snapshotList['questionText'],
+        quizID: snapshotList['quizID'],
+      );
+  }
+
+
+  // Return a Nearest Wins Question Model object from a given Question snapshot
+  NearestWinsQuestion nearestWinsQuestionFromSnapshot(var snapshotList) {
+    return NearestWinsQuestion(
       id: snapshotList['id'],
-      answerA: snapshotList['answerA'],
-      answerB: snapshotList['answerB'],
-      answerC: snapshotList['answerC'],
-      answerD: snapshotList['answerD'],
       correctAnswer: snapshotList['correctAnswer'],
       questionNumber: snapshotList['questionNumber'],
       questionText: snapshotList['questionText'],
@@ -278,10 +305,10 @@ class DatabaseService {
   }
 
 
-  // Insert a new question document into the Questions collection
+  // Insert a new multiple choice question document into the Questions collection
   // Whilst also incrementing the total number of questions contained within
   // the new question's quiz
-  Future createQuestion(Question question) async {
+  Future createMultipleChoiceQuestion(MultipleChoiceQuestion question) async {
 
     String id = _generateID();
 
@@ -314,6 +341,44 @@ class DatabaseService {
       'answerB': question.answerB,
       'answerC': question.answerC,
       'answerD': question.answerD,
+      'questionType': 'MCQ'
+    });
+  }
+
+
+  // Insert a new nearest wins question document into the Questions collection
+  // Whilst also incrementing the total number of questions contained within
+  // the new question's quiz
+  Future createNearestWinsQuestion(NearestWinsQuestion question) async {
+
+    String id = _generateID();
+
+    // Increment total questions in the new questions' quiz by one
+    await quizCollection
+        .where('id', isEqualTo: question.quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+
+        Quiz quiz = quizFromSnapshot(doc);
+
+        int totalQuestions = quiz.questionCount!;
+
+        await quizCollection.doc(question.quizID).update({
+          "questionCount": (totalQuestions + 1),
+        });
+      })
+    });
+
+    // Create the question document
+    return await questionCollection.doc(id).set({
+      'id': id,
+      'quizID': question.quizID,
+      'questionNumber': question.questionNumber,
+      'questionText': question.questionText,
+      'correctAnswer': question.correctAnswer,
+      'questionType': 'NWQ'
     });
   }
 
@@ -391,8 +456,8 @@ class DatabaseService {
   }
 
 
-  // Update a question document in the Questions collection
-  Future updateQuestion(Question question) async {
+  // Update a multiple choice question document in the Questions collection
+  Future updateMultipleChoiceQuestion(MultipleChoiceQuestion question) async {
 
     return await questionCollection.doc(question.id).update({
       "answerA": question.answerA,
@@ -400,7 +465,26 @@ class DatabaseService {
       "answerC": question.answerC,
       "answerD": question.answerD,
       "correctAnswer": question.correctAnswer,
-      "questionText": question.questionText
+      "questionText": question.questionText,
+      "questionType": 'MCQ'
+    });
+
+  }
+
+
+  // Update a nearest wins question document in the Questions collection
+  // And delete any MCQ fields in the Question document if there are any
+  // (in case the question was switched from a MCQ to a NWQ)
+  Future updateNearestWinsQuestion(NearestWinsQuestion question) async {
+
+    return await questionCollection.doc(question.id).update({
+      "correctAnswer": question.correctAnswer,
+      "questionText": question.questionText,
+      "questionType": 'NWQ',
+      "answerA": FieldValue.delete(),
+      "answerB": FieldValue.delete(),
+      "answerC": FieldValue.delete(),
+      "answerD": FieldValue.delete()
     });
 
   }
@@ -482,10 +566,34 @@ class DatabaseService {
   }
 
 
+  // Retrieve how many questions are in a given quiz
+  Future retrieveQuestionCount(String quizID) async {
+
+    int questionCount = -1;
+
+    // Retrieve the question count from the quiz document with the matching id
+    await quizCollection
+        .where('id', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+
+        Quiz quiz = quizFromSnapshot(doc);
+
+        questionCount = quiz.questionCount!;
+        })
+      });
+
+    return questionCount;
+  }
+
+
   // Mark the inputted quiz as inactive and set the non active quiz marker in
   // the database to true
   // Also reset all the currentQuestionCorrect booleans in the
   // Scores collection for the active quiz to false
+  // And reset the currentQuestionAnswer variables to be empty
   // Also for each winning user of the quiz add one win to their User document
   // in the Users collection
   Future endQuiz(String quizID, int highestScore) async {
@@ -523,7 +631,8 @@ class DatabaseService {
     // Reset all the currentQuestionCorrect booleans for the active quiz to
     // false
     // To allow this quiz to be restarted without accidentally giving out
-    // any points.
+    // any points
+    // Also reset the currentQuestionAnswer variables to be empty
     return scoreCollection
         .where('quizID', isEqualTo: quizID)
         .get()
@@ -536,7 +645,7 @@ class DatabaseService {
 
         await scoreCollection
             .doc(scoreID)
-            .update({'currentQuestionCorrect': false});
+            .update({'currentQuestionCorrect': false,'currentQuestionAnswer': ''});
       })
     });
   }
@@ -550,6 +659,7 @@ class DatabaseService {
       quizID: snapshotList['quizID'],
       userID: snapshotList['userID'],
       score: snapshotList['score'],
+      currentQuestionAnswer: snapshotList['currentQuestionAnswer']
     );
   }
 
@@ -557,8 +667,14 @@ class DatabaseService {
   // Move an inputted quiz to its next question and mark whether the quiz
   // has ended or not
 
+  // Also if the current question is a nearest wins question, determine which
+  // user submitted answer is the closest to (or matches) the correct answer
+  // Then set any Score documents containing this answer to have the current
+  // question correct
+
   // Also add 10 points to each score document with the currentQuestionCorrect
-  // boolean set to true
+  // boolean set to true (if it is a multiple choice question)
+  // Add 30 points if its a nearest wins question
   // And then set each one of these booleans to false so they are prepared
   // for the next question.
 
@@ -609,46 +725,193 @@ class DatabaseService {
     }
 
 
-    // For each score document in the Scores collection for the currently
-    // active quiz
-    await scoreCollection
+
+    // Determine the type of the previous question
+    String questionType = "";
+
+    await questionCollection
         .where('quizID', isEqualTo: quizID)
+        .where('questionNumber', isEqualTo: currentQuestionNumber - 1)
         .get()
         .then((QuerySnapshot querySnapshot) => {
-      querySnapshot.docs.forEach((doc) async {
-
-        // Retrieve the document's id, whether the user tied to the document
-        // has the previous question correct, and their overall score for the
-        // currently active quiz
-
-        Score score = scoreFromSnapshot(doc);
-
-        String scoreID = score.id!;
-        bool answerCorrect = score.currentQuestionCorrect!;
-        int currentScore = score.score!;
-
-        // If the user tied to this Score document got the previous question
-        // correct
-        if (answerCorrect) {
-          // Add 10 points to their current score
-          await scoreCollection
-              .doc(scoreID)
-              .update({'score': currentScore + 10});
-          // And reset the boolean that marks whether they have the current
-          // question correct to false
-          await scoreCollection
-              .doc(scoreID)
-              .update({'currentQuestionCorrect': false});
-        }
+      querySnapshot.docs.forEach((doc) {
+        questionType = doc["questionType"];
       })
     });
+
+
+    // If it is a nearest wins question type
+    if (questionType == "NWQ") {
+
+      // Retrieve the correct answer of the currently active question in the
+      // retrieved quiz
+      // Using the retrieved quiz id and current question number
+      double correctAnswer = 255564;
+
+      await questionCollection
+          .where('quizID', isEqualTo: quizID)
+          .where('questionNumber', isEqualTo: currentQuestionNumber - 1)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        querySnapshot.docs.forEach((doc) {
+          correctAnswer = doc["correctAnswer"];
+        })
+      });
+
+
+      // For each score document in the Scores collection for the currently
+      // active quiz
+      // Retrieve the closest or matching user submitted answer for the nearest
+      // wins question
+      double closestAnswer = -49032;
+      double difference = 9549389;
+      await scoreCollection
+          .where('quizID', isEqualTo: quizID)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        querySnapshot.docs.forEach((doc) async {
+
+          Score score = scoreFromSnapshot(doc);
+
+          // If this user has submitted an answer
+          if (score.currentQuestionAnswer != '') {
+
+            // Determine the absolute difference between the correct answer and
+            // this user's submitted answer
+            // If it is the smallest absolute difference so far, then mark the
+            // user's submitted answer as the closest one found so far
+            if (correctAnswer > double.parse(score.currentQuestionAnswer)) {
+              if ((correctAnswer - double.parse(score.currentQuestionAnswer)) < difference) {
+                difference = (correctAnswer - double.parse(score.currentQuestionAnswer));
+                closestAnswer = double.parse(score.currentQuestionAnswer);
+              }
+            }
+            // This else statement covers any exactly correct answers submitted too
+            else {
+              if ((double.parse(score.currentQuestionAnswer) - correctAnswer) < difference) {
+                difference = (double.parse(score.currentQuestionAnswer) - correctAnswer);
+                closestAnswer = double.parse(score.currentQuestionAnswer);
+              }
+            }
+          }
+        })
+      });
+
+
+      // Set currentQuestionCorrect booleans in Score documents to true if their
+      // answer matches the closest answer found
+      await scoreCollection
+          .where('quizID', isEqualTo: quizID)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        querySnapshot.docs.forEach((doc) async {
+
+          // Retrieve the ID of the Score document
+          Score score = scoreFromSnapshot(doc);
+          String scoreID = score.id!;
+
+          if (double.parse(score.currentQuestionAnswer!) == closestAnswer) {
+            await scoreCollection
+                .doc(scoreID)
+                .update({'currentQuestionCorrect': true});
+          }
+        })
+      });
+
+
+      // For each score document in the Scores collection for the currently
+      // active quiz
+      await scoreCollection
+          .where('quizID', isEqualTo: quizID)
+          .get()
+          .then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) async {
+
+          // Retrieve the document's id, whether the user tied to the document
+          // has the previous question correct, and their overall score for the
+          // currently active quiz
+
+          Score score = scoreFromSnapshot(doc);
+
+          String scoreID = score.id!;
+          bool answerCorrect = score.currentQuestionCorrect!;
+          int currentScore = score.score!;
+
+          // If the user tied to this Score document got the previous question
+          // correct
+          if (answerCorrect) {
+            // Add 30 points to their current score
+            await scoreCollection
+                .doc(scoreID)
+                .update({'score': currentScore + 30});
+
+            // And reset the boolean that marks whether they have the current
+            // question correct to false
+            // And reset the currentQuestionAnswer field
+            await scoreCollection
+                .doc(scoreID)
+                .update({'currentQuestionCorrect': false, 'currentQuestionAnswer': ''});
+          }
+
+          // For any incorrect answers, reset currentQuestionCorrect boolean and
+          // reset currentQuestionAnswer field
+          else {
+            await scoreCollection
+                .doc(scoreID)
+                .update({'currentQuestionCorrect': false, 'currentQuestionAnswer': ''});
+          }
+        })
+      });
+    }
+
+
+    // If it is a Multiple Choice Question
+    else if (questionType == "MCQ") {
+
+      // For each score document in the Scores collection for the currently
+      // active quiz
+      await scoreCollection
+          .where('quizID', isEqualTo: quizID)
+          .get()
+          .then((QuerySnapshot querySnapshot) => {
+        querySnapshot.docs.forEach((doc) async {
+
+          // Retrieve the document's id, whether the user tied to the document
+          // has the previous question correct, and their overall score for the
+          // currently active quiz
+
+          Score score = scoreFromSnapshot(doc);
+
+          String scoreID = score.id!;
+          bool answerCorrect = score.currentQuestionCorrect!;
+          int currentScore = score.score!;
+
+          // If the user tied to this Score document got the previous question
+          // correct
+          if (answerCorrect) {
+            // Add 10 points to their current score
+            await scoreCollection
+                .doc(scoreID)
+                .update({'score': currentScore + 10});
+            // And reset the boolean that marks whether they have the current
+            // question correct to false
+            await scoreCollection
+                .doc(scoreID)
+                .update({'currentQuestionCorrect': false});
+          }
+        })
+      });
+    }
   }
 
 
   // Score document is created or updated to store whether the
   // currently logged-in user has the correct answer currently selected on the
   // current question in the currently active quiz.
-  Future submitAnswer(String answer) async {
+  Future submitMultipleChoiceAnswer(String answer) async {
 
     // Retrieve the currently active quiz id and current question number
     String quizID = "Not Set";
@@ -730,7 +993,8 @@ class DatabaseService {
         currentQuestionCorrect: false,
         quizID: quizID,
         userID: userID,
-        score: 0
+        score: 0,
+        currentQuestionAnswer: answer
       );
 
       // Create the Score document with the currentQuestionCorrect boolean
@@ -744,8 +1008,173 @@ class DatabaseService {
         'quizID': newScore.quizID,
         'userID': newScore.userID,
         'score': newScore.score,
-        'currentQuestionCorrect': newScore.currentQuestionCorrect
+        'currentQuestionCorrect': newScore.currentQuestionCorrect,
+        'currentQuestionAnswer': newScore.currentQuestionAnswer
       });
+    }
+  }
+
+
+  // Score document is created or updated to store the users currently submitted
+  // answer
+  // And if the user guesses exactly correctly then the score document is also
+  // updated to store that they have the current question correct
+  Future submitNearestWinsAnswer(var answer) async {
+
+    // Retrieve the currently active quiz id and current question number
+    String quizID = "Not Set";
+    int currentQuestionNumber = 300;
+
+    await quizCollection
+        .where('isActive', isEqualTo: true)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        quizID = doc['id'];
+        currentQuestionNumber = doc['currentQuestion'];
+      })
+    });
+
+    // Retrieve the correct answer of the currently active question in the
+    // retrieved quiz
+    // Using the retrieved quiz id and current question number
+    double correctAnswer = -94345784;
+
+    await questionCollection
+        .where('quizID', isEqualTo: quizID)
+        .where('questionNumber', isEqualTo: currentQuestionNumber)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        correctAnswer = doc["correctAnswer"];
+      })
+    });
+
+    // Compare the user's answer to the retrieved correct answer
+    // And store whether it is correct
+    bool answerCorrect = false;
+    if (double.parse(answer) == correctAnswer) {
+      answerCorrect = true;
+    }
+
+    // Retrieve the currently logged-in user's ID from the
+    // authentication service
+    String userID = _auth.currentUID()!;
+
+
+    // Attempt to retrieve the logged-in user's Score document for the
+    // currently active quiz
+    String scoreID = "Not Set";
+
+    await scoreCollection
+        .where('userID', isEqualTo: userID)
+        .where('quizID', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        scoreID = doc["id"];
+      })
+    });
+
+    // Determine whether or not this Score document already exists
+    // If updating an existing Score document
+    if (scoreID != "Not Set") {
+      // Update the Score document's currentQuestionCorrect boolean to store
+      // whether the user has the correct answer currently selected
+      // And store the user's submitted answer
+      if (answerCorrect) {
+        await scoreCollection
+            .doc(scoreID)
+            .update({'currentQuestionCorrect': true, 'currentQuestionAnswer': answer});
+      } else {
+        await scoreCollection
+            .doc(scoreID)
+            .update({'currentQuestionCorrect': false, 'currentQuestionAnswer': answer});
+      }
+    }
+    // Otherwise, if creating a new Score document
+    else {
+      // Create a score doc with an auto generated id of 20 characters
+      scoreID = _generateID();
+
+      Score newScore = Score(
+          id: scoreID,
+          currentQuestionCorrect: false,
+          quizID: quizID,
+          userID: userID,
+          score: 0,
+          currentQuestionAnswer: answer
+      );
+
+      // Create the Score document with the currentQuestionCorrect boolean
+      // storing whether the user has the correct answer currently submitted
+      // And store the user's submitted answer
+      if (answerCorrect) {
+        newScore.currentQuestionCorrect = true;
+      }
+
+      await scoreCollection.doc(scoreID).set({
+        'id': newScore.id,
+        'quizID': newScore.quizID,
+        'userID': newScore.userID,
+        'score': newScore.score,
+        'currentQuestionCorrect': newScore.currentQuestionCorrect,
+        'currentQuestionAnswer': newScore.currentQuestionAnswer
+      });
+    }
+  }
+
+
+  // Retrieve the logged-in user's possibly submitted nearest wins answer
+  // for the current question in the active quiz
+  // If no answer was submitted then "No Answer Submitted" is returned.
+  Future retrieveSubmittedNearestWinsAnswer() async {
+
+    // Retrieve the currently active quiz id and current question number
+    String quizID = "Not Set";
+
+    await quizCollection
+        .where('isActive', isEqualTo: true)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        quizID = doc['id'];
+      })
+    });
+
+
+    // Retrieve the currently logged-in user's ID from the
+    // authentication service
+    String userID = _auth.currentUID()!;
+
+
+    // Attempt to retrieve the logged-in user's Score document for the
+    // currently active quiz
+    String currentQuestionAnswer = "";
+
+    await scoreCollection
+        .where('userID', isEqualTo: userID)
+        .where('quizID', isEqualTo: quizID)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+      querySnapshot.docs.forEach((doc) {
+        currentQuestionAnswer = doc["currentQuestionAnswer"];
+      })
+    });
+
+    // Determine whether or not this user has submitted an answer for the
+    // current question
+    // (If no score document exists for this user and quiz then
+    // currentQuestionAnswer will also be left empty)
+    if (currentQuestionAnswer != "") {
+      // Return the user's submitted answer
+      return currentQuestionAnswer;
+    }
+    // Otherwise, if the user has not submitted any answers for the active quiz
+    // They couldn't have previously submitted an answer for the current question
+    else {
+      // Return that the user has not submitted an answer
+      return "No Answer Submitted";
     }
   }
 

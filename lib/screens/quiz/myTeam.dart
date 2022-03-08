@@ -43,8 +43,8 @@ class _MyTeamState extends State<MyTeam> {
   // Once retrieved, the user's pub quiz team information is displayed.
   @override
   Widget build(BuildContext context) => FutureBuilder(
-    // Rebuilt when currentUser is updated
-    // (when the user details are returned)
+      // Rebuilt when currentUser is updated
+      // (when the user details are returned)
       future: currentUser,
       builder: (context, snapshot) {
         // If the user's details are fully returned build the My Team page
@@ -154,3 +154,8 @@ class _MyTeamState extends State<MyTeam> {
         }
       });
 }
+
+
+
+
+

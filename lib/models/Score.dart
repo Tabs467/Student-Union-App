@@ -6,13 +6,15 @@ class Score {
   String? quizID;
   String? userID;
   int? score;
+  dynamic currentQuestionAnswer;
 
   Score({
     this.id,
     this.currentQuestionCorrect,
     this.quizID,
     this.userID,
-    this.score
+    this.score,
+    this.currentQuestionAnswer
   });
 
 }

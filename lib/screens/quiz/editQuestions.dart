@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/MultipleChoiceQuestion.dart';
+import 'package:student_union_app/models/NearestWinsQuestion.dart';
 import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
@@ -82,146 +84,265 @@ class _EditQuestionsState extends State<EditQuestions> {
                       Map<String, dynamic> data =
                           document.data()! as Map<String, dynamic>;
 
-                      Question question = _database.questionFromSnapshot(data);
+                      // Retrieve the question to determine the question type
+                      Question retrievedQuestion = _database.questionFromSnapshot(data);
 
-                      // Display each question's number, text, and answers
-                      // Also, highlight the correct answer in green
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 3.0, horizontal: 0.0),
-                        child: Card(
-                          elevation: 20,
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 5.0),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 5.0),
-                                child: Text(
-                                  'Q' +
-                                      question.questionNumber!.toString() +
-                                      ': ' +
-                                      question.questionText!,
-                                  style: const TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5.0),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 5.0),
-                                child: Text(
-                                  'A: ' + question.answerA!.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color: (question.correctAnswer! == 'a')
-                                        ? Colors.green
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 5.0),
-                                child: Text(
-                                  'B: ' + question.answerB!.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color: (question.correctAnswer! == 'b')
-                                        ? Colors.green
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 5.0),
-                                child: Text(
-                                  'C: ' + question.answerC!.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color: (question.correctAnswer! == 'c')
-                                        ? Colors.green
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 0.0),
-                                child: Text(
-                                  'D: ' + question.answerD!.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color: (question.correctAnswer! == 'd')
-                                        ? Colors.green
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10.0),
+                      // If the question is a multiple choice question
+                      if (retrievedQuestion.questionType == "MCQ") {
 
-                              // Display an Edit Question and a Delete Question
-                              // button per displayed question
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 0.0),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(200, 50),
-                                    maximumSize: const Size(200, 50),
-                                    primary:
-                                        const Color.fromRGBO(22, 66, 139, 1),
+                        // Cast the Question as a Multiple Choice Question
+                        MultipleChoiceQuestion question =
+                        _database.multipleChoiceQuestionFromSnapshot(data);
+
+                        // Display each question's number, text, and answers
+                        // Also, highlight the correct answer in green
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3.0, horizontal: 0.0),
+                          child: Card(
+                            elevation: 20,
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 5.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  child: Text(
+                                    'Q' +
+                                        question.questionNumber!.toString() +
+                                        ': ' +
+                                        question.questionText!,
+                                    style: const TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                    ),
                                   ),
-                                  child: const Text('Edit Question'),
-                                  // When tapped, navigate to the EditQuestion
-                                  // Widget with the question's details being
-                                  // passed as a parameter
-                                  onPressed: () async {
-                                    Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => EditQuestion(
-                                              question: question
-                                            ),
-                                          ),
-                                        );
-                                  },
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 0.0),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(200, 50),
-                                    maximumSize: const Size(200, 50),
-                                    primary:
-                                        const Color.fromRGBO(22, 66, 139, 1),
+                                const SizedBox(height: 5.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  child: Text(
+                                    'A: ' + question.answerA!.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: (question.correctAnswer! == 'a')
+                                          ? Colors.green
+                                          : Colors.black,
+                                    ),
                                   ),
-                                  child: const Text('Delete Question'),
-                                  // When tapped delete the question from the
-                                  // quiz
-                                  onPressed: () async {
-                                    _database.deleteQuestion(data['id']);
-                                  },
                                 ),
-                              ),
-                              const SizedBox(height: 5.0),
-                            ],
+                                const SizedBox(height: 10.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  child: Text(
+                                    'B: ' + question.answerB!.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: (question.correctAnswer! == 'b')
+                                          ? Colors.green
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  child: Text(
+                                    'C: ' + question.answerC!.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: (question.correctAnswer! == 'c')
+                                          ? Colors.green
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 0.0),
+                                  child: Text(
+                                    'D: ' + question.answerD!.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: (question.correctAnswer! == 'd')
+                                          ? Colors.green
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+
+                                // Display an Edit Question and a Delete Question
+                                // button per displayed question
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(200, 50),
+                                      maximumSize: const Size(200, 50),
+                                      primary:
+                                      const Color.fromRGBO(22, 66, 139, 1),
+                                    ),
+                                    child: const Text('Edit Question'),
+                                    // When tapped, navigate to the EditQuestion
+                                    // Widget with the question's details being
+                                    // passed as a parameter
+                                    onPressed: () async {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditQuestion(
+                                                  question: question
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(200, 50),
+                                      maximumSize: const Size(200, 50),
+                                      primary:
+                                      const Color.fromRGBO(22, 66, 139, 1),
+                                    ),
+                                    child: const Text('Delete Question'),
+                                    // When tapped delete the question from the
+                                    // quiz
+                                    onPressed: () async {
+                                      _database.deleteQuestion(data['id']);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
+
+
+                      // If the question is a nearest wins question
+                      else if (retrievedQuestion.questionType == "NWQ") {
+
+                        // Cast the Question as a Nearest Wins Question
+                        NearestWinsQuestion question = _database
+                            .nearestWinsQuestionFromSnapshot(data);
+
+                        // Display each question's number, text, and correct answer
+                        // Also, highlight the correct answer in green
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3.0, horizontal: 0.0),
+                          child: Card(
+                            elevation: 20,
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 5.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  child: Text(
+                                    'Q' +
+                                        question.questionNumber!.toString() +
+                                        ': ' +
+                                        question.questionText!,
+                                    style: const TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 5.0),
+                                  child: Text(
+                                    'Correct Answer: ' + question.correctAnswer!.toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+
+                                // Display an Edit Question and a Delete Question
+                                // button per displayed question
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(200, 50),
+                                      maximumSize: const Size(200, 50),
+                                      primary:
+                                      const Color.fromRGBO(22, 66, 139, 1),
+                                    ),
+                                    child: const Text('Edit Question'),
+                                    // When tapped, navigate to the EditQuestion
+                                    // Widget with the question's details being
+                                    // passed as a parameter
+                                    onPressed: () async {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditQuestion(
+                                                  question: question
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(200, 50),
+                                      maximumSize: const Size(200, 50),
+                                      primary:
+                                      const Color.fromRGBO(22, 66, 139, 1),
+                                    ),
+                                    child: const Text('Delete Question'),
+                                    // When tapped delete the question from the
+                                    // quiz
+                                    onPressed: () async {
+                                      _database.deleteQuestion(data['id']);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+
+                      // If the question type cannot be determined return the
+                      // following error
+                      else {
+                        return const Text('Question type cannot be determined');
+                      }
                     }).toList()),
                   ),
                 );

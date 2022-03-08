@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/models/MultipleChoiceQuestion.dart';
+import 'package:student_union_app/models/NearestWinsQuestion.dart';
 import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
@@ -166,208 +168,344 @@ class _QuizControlState extends State<QuizControl> {
                         Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
 
-                        Question currentQuestion = _database
-                            .questionFromSnapshot(data);
+                        // Retrieve the question to determine the question type
+                        Question retrievedQuestion = _database.questionFromSnapshot(data);
 
-                        return Container(
-                          color: const Color.fromRGBO(244, 175, 20, 1.0),
-                          child: IntrinsicWidth(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Card(
-                                    color: const Color.fromRGBO(22, 66, 139, 1),
-                                    elevation: 20,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      side: const BorderSide(
-                                          color: Colors.white70, width: 1),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Center(
-                                        child: Text(
-                                          'Q' +
-                                              currentQuestion.questionNumber
-                                                  .toString() +
-                                              ': ' +
-                                              currentQuestion.questionText!,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.fromLTRB(
-                                      15.0, 7.5, 15.0, 5.0),
-                                  child: Card(
-                                    color: Colors.red[900],
-                                    elevation: 20,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                      side: const BorderSide(
-                                          color: Colors.white70, width: 1),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'A: ' + currentQuestion.answerA!,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.fromLTRB(
-                                      15.0, 0.0, 15.0, 5.0),
-                                  child: Card(
-                                    color: Colors.blue[900],
-                                    elevation: 20,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                      side: const BorderSide(
-                                          color: Colors.white70, width: 1),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'B: ' + currentQuestion.answerB!,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.fromLTRB(
-                                      15.0, 0.0, 15.0, 5.0),
-                                  child: Card(
-                                    color: Colors.green[900],
-                                    elevation: 20,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                      side: const BorderSide(
-                                          color: Colors.white70, width: 1),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'C: ' + currentQuestion.answerC!,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.fromLTRB(
-                                      15.0, 0.0, 15.0, 5.0),
-                                  child: Card(
-                                    color: Colors.yellow[900],
-                                    elevation: 20,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0),
-                                      side: const BorderSide(
-                                          color: Colors.white70, width: 1),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'D: ' + currentQuestion.answerD!,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Card(
-                                    color: const Color.fromRGBO(
-                                        244, 140, 20, 1),
-                                    elevation: 20,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      side: const BorderSide(
-                                          color: Colors.yellow, width: 3),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Center(
-                                        child: Text(
-                                          'Correct Answer: ' +
-                                              currentQuestion.correctAnswer!
-                                                  .toUpperCase(),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      16.0, 0.0, 16.0, 16.0),
-                                  child: Card(
-                                    color: const Color.fromRGBO(22, 66, 139, 1),
-                                    elevation: 20,
-                                    shape: const RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.white, width: 2.0),
-                                    ),
-                                    child: InkWell(
-                                      // When tapped, toggle the Drawer
-                                      // containing the leaderboard
-                                      onTap: () {
-                                        Scaffold.of(context).openDrawer();
-                                      },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Center(
-                                          child: Text(
-                                            'Leaderboard',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 30,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                        // If the question is a multiple choice question
+                         if (retrievedQuestion.questionType == "MCQ") {
+
+                           // Cast the Question as a Multiple Choice Question
+                           MultipleChoiceQuestion currentQuestion = _database
+                               .multipleChoiceQuestionFromSnapshot(data);
+
+                           // Display the current MCQ along with its answers
+                           // And the Leaderboard button
+                           return Container(
+                             color: const Color.fromRGBO(244, 175, 20, 1.0),
+                             child: IntrinsicWidth(
+                               child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                                 children: [
+                                   Padding(
+                                     padding: const EdgeInsets.all(8),
+                                     child: Card(
+                                       color: const Color.fromRGBO(
+                                           22, 66, 139, 1),
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(
+                                             30),
+                                         side: const BorderSide(
+                                             color: Colors.white70, width: 1),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(16.0),
+                                         child: Center(
+                                           child: Text(
+                                             'Q' +
+                                                 currentQuestion.questionNumber
+                                                     .toString() +
+                                                 ': ' +
+                                                 currentQuestion.questionText!,
+                                             style: const TextStyle(
+                                               fontWeight: FontWeight.bold,
+                                               fontSize: 30,
+                                               color: Colors.white,
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding:
+                                     const EdgeInsets.fromLTRB(
+                                         15.0, 7.5, 15.0, 5.0),
+                                     child: Card(
+                                       color: Colors.red[900],
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(0),
+                                         side: const BorderSide(
+                                             color: Colors.white70, width: 1),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(10.0),
+                                         child: Text(
+                                           'A: ' + currentQuestion.answerA!,
+                                           style: const TextStyle(
+                                             fontWeight: FontWeight.bold,
+                                             fontSize: 30,
+                                             color: Colors.white,
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding:
+                                     const EdgeInsets.fromLTRB(
+                                         15.0, 0.0, 15.0, 5.0),
+                                     child: Card(
+                                       color: Colors.blue[900],
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(0),
+                                         side: const BorderSide(
+                                             color: Colors.white70, width: 1),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(10.0),
+                                         child: Text(
+                                           'B: ' + currentQuestion.answerB!,
+                                           style: const TextStyle(
+                                             fontWeight: FontWeight.bold,
+                                             fontSize: 30,
+                                             color: Colors.white,
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding:
+                                     const EdgeInsets.fromLTRB(
+                                         15.0, 0.0, 15.0, 5.0),
+                                     child: Card(
+                                       color: Colors.green[900],
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(0),
+                                         side: const BorderSide(
+                                             color: Colors.white70, width: 1),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(10.0),
+                                         child: Text(
+                                           'C: ' + currentQuestion.answerC!,
+                                           style: const TextStyle(
+                                             fontWeight: FontWeight.bold,
+                                             fontSize: 30,
+                                             color: Colors.white,
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding:
+                                     const EdgeInsets.fromLTRB(
+                                         15.0, 0.0, 15.0, 5.0),
+                                     child: Card(
+                                       color: Colors.yellow[900],
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(0),
+                                         side: const BorderSide(
+                                             color: Colors.white70, width: 1),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(10.0),
+                                         child: Text(
+                                           'D: ' + currentQuestion.answerD!,
+                                           style: const TextStyle(
+                                             fontWeight: FontWeight.bold,
+                                             fontSize: 30,
+                                             color: Colors.white,
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding: const EdgeInsets.all(16),
+                                     child: Card(
+                                       color: const Color.fromRGBO(
+                                           244, 140, 20, 1),
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(
+                                             30),
+                                         side: const BorderSide(
+                                             color: Colors.yellow, width: 3),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(10.0),
+                                         child: Center(
+                                           child: Text(
+                                             'Correct Answer: ' +
+                                                 currentQuestion.correctAnswer!
+                                                     .toUpperCase(),
+                                             style: const TextStyle(
+                                               fontWeight: FontWeight.bold,
+                                               fontSize: 30,
+                                               color: Colors.white,
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding: const EdgeInsets.fromLTRB(
+                                         16.0, 0.0, 16.0, 16.0),
+                                     child: Card(
+                                       color: const Color.fromRGBO(
+                                           22, 66, 139, 1),
+                                       elevation: 20,
+                                       shape: const RoundedRectangleBorder(
+                                         side: BorderSide(
+                                             color: Colors.white, width: 2.0),
+                                       ),
+                                       child: InkWell(
+                                         // When tapped, toggle the Drawer
+                                         // containing the leaderboard
+                                         onTap: () {
+                                           Scaffold.of(context).openDrawer();
+                                         },
+                                         child: const Padding(
+                                           padding: EdgeInsets.all(10.0),
+                                           child: Center(
+                                             child: Text(
+                                               'Leaderboard',
+                                               style: TextStyle(
+                                                 fontWeight: FontWeight.bold,
+                                                 fontSize: 30,
+                                                 color: Colors.white,
+                                               ),
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           );
+                         }
+
+
+                         // If the question is a nearest wins question
+                         else if (retrievedQuestion.questionType == "NWQ") {
+
+                           // Cast the Question as a Nearest Wins Question
+                           NearestWinsQuestion currentQuestion = _database
+                               .nearestWinsQuestionFromSnapshot(data);
+
+                           // Display the current NWQ along with its answer
+                           // And the Leaderboard button
+                           return Container(
+                             color: const Color.fromRGBO(244, 175, 20, 1.0),
+                             child: IntrinsicWidth(
+                               child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                                 children: [
+                                   Padding(
+                                     padding: const EdgeInsets.all(8),
+                                     child: Card(
+                                       color: const Color.fromRGBO(
+                                           22, 66, 139, 1),
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(
+                                             30),
+                                         side: const BorderSide(
+                                             color: Colors.white70, width: 1),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(16.0),
+                                         child: Center(
+                                           child: Text(
+                                             'Q' +
+                                                 currentQuestion.questionNumber
+                                                     .toString() +
+                                                 ': ' +
+                                                 currentQuestion.questionText!,
+                                             style: const TextStyle(
+                                               fontWeight: FontWeight.bold,
+                                               fontSize: 30,
+                                               color: Colors.white,
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding: const EdgeInsets.all(16),
+                                     child: Card(
+                                       color: const Color.fromRGBO(
+                                           244, 140, 20, 1),
+                                       elevation: 20,
+                                       shape: RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.circular(
+                                             30),
+                                         side: const BorderSide(
+                                             color: Colors.yellow, width: 3),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.all(10.0),
+                                         child: Center(
+                                           child: Text(
+                                             'Correct Answer: ' +
+                                                 currentQuestion.correctAnswer!
+                                                     .toString(),
+                                             style: const TextStyle(
+                                               fontWeight: FontWeight.bold,
+                                               fontSize: 30,
+                                               color: Colors.white,
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding: const EdgeInsets.fromLTRB(
+                                         16.0, 0.0, 16.0, 16.0),
+                                     child: Card(
+                                       color: const Color.fromRGBO(
+                                           22, 66, 139, 1),
+                                       elevation: 20,
+                                       shape: const RoundedRectangleBorder(
+                                         side: BorderSide(
+                                             color: Colors.white, width: 2.0),
+                                       ),
+                                       child: InkWell(
+                                         // When tapped, toggle the Drawer
+                                         // containing the leaderboard
+                                         onTap: () {
+                                           Scaffold.of(context).openDrawer();
+                                         },
+                                         child: const Padding(
+                                           padding: EdgeInsets.all(10.0),
+                                           child: Center(
+                                             child: Text(
+                                               'Leaderboard',
+                                               style: TextStyle(
+                                                 fontWeight: FontWeight.bold,
+                                                 fontSize: 30,
+                                                 color: Colors.white,
+                                               ),
+                                             ),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           );
+                         }
+
+
+                         // If the question type cannot be determined, output the
+                         // following error message
+                         else {
+                           return const Text('Question Type Not Set');
+                         }
                       }).toList()),
                 ),
               ),
