@@ -10,7 +10,7 @@ class AuthenticationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Create CurrentUser object based on FirebaseUser object (FirebaseUser
-  // does not contain email, name, teamName, wins, admin).
+  // does not contain email, name, teamName, wins, admin, etc.).
   CurrentUser? _userFromFirebase(User user) {
     return CurrentUser(
         uid: user.uid,
@@ -18,6 +18,13 @@ class AuthenticationService {
         name: 'not set',
         teamName: 'not set',
         wins: 0,
+        monthlyWins: 0,
+        semesterlyWins: 0,
+        yearlyWins: 0,
+        winDates: [],
+        monthlyWinDates: [],
+        semesterlyWinDates: [],
+        yearlyWinDates: [],
         admin: false);
   }
 

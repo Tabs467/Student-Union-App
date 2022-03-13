@@ -141,13 +141,23 @@ class DatabaseService {
   // Create a CurrentUser object based on results from a query to the
   // Users collection
   CurrentUser? _userFromQuery(String uid, String email, String name,
-      String teamName, int wins, bool admin) {
+      String teamName, int wins, int monthlyWins, int semesterlyWins,
+      int yearlyWins, var winDates, var monthlyWinDates, var semesterlyWinDates,
+      var yearlyWinDates, bool admin) {
+
     return CurrentUser(
         uid: uid,
         email: email,
         name: name,
         teamName: teamName,
         wins: wins,
+        monthlyWins: monthlyWins,
+        semesterlyWins: semesterlyWins,
+        yearlyWins: yearlyWins,
+        winDates: winDates,
+        monthlyWinDates: monthlyWinDates,
+        semesterlyWinDates: semesterlyWinDates,
+        yearlyWinDates: yearlyWinDates,
         admin: admin);
   }
 
@@ -159,6 +169,13 @@ class DatabaseService {
     String name = '';
     String teamName = '';
     int wins = 0;
+    int monthlyWins = 0;
+    int semesterlyWins = 0;
+    int yearlyWins = 0;
+    List<Timestamp> winDates = [];
+    List<Timestamp> monthlyWinDates = [];
+    List<Timestamp> semesterlyWinDates = [];
+    List<Timestamp> yearlyWinDates = [];
     bool admin = false;
 
     await userCollection
@@ -169,11 +186,20 @@ class DatabaseService {
                 name = doc["name"];
                 teamName = doc["teamName"];
                 wins = doc["wins"];
+                monthlyWins = doc["monthlyWins"];
+                semesterlyWins = doc["semesterlyWins"];
+                yearlyWins = doc["yearlyWins"];
+                winDates = doc["winDates"];
+                monthlyWinDates = doc["monthlyWinDates"];
+                semesterlyWinDates = doc["semesterlyWinDates"];
+                yearlyWinDates = doc["yearlyWinDates"];
                 admin = doc["admin"];
               })
             });
 
-    return _userFromQuery(uid, email, name, teamName, wins, admin);
+    return _userFromQuery(uid, email, name, teamName, wins, monthlyWins,
+        semesterlyWins, yearlyWins, winDates, monthlyWinDates,
+        semesterlyWinDates, yearlyWinDates, admin);
   }
 
 
@@ -186,6 +212,13 @@ class DatabaseService {
     String name = '';
     String teamName = '';
     int wins = 0;
+    int monthlyWins = 0;
+    int semesterlyWins = 0;
+    int yearlyWins = 0;
+    List<Timestamp> winDates = [];
+    List<Timestamp> monthlyWinDates = [];
+    List<Timestamp> semesterlyWinDates = [];
+    List<Timestamp> yearlyWinDates = [];
     bool admin = false;
 
     await userCollection
@@ -196,11 +229,20 @@ class DatabaseService {
         name = doc["name"];
         teamName = doc["teamName"];
         wins = doc["wins"];
+        monthlyWins = doc["monthlyWins"];
+        semesterlyWins = doc["semesterlyWins"];
+        yearlyWins = doc["yearlyWins"];
+        winDates = doc["winDates"];
+        monthlyWinDates = doc["monthlyWinDates"];
+        semesterlyWinDates = doc["semesterlyWinDates"];
+        yearlyWinDates = doc["yearlyWinDates"];
         admin = doc["admin"];
       })
     });
 
-    return _userFromQuery(uid, email, name, teamName, wins, admin);
+    return _userFromQuery(uid, email, name, teamName, wins, monthlyWins,
+        semesterlyWins, yearlyWins, winDates, monthlyWinDates,
+        semesterlyWinDates, yearlyWinDates, admin);
   }
 
 
