@@ -140,8 +140,8 @@ class _AdminQuizMainMenuState extends State<AdminQuizMainMenu> {
                               child: InkWell(
                                   splashColor: Colors.black.withOpacity(.3),
                                   onTap: () {
-                                    //Navigator.pushNamed(
-                                    //context, '/quiz/leaderboards');
+                                    Navigator.pushNamed(
+                                        context, '/quiz/leaderboards');
                                   }),
                             )),
                       ),

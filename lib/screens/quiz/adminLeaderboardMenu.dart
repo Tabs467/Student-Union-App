@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:student_union_app/screens/buildAppBar.dart';
-import 'package:student_union_app/screens/buildTabTitle.dart';
+import '../buildAppBar.dart';
+import '../buildTabTitle.dart';
 
-class AnonQuizMainMenu extends StatefulWidget {
-  const AnonQuizMainMenu({Key? key}) : super(key: key);
+class AdminLeaderboardMenu extends StatefulWidget {
+  const AdminLeaderboardMenu({Key? key}) : super(key: key);
 
   @override
-  _AnonQuizMainMenuState createState() => _AnonQuizMainMenuState();
+  _AdminLeaderboardMenuState createState() => _AdminLeaderboardMenuState();
 }
 
-// Widget to display the Quiz Main Menu screen for user's that are not
-// logged-in - so some buttons on the screen lead to the login page rather than
-// the active quiz page or the 'My Team' page.
-class _AnonQuizMainMenuState extends State<AnonQuizMainMenu> {
+// Widget to display the admin leaderboards menu where the user can navigate to
+// the admin versions of the monthly, semesterly, and yearly leaderboards
+class _AdminLeaderboardMenuState extends State<AdminLeaderboardMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +26,7 @@ class _AnonQuizMainMenuState extends State<AnonQuizMainMenu> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
-                  child: buildTabTitle('Pub Quiz', 40),
+                  child: buildTabTitle('Leaderboards', 40),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 0.0, 4, 3.0),
@@ -37,13 +36,13 @@ class _AnonQuizMainMenuState extends State<AnonQuizMainMenu> {
                     child: Card(
                         margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                         child: Ink.image(
-                          image: const AssetImage('assets/sign_up_to_play.png'),
+                          image: const AssetImage('assets/leaderboards.png'),
                           fit: BoxFit.fill,
                           child: InkWell(
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/authentication/authenticate');
+                                    context, '/quiz/adminMonthly');
                               }),
                         )),
                   ),
@@ -62,7 +61,7 @@ class _AnonQuizMainMenuState extends State<AnonQuizMainMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/quiz/leaderboards');
+                                context, '/quiz/adminSemesterly');
                               }),
                         )),
                   ),
@@ -76,13 +75,13 @@ class _AnonQuizMainMenuState extends State<AnonQuizMainMenu> {
                         margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                         child: Ink.image(
                           image: const AssetImage(
-                              'assets/sign_up_to_keep_track_of_your_team.png'),
+                              'assets/leaderboards.png'),
                           fit: BoxFit.fill,
                           child: InkWell(
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/authentication/authenticate');
+                                    context, '/quiz/adminYearly');
                               }),
                         )),
                   ),
