@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 // Model for users
 class CurrentUser {
   final String uid;
@@ -11,10 +9,10 @@ class CurrentUser {
   final int semesterlyWins;
   final int yearlyWins;
   final bool admin;
-  List<Timestamp> winDates = [];
-  List<Timestamp> monthlyWinDates = [];
-  List<Timestamp> semesterlyWinDates = [];
-  List<Timestamp> yearlyWinDates = [];
+  List<dynamic>? winDates = [];
+  List<dynamic>? monthlyWinDates = [];
+  List<dynamic>? semesterlyWinDates = [];
+  List<dynamic>? yearlyWinDates = [];
 
   CurrentUser(
       {required this.uid,

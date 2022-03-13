@@ -1,13 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:student_union_app/models/BandaokeQueue.dart';
 import 'package:student_union_app/models/Comedian.dart';
 import 'package:student_union_app/models/ComedyNightSchedule.dart';
+import 'package:student_union_app/models/LeaderboardEntry.dart';
 import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/models/MenuSubGroup.dart';
+import 'package:student_union_app/models/MonthlyLeaderboardDoc.dart';
 import 'package:student_union_app/models/MultipleChoiceQuestion.dart';
 import 'package:student_union_app/models/NearestWinsQuestion.dart';
 import 'package:student_union_app/models/Question.dart';
 import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/models/Score.dart';
+import 'package:student_union_app/models/SemesterlyLeaderboardDoc.dart';
+import 'package:student_union_app/models/YearlyLeaderboardDoc.dart';
 import 'authentication.dart';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,6 +39,12 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('BandaokeQueue');
   CollectionReference comedyNightScheduleCollection =
       FirebaseFirestore.instance.collection('ComedyNightSchedule');
+  CollectionReference monthlyLeaderboardEntriesCollection =
+      FirebaseFirestore.instance.collection('MonthlyLeaderboardEntries');
+  CollectionReference semesterlyLeaderboardEntriesCollection =
+      FirebaseFirestore.instance.collection('SemesterlyLeaderboardEntries');
+  CollectionReference yearlyLeaderboardEntriesCollection =
+      FirebaseFirestore.instance.collection('YearlyLeaderboardEntries');
 
   // Some FireStore access requires the authentication service to determine
   // the currently logged-in user's UID
@@ -122,10 +133,73 @@ class DatabaseService {
   }
 
 
+  // Return a stream containing the snapshots of the singleton monthly
+  // leaderboard document
+  Stream<QuerySnapshot> getMonthlyLeaderboardDoc() {
+    return monthlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'AoJjjYhtjLeYQhc2s8zK')
+        .snapshots();
+  }
+
+
+  // Return a stream of all the leaderboard entries for a given month in order
+  // of descending total wins
+  Stream<QuerySnapshot> getMonthlyScores(String seasonNumber) {
+
+    return monthlyLeaderboardEntriesCollection
+        .orderBy('totalWins', descending: true)
+        .where('seasonNumber', isEqualTo: seasonNumber)
+        .snapshots();
+  }
+
+
+  // Return a stream containing the snapshots of the singleton semesterly
+  // leaderboard document
+  Stream<QuerySnapshot> getSemesterlyLeaderboardDoc() {
+    return semesterlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: '2RpLeBNHCgOcHzjORDCQ')
+        .snapshots();
+  }
+
+
+  // Return a stream of all the leaderboard entries for a given semester in
+  // order of descending total wins
+  Stream<QuerySnapshot> getSemesterlyScores(String seasonNumber) {
+
+    return semesterlyLeaderboardEntriesCollection
+        .orderBy('totalWins', descending: true)
+        .where('seasonNumber', isEqualTo: seasonNumber)
+        .snapshots();
+  }
+
+
+  // Return a stream containing the snapshots of the singleton yearly
+  // leaderboard document
+  Stream<QuerySnapshot> getYearlyLeaderboardDoc() {
+    return yearlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'OrAMZAbg8wi3UTUgcYth')
+        .snapshots();
+  }
+
+
+  // Return a stream of all the leaderboard entries for a given year in order
+  // of descending total wins
+  Stream<QuerySnapshot> getYearlyScores(String seasonNumber) {
+
+    return yearlyLeaderboardEntriesCollection
+        .orderBy('totalWins', descending: true)
+        .where('seasonNumber', isEqualTo: seasonNumber)
+        .snapshots();
+  }
+
+
   // Create or update user information into the Users collection
   // in the database
   Future updateUser(String uid, String name, String teamName,
-      int wins, bool admin) async {
+      int wins, int monthlyWins, int semesterlyWins, int yearlyWins,
+      var winDates, var monthlyWinDates, var semesterlyWinDates,
+      var yearlyWinDates, bool admin) async {
+
     // If a document with the given uid doesn't exist yet in the database
     // it will be created
     return await userCollection.doc(uid).set({
@@ -133,6 +207,13 @@ class DatabaseService {
       'name': name,
       'teamName': teamName,
       'wins': wins,
+      'monthlyWins': monthlyWins,
+      'semesterlyWins': semesterlyWins,
+      'yearlyWins': yearlyWins,
+      'winDates': winDates,
+      'monthlyWinDates': monthlyWinDates,
+      'semesterlyWinDates': semesterlyWinDates,
+      'yearlyWinDates': yearlyWinDates,
       'admin': admin,
     });
   }
@@ -172,10 +253,10 @@ class DatabaseService {
     int monthlyWins = 0;
     int semesterlyWins = 0;
     int yearlyWins = 0;
-    List<Timestamp> winDates = [];
-    List<Timestamp> monthlyWinDates = [];
-    List<Timestamp> semesterlyWinDates = [];
-    List<Timestamp> yearlyWinDates = [];
+    var winDates = [];
+    var monthlyWinDates = [];
+    var semesterlyWinDates = [];
+    var yearlyWinDates = [];
     bool admin = false;
 
     await userCollection
@@ -215,10 +296,10 @@ class DatabaseService {
     int monthlyWins = 0;
     int semesterlyWins = 0;
     int yearlyWins = 0;
-    List<Timestamp> winDates = [];
-    List<Timestamp> monthlyWinDates = [];
-    List<Timestamp> semesterlyWinDates = [];
-    List<Timestamp> yearlyWinDates = [];
+    var winDates = [];
+    var monthlyWinDates = [];
+    var semesterlyWinDates = [];
+    var yearlyWinDates = [];
     bool admin = false;
 
     await userCollection
@@ -1224,6 +1305,56 @@ class DatabaseService {
       // Return that the user has not submitted an answer
       return "No Answer Submitted";
     }
+  }
+
+
+  // Return a LeaderboardEntry Model object from a given Leaderboard Entry
+  // snapshot
+  LeaderboardEntry leaderboardEntryFromSnapshot(var snapshotList) {
+    return LeaderboardEntry(
+        id: snapshotList['id'],
+        seasonNumber: snapshotList['seasonNumber'],
+        userID: snapshotList['userID'],
+        totalWins: snapshotList['totalWins'],
+        totalPoints: snapshotList['totalPoints']
+    );
+  }
+
+
+  // Return a MonthlyLeaderboardDoc Model object from a given Monthly
+  // Leaderboard Entry snapshot
+  MonthlyLeaderboardDoc monthlyLeaderboardDocFromSnapshot(var snapshotList) {
+    return MonthlyLeaderboardDoc(
+        id: snapshotList['id'],
+        currentSeason: snapshotList['currentSeason'],
+        currentMonth: snapshotList['currentMonth'],
+        prizes: snapshotList['prizes']
+    );
+  }
+
+
+  // Return a SemesterlyLeaderboardDoc Model object from a given Semesterly
+  // Leaderboard Entry snapshot
+  SemesterlyLeaderboardDoc semesterlyLeaderboardDocFromSnapshot(
+      var snapshotList
+      ) {
+
+    return SemesterlyLeaderboardDoc(
+        id: snapshotList['id'],
+        currentSeason: snapshotList['currentSeason'],
+        prizes: snapshotList['prizes']
+    );
+  }
+
+
+  // Return a YearlyLeaderboardDoc Model object from a given Yearly Leaderboard
+  // Entry snapshot
+  YearlyLeaderboardDoc yearlyLeaderboardDocFromSnapshot(var snapshotList) {
+    return YearlyLeaderboardDoc(
+        id: snapshotList['id'],
+        currentSeason: snapshotList['currentSeason'],
+        prizes: snapshotList['prizes']
+    );
   }
 
 

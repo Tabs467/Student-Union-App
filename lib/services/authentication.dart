@@ -88,7 +88,9 @@ class AuthenticationService {
 
       // Create a Google Firebase entry into the Users collection of the new
       // user
-      await DatabaseService().updateUser(uid!, name, teamName, 0, false);
+      await DatabaseService().updateUser(
+          uid!, name, teamName, 0, 0, 0, 0, [], [], [], [], false
+      );
 
       return _userFromFirebase(user);
 
