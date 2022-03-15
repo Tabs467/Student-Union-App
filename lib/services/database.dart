@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:student_union_app/models/BandaokeQueue.dart';
 import 'package:student_union_app/models/Comedian.dart';
 import 'package:student_union_app/models/ComedyNightSchedule.dart';
@@ -144,7 +143,7 @@ class DatabaseService {
 
   // Return a stream of all the leaderboard entries for a given month in order
   // of descending total wins
-  Stream<QuerySnapshot> getMonthlyScores(String seasonNumber) {
+  Stream<QuerySnapshot> getMonthlyScores(int seasonNumber) {
 
     return monthlyLeaderboardEntriesCollection
         .orderBy('totalWins', descending: true)
@@ -164,7 +163,7 @@ class DatabaseService {
 
   // Return a stream of all the leaderboard entries for a given semester in
   // order of descending total wins
-  Stream<QuerySnapshot> getSemesterlyScores(String seasonNumber) {
+  Stream<QuerySnapshot> getSemesterlyScores(int seasonNumber) {
 
     return semesterlyLeaderboardEntriesCollection
         .orderBy('totalWins', descending: true)
@@ -184,7 +183,7 @@ class DatabaseService {
 
   // Return a stream of all the leaderboard entries for a given year in order
   // of descending total wins
-  Stream<QuerySnapshot> getYearlyScores(String seasonNumber) {
+  Stream<QuerySnapshot> getYearlyScores(int seasonNumber) {
 
     return yearlyLeaderboardEntriesCollection
         .orderBy('totalWins', descending: true)
@@ -363,7 +362,10 @@ class DatabaseService {
 
 
   // Update a user's number of pub quiz wins to include one more win
-  Future addWin(String uid) async {
+  // And add the win date to their document
+  // And add one more win and to the total points to their current monthly,
+  // semesterly, and yearly total wins of the current seasons
+  Future addWin(String uid, int points) async {
     // Retrieve the given user's data
     CurrentUser winningUser = await getUserData(uid) as CurrentUser;
 
@@ -371,9 +373,167 @@ class DatabaseService {
     int newWins = winningUser.wins + 1;
 
     // Update the user document to store the new number of wins
+    // And the new win date
     await userCollection.doc(uid).update({
       'wins': newWins,
+      'winDates': FieldValue.arrayUnion([DateTime.now()])
     });
+
+
+
+    // Retrieve the current monthly season number
+    int monthlySeason = await retrieveCurrentMonthlySeason();
+
+    String monthlyEntryID = '';
+    int totalPoints = -1;
+    int totalWins = -1;
+    bool monthlyRecordFound = false;
+
+    // Attempt to retrieve the user's existing monthly leaderboard entry for the
+    // current season
+    await monthlyLeaderboardEntriesCollection
+        .where('userID', isEqualTo: uid)
+        .where('seasonNumber', isEqualTo: monthlySeason)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+
+        LeaderboardEntry entry = leaderboardEntryFromSnapshot(doc);
+
+        monthlyEntryID = entry.id!;
+        totalPoints = entry.totalPoints!;
+        totalWins = entry.totalWins!;
+
+        monthlyRecordFound = true;
+      })
+    });
+
+    // If a leaderboard entry for the current season could be found
+    // Update the existing record
+    if (monthlyRecordFound) {
+      // Update the user's Monthly Leaderboard Entry document to include one more
+      // win and the points gained (if one doesn't exist it will be created)
+      await monthlyLeaderboardEntriesCollection.doc(monthlyEntryID).update({
+        'totalWins': (totalWins + 1),
+        'totalPoints': (totalPoints + points)
+      });
+    }
+    // Otherwise, create a new record
+    else {
+      String newMonthlyEntryID = _generateID();
+      await monthlyLeaderboardEntriesCollection.doc(newMonthlyEntryID).set({
+        'id': newMonthlyEntryID,
+        'seasonNumber': monthlySeason,
+        'totalWins': 1,
+        'totalPoints': points,
+        'userID': uid
+      });
+    }
+
+
+
+    // Retrieve the current semesterly season number
+    int semesterlySeason = await retrieveCurrentSemesterlySeason();
+
+    String semesterlyEntryID = '';
+    totalPoints = -1;
+    totalWins = -1;
+    bool semesterlyRecordFound = false;
+
+    // Attempt to retrieve the user's existing semesterly leaderboard entry for
+    // the current season
+    await semesterlyLeaderboardEntriesCollection
+        .where('userID', isEqualTo: uid)
+        .where('seasonNumber', isEqualTo: semesterlySeason)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+
+        LeaderboardEntry entry = leaderboardEntryFromSnapshot(doc);
+
+        semesterlyEntryID = entry.id!;
+        totalPoints = entry.totalPoints!;
+        totalWins = entry.totalWins!;
+
+        semesterlyRecordFound = true;
+      })
+    });
+
+    // If a leaderboard entry for the current season could be found
+    // Update the existing record
+    if (semesterlyRecordFound) {
+      // Update the user's Semesterly Leaderboard Entry document to include one
+      // more win and the points gained (if one doesn't exist it will be created)
+      await semesterlyLeaderboardEntriesCollection.doc(semesterlyEntryID).update({
+        'totalWins': (totalWins + 1),
+        'totalPoints': (totalPoints + points)
+      });
+    }
+    // Otherwise, create a new record
+    else {
+      String newSemesterlyEntryID = _generateID();
+      await semesterlyLeaderboardEntriesCollection.doc(newSemesterlyEntryID).set({
+        'id': newSemesterlyEntryID,
+        'seasonNumber': semesterlySeason,
+        'totalWins': 1,
+        'totalPoints': points,
+        'userID': uid
+      });
+    }
+
+
+
+    // Retrieve the current yearly season number
+    int yearlySeason = await retrieveCurrentYearlySeason();
+
+    String yearlyEntryID = '';
+    totalPoints = -1;
+    totalWins = -1;
+    bool yearlyRecordFound = false;
+
+    // Attempt to retrieve the user's existing yearly leaderboard entry for the
+    // current season
+    await yearlyLeaderboardEntriesCollection
+        .where('userID', isEqualTo: uid)
+        .where('seasonNumber', isEqualTo: yearlySeason)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      querySnapshot.docs.forEach((doc) async {
+
+        LeaderboardEntry entry = leaderboardEntryFromSnapshot(doc);
+
+        yearlyEntryID = entry.id!;
+        totalPoints = entry.totalPoints!;
+        totalWins = entry.totalWins!;
+
+        yearlyRecordFound = true;
+      })
+    });
+
+    // If a leaderboard entry for the current season could be found
+    // Update the existing record
+    if (yearlyRecordFound) {
+      // Update the user's Yearly Leaderboard Entry document to include one more
+      // win and the points gained (if one doesn't exist it will be created)
+      await yearlyLeaderboardEntriesCollection.doc(yearlyEntryID).update({
+        'totalWins': (totalWins + 1),
+        'totalPoints': (totalPoints + points)
+      });
+    }
+    // Otherwise, create a new record
+    else {
+      String newYearlyEntryID = _generateID();
+      await yearlyLeaderboardEntriesCollection.doc(newYearlyEntryID).set({
+        'id': newYearlyEntryID,
+        'seasonNumber': yearlySeason,
+        'totalWins': 1,
+        'totalPoints': points,
+        'userID': uid
+      });
+    }
   }
 
 
@@ -719,6 +879,8 @@ class DatabaseService {
   // And reset the currentQuestionAnswer variables to be empty
   // Also for each winning user of the quiz add one win to their User document
   // in the Users collection
+  // And add the win DateTime to the User document
+  // And update the user's leaderboard documents
   Future endQuiz(String quizID, int highestScore) async {
     // Mark the Quiz document that is used to mark that there
     // isn't a quiz currently active as active
@@ -746,7 +908,11 @@ class DatabaseService {
           Score score = scoreFromSnapshot(doc);
 
           String userID = score.userID!;
-          await addWin(userID);
+
+          // Add one win to the User document
+          // And add the win DateTime to the User document
+          // And update the user's leaderboard documents
+          await addWin(userID, highestScore);
         })
       });
     }
@@ -1355,6 +1521,108 @@ class DatabaseService {
         currentSeason: snapshotList['currentSeason'],
         prizes: snapshotList['prizes']
     );
+  }
+
+
+  // Returns the current season of the monthly leaderboard
+  Future<int> retrieveCurrentMonthlySeason() async {
+
+    int currentSeason = -1;
+
+    // Retrieve the monthly leaderboard singleton document
+    await monthlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'AoJjjYhtjLeYQhc2s8zK')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the current season
+        MonthlyLeaderboardDoc retrievedMonthlyDoc = monthlyLeaderboardDocFromSnapshot(doc);
+        currentSeason = retrievedMonthlyDoc.currentSeason!;
+      })
+    });
+
+    return currentSeason;
+  }
+
+
+  // Returns the current season of the semesterly leaderboard
+  Future<int> retrieveCurrentSemesterlySeason() async {
+
+    int currentSeason = -1;
+
+    // Retrieve the semesterly leaderboard singleton document
+    await semesterlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: '2RpLeBNHCgOcHzjORDCQ')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the current season
+        SemesterlyLeaderboardDoc retrievedSemesterlyDoc
+                                    = semesterlyLeaderboardDocFromSnapshot(doc);
+        currentSeason = retrievedSemesterlyDoc.currentSeason!;
+      })
+    });
+
+    return currentSeason;
+  }
+
+
+  // Returns the current season of the yearly leaderboard
+  Future<int> retrieveCurrentYearlySeason() async {
+
+    int currentSeason = -1;
+
+    // Retrieve the yearly leaderboard singleton document
+    await yearlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'OrAMZAbg8wi3UTUgcYth')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Retrieve the current season
+        YearlyLeaderboardDoc retrievedYearlyDoc
+                                        = yearlyLeaderboardDocFromSnapshot(doc);
+        currentSeason = retrievedYearlyDoc.currentSeason!;
+      })
+    });
+
+    return currentSeason;
+  }
+
+
+  // Update the current month stored in the monthly leaderboard doc
+  // And increase the current season number stored in it
+  Future endMonthSeason(int currentMonth) async {
+
+    // Retrieve the current season number
+    await monthlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'AoJjjYhtjLeYQhc2s8zK')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        MonthlyLeaderboardDoc retrievedMonthlyDoc = monthlyLeaderboardDocFromSnapshot(doc);
+
+        int retrievedCurrentSeason = retrievedMonthlyDoc.currentSeason!;
+
+        // Update the document with the new current month and season number
+        return await monthlyLeaderboardEntriesCollection.doc('AoJjjYhtjLeYQhc2s8zK')
+            .update({
+          "currentMonth": currentMonth,
+          "currentSeason": (retrievedCurrentSeason + 1)
+        });
+      })
+    });
   }
 
 
