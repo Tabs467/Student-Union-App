@@ -1600,7 +1600,11 @@ class DatabaseService {
 
   // Update the current month stored in the monthly leaderboard doc
   // And increase the current season number stored in it
+  // And add an extra element to the prizes array
+  // And add a monthly win and the monthly win DateTime to any winners
   Future endMonthSeason(int currentMonth) async {
+
+    int retrievedCurrentSeason = -1;
 
     // Retrieve the current season number
     await monthlyLeaderboardEntriesCollection
@@ -1613,16 +1617,256 @@ class DatabaseService {
 
         MonthlyLeaderboardDoc retrievedMonthlyDoc = monthlyLeaderboardDocFromSnapshot(doc);
 
-        int retrievedCurrentSeason = retrievedMonthlyDoc.currentSeason!;
+        retrievedCurrentSeason = retrievedMonthlyDoc.currentSeason!;
 
         // Update the document with the new current month and season number
+        // And add an extra element to the prizes array
         return await monthlyLeaderboardEntriesCollection.doc('AoJjjYhtjLeYQhc2s8zK')
             .update({
           "currentMonth": currentMonth,
-          "currentSeason": (retrievedCurrentSeason + 1)
+          "currentSeason": (retrievedCurrentSeason + 1),
+          "prizes": FieldValue.arrayUnion(['Prize Not Set'])
         });
       })
     });
+
+
+
+    // Determine the highest total wins of the season
+
+    int highestTotalWins = -1;
+    await monthlyLeaderboardEntriesCollection
+        .where('seasonNumber', isEqualTo: retrievedCurrentSeason)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Determine the highest total wins of the season
+        LeaderboardEntry monthlyEntry = leaderboardEntryFromSnapshot(doc);
+
+        if (monthlyEntry.totalWins! > highestTotalWins) {
+          highestTotalWins = monthlyEntry.totalWins!;
+        }
+
+      })
+    });
+
+
+    // If there is a highest total wins
+    if (highestTotalWins != -1) {
+
+      // Retrieve the leaderboard entry for each winner of the season
+
+      await monthlyLeaderboardEntriesCollection
+          .where('totalWins', isEqualTo: highestTotalWins)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        // For the found document,
+        querySnapshot.docs.forEach((doc) async {
+
+          // Add one monthly win and the monthly win date to the related
+          // document in the Users collection
+
+          LeaderboardEntry winningEntry = leaderboardEntryFromSnapshot(doc);
+
+          // Retrieve the user's current monthly wins
+          int monthlyWins = -1;
+          CurrentUser retrievedUser = await getUserData(winningEntry.userID);
+          monthlyWins = retrievedUser.monthlyWins;
+
+          // Update the User document to contain the extra monthly win and
+          // monthly win date
+          await userCollection.doc(winningEntry.userID).update({
+            'monthlyWins': (monthlyWins + 1),
+            'monthlyWinDates': FieldValue.arrayUnion([DateTime.now()]),
+          });
+
+        })
+      });
+    }
+  }
+
+
+  // Increase the current season number stored in semesterly leaderboard doc
+  // And add an extra element to the prizes array
+  // And add a semesterly win and the semesterly win DateTime to any winners
+  Future endSemesterSeason() async {
+
+    int retrievedCurrentSeason = -1;
+
+    // Retrieve the current season number
+    await semesterlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: '2RpLeBNHCgOcHzjORDCQ')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        SemesterlyLeaderboardDoc retrievedSemesterlyDoc = semesterlyLeaderboardDocFromSnapshot(doc);
+
+        retrievedCurrentSeason = retrievedSemesterlyDoc.currentSeason!;
+
+        // Update the document with the new season number
+        // And add a new element to the prizes array
+        return await semesterlyLeaderboardEntriesCollection.doc('2RpLeBNHCgOcHzjORDCQ')
+            .update({
+          "currentSeason": (retrievedCurrentSeason + 1),
+          "prizes": FieldValue.arrayUnion(['Prize Not Set'])
+        });
+      })
+    });
+
+
+
+    // Determine the highest total wins of the season
+
+    int highestTotalWins = -1;
+    await semesterlyLeaderboardEntriesCollection
+        .where('seasonNumber', isEqualTo: retrievedCurrentSeason)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Determine the highest total wins of the season
+        LeaderboardEntry semesterlyEntry = leaderboardEntryFromSnapshot(doc);
+
+        if (semesterlyEntry.totalWins! > highestTotalWins) {
+          highestTotalWins = semesterlyEntry.totalWins!;
+        }
+
+      })
+    });
+
+
+    // If there is a highest total wins
+    if (highestTotalWins != -1) {
+
+      // Retrieve the leaderboard entry for each winner of the season
+
+      await semesterlyLeaderboardEntriesCollection
+          .where('totalWins', isEqualTo: highestTotalWins)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        // For the found document,
+        querySnapshot.docs.forEach((doc) async {
+
+          // Add one semesterly win and the semesterly win date to the related
+          // document in the Users collection
+
+          LeaderboardEntry winningEntry = leaderboardEntryFromSnapshot(doc);
+
+          // Retrieve the user's current semesterly wins
+          int semesterlyWins = -1;
+          CurrentUser retrievedUser = await getUserData(winningEntry.userID);
+          semesterlyWins = retrievedUser.semesterlyWins;
+
+          // Update the User document to contain the extra semesterly win and
+          // semesterly win date
+          await userCollection.doc(winningEntry.userID).update({
+            'semesterlyWins': (semesterlyWins + 1),
+            'semesterlyWinDates': FieldValue.arrayUnion([DateTime.now()])
+          });
+
+        })
+      });
+    }
+  }
+
+
+  // Increase the current season number stored in yearly leaderboard doc
+  // And add an extra element to the prizes array
+  // And add a yearly win and the yearly win DateTime to any winners
+  Future endYearSeason() async {
+
+    int retrievedCurrentSeason = -1;
+
+    // Retrieve the current season number
+    await yearlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'OrAMZAbg8wi3UTUgcYth')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        YearlyLeaderboardDoc retrievedYearlyDoc = yearlyLeaderboardDocFromSnapshot(doc);
+
+        retrievedCurrentSeason = retrievedYearlyDoc.currentSeason!;
+
+        // Update the document with the new season number
+        // And add an extra element to the prizes array
+        return await yearlyLeaderboardEntriesCollection.doc('OrAMZAbg8wi3UTUgcYth')
+            .update({
+          "currentSeason": (retrievedCurrentSeason + 1),
+          "prizes": FieldValue.arrayUnion(['Prize Not Set'])
+        });
+      })
+    });
+
+
+
+    // Determine the highest total wins of the season
+
+    int highestTotalWins = -1;
+    await yearlyLeaderboardEntriesCollection
+        .where('seasonNumber', isEqualTo: retrievedCurrentSeason)
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        // Determine the highest total wins of the season
+        LeaderboardEntry yearlyEntry = leaderboardEntryFromSnapshot(doc);
+
+        if (yearlyEntry.totalWins! > highestTotalWins) {
+          highestTotalWins = yearlyEntry.totalWins!;
+        }
+
+      })
+    });
+
+
+    // If there is a highest total wins
+    if (highestTotalWins != -1) {
+
+      // Retrieve the leaderboard entry for each winner of the season
+
+      await yearlyLeaderboardEntriesCollection
+          .where('totalWins', isEqualTo: highestTotalWins)
+          .get()
+          .then((QuerySnapshot querySnapshot) =>
+      {
+        // For the found document,
+        querySnapshot.docs.forEach((doc) async {
+
+          // Add one yearly win and the yearly win date to the related
+          // document in the Users collection
+
+          LeaderboardEntry winningEntry = leaderboardEntryFromSnapshot(doc);
+
+          // Retrieve the user's current yearly wins
+          int yearlyWins = -1;
+          CurrentUser retrievedUser = await getUserData(winningEntry.userID);
+          yearlyWins = retrievedUser.yearlyWins;
+
+          // Update the User document to contain the extra yearly win and
+          // yearly win date
+          await userCollection.doc(winningEntry.userID).update({
+            'yearlyWins': (yearlyWins + 1),
+            'yearlyWinDates': FieldValue.arrayUnion([DateTime.now()])
+          });
+
+        })
+      });
+    }
   }
 
 

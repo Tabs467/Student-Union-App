@@ -45,6 +45,7 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
 
   // Update current month in the monthly leaderboard doc
   // and end the current season
+  // And add a monthly win and the monthly win DateTime to any winners
   _updateCurrentMonth(currentMonth) async {
     await _database.endMonthSeason(currentMonth);
   }
@@ -143,6 +144,8 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
                                     // So the current season has ended
                                     // Update the current month in the database
                                     // and end the current season
+                                    // And add a monthly win and the monthly win
+                                    // DateTime to any winners
                                     _updateCurrentMonth(currentMonth);
                                   }
 
@@ -168,15 +171,17 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
                                                   const EdgeInsets.symmetric(
                                                       vertical: 5.0,
                                                       horizontal: 5.0),
-                                              child: Text(
-                                                "Prize: " +
-                                                    monthlyDoc.prizes![
-                                                        seasonNumber -
-                                                            selectedSeasonDifference],
-                                                style: const TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 25,
+                                              child: Center(
+                                                child: Text(
+                                                  "Prize: " +
+                                                      monthlyDoc.prizes![
+                                                          seasonNumber -
+                                                              selectedSeasonDifference],
+                                                  style: const TextStyle(
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 25,
+                                                  ),
                                                 ),
                                               ),
                                             ),

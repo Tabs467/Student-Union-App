@@ -40,7 +40,7 @@ Future<void> main() async {
 
   // Default route is to the Food/Drink Menu
   runApp(MaterialApp(
-    initialRoute: '/quiz/monthly',
+    initialRoute: '/quiz/yearly',
     routes: {
       '/menu': (context) => const Menu(),
       '/menu/createMenuGroup': (context) => const CreateMenuGroup(),
