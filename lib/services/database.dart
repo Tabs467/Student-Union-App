@@ -1619,13 +1619,27 @@ class DatabaseService {
 
         retrievedCurrentSeason = retrievedMonthlyDoc.currentSeason!;
 
+        var oldArray = retrievedMonthlyDoc.prizes;
+        int oldLength = oldArray!.length;
+
+        // Declare a new array with one more element than the old array
+        var updatedArray = List.filled(
+            oldLength + 1, "Prize Not Set", growable: false
+        );
+
+        // Fill the larger array with the old array's data (other than the new
+        // final element which already has "Prize Not Set" stored in it)
+        for (int oldArrayIndex = 0; oldArrayIndex < oldLength; oldArrayIndex++) {
+          updatedArray[oldArrayIndex] = oldArray[oldArrayIndex];
+        }
+
         // Update the document with the new current month and season number
-        // And add an extra element to the prizes array
+        // And extra element in the prizes array
         return await monthlyLeaderboardEntriesCollection.doc('AoJjjYhtjLeYQhc2s8zK')
             .update({
           "currentMonth": currentMonth,
           "currentSeason": (retrievedCurrentSeason + 1),
-          "prizes": FieldValue.arrayUnion(['Prize Not Set'])
+          "prizes": updatedArray
         });
       })
     });
@@ -1690,6 +1704,34 @@ class DatabaseService {
   }
 
 
+  // Update the prize of a given monthly season
+  Future updateMonthlyPrize(String prize, int seasonNumber) async {
+
+    var updatedArray;
+
+    // Retrieve the prizes array of the current season
+    await monthlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'AoJjjYhtjLeYQhc2s8zK')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        MonthlyLeaderboardDoc monthlyDoc = monthlyLeaderboardDocFromSnapshot(doc);
+
+        // Create a local copy of the array and update the prize
+        updatedArray = monthlyDoc.prizes;
+        updatedArray[seasonNumber - 1] = prize;
+
+        // Overwrite the array in the database with the updated local copy
+        monthlyLeaderboardEntriesCollection.doc('AoJjjYhtjLeYQhc2s8zK')
+            .update({"prizes": updatedArray});
+      })
+    });
+  }
+
+
   // Increase the current season number stored in semesterly leaderboard doc
   // And add an extra element to the prizes array
   // And add a semesterly win and the semesterly win DateTime to any winners
@@ -1710,12 +1752,26 @@ class DatabaseService {
 
         retrievedCurrentSeason = retrievedSemesterlyDoc.currentSeason!;
 
+        var oldArray = retrievedSemesterlyDoc.prizes;
+        int oldLength = oldArray!.length;
+
+        // Declare a new array with one more element than the old array
+        var updatedArray = List.filled(
+            oldLength + 1, "Prize Not Set", growable: false
+        );
+
+        // Fill the larger array with the old array's data (other than the new
+        // final element which already has "Prize Not Set" stored in it)
+        for (int oldArrayIndex = 0; oldArrayIndex < oldLength; oldArrayIndex++) {
+          updatedArray[oldArrayIndex] = oldArray[oldArrayIndex];
+        }
+
         // Update the document with the new season number
         // And add a new element to the prizes array
         return await semesterlyLeaderboardEntriesCollection.doc('2RpLeBNHCgOcHzjORDCQ')
             .update({
           "currentSeason": (retrievedCurrentSeason + 1),
-          "prizes": FieldValue.arrayUnion(['Prize Not Set'])
+          "prizes": updatedArray
         });
       })
     });
@@ -1780,6 +1836,34 @@ class DatabaseService {
   }
 
 
+  // Update the prize of a given semesterly season
+  Future updateSemesterlyPrize(String prize, int seasonNumber) async {
+
+    var updatedArray;
+
+    // Retrieve the prizes array of the current season
+    await semesterlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: '2RpLeBNHCgOcHzjORDCQ')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        SemesterlyLeaderboardDoc semesterlyDoc = semesterlyLeaderboardDocFromSnapshot(doc);
+
+        // Create a local copy of the array and update the prize
+        updatedArray = semesterlyDoc.prizes;
+        updatedArray[seasonNumber - 1] = prize;
+
+        // Overwrite the array in the database with the updated local copy
+        semesterlyLeaderboardEntriesCollection.doc('2RpLeBNHCgOcHzjORDCQ')
+            .update({"prizes": updatedArray});
+      })
+    });
+  }
+
+
   // Increase the current season number stored in yearly leaderboard doc
   // And add an extra element to the prizes array
   // And add a yearly win and the yearly win DateTime to any winners
@@ -1800,12 +1884,26 @@ class DatabaseService {
 
         retrievedCurrentSeason = retrievedYearlyDoc.currentSeason!;
 
+        var oldArray = retrievedYearlyDoc.prizes;
+        int oldLength = oldArray!.length;
+
+        // Declare a new array with one more element than the old array
+        var updatedArray = List.filled(
+            oldLength + 1, "Prize Not Set", growable: false
+        );
+
+        // Fill the larger array with the old array's data (other than the new
+        // final element which already has "Prize Not Set" stored in it)
+        for (int oldArrayIndex = 0; oldArrayIndex < oldLength; oldArrayIndex++) {
+          updatedArray[oldArrayIndex] = oldArray[oldArrayIndex];
+        }
+
         // Update the document with the new season number
         // And add an extra element to the prizes array
         return await yearlyLeaderboardEntriesCollection.doc('OrAMZAbg8wi3UTUgcYth')
             .update({
           "currentSeason": (retrievedCurrentSeason + 1),
-          "prizes": FieldValue.arrayUnion(['Prize Not Set'])
+          "prizes": updatedArray
         });
       })
     });
@@ -1867,6 +1965,34 @@ class DatabaseService {
         })
       });
     }
+  }
+
+
+  // Update the prize of a given yearly season
+  Future updateYearlyPrize(String prize, int seasonNumber) async {
+
+    var updatedArray;
+
+    // Retrieve the prizes array of the current season
+    await yearlyLeaderboardEntriesCollection
+        .where('id', isEqualTo: 'OrAMZAbg8wi3UTUgcYth')
+        .get()
+        .then((QuerySnapshot querySnapshot) =>
+    {
+      // For the found document,
+      querySnapshot.docs.forEach((doc) async {
+
+        YearlyLeaderboardDoc yearlyDoc = yearlyLeaderboardDocFromSnapshot(doc);
+
+        // Create a local copy of the array and update the prize
+        updatedArray = yearlyDoc.prizes;
+        updatedArray[seasonNumber - 1] = prize;
+
+        // Overwrite the array in the database with the updated local copy
+        yearlyLeaderboardEntriesCollection.doc('OrAMZAbg8wi3UTUgcYth')
+            .update({"prizes": updatedArray});
+      })
+    });
   }
 
 

@@ -210,6 +210,7 @@ class _SemesterlyLeaderboardState extends State<SemesterlyLeaderboard> {
                           // Determine the values of the three highest total wins so that the
                           // leaderboard rows that contain them can be coloured gold, silver,
                           // or bronze later in the ListView Widget
+                          firstHighestWins = 0;
                           int secondHighestWins = 0;
                           int thirdHighestWins = 0;
                           for (int wins in winsList) {
@@ -366,6 +367,8 @@ class _SemesterlyLeaderboardState extends State<SemesterlyLeaderboard> {
                             ),
                           );
                         }),
+
+
                     const SizedBox(height: 15.0),
                   ],
                 ),

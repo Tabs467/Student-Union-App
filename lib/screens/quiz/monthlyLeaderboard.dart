@@ -46,8 +46,13 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
   // Update current month in the monthly leaderboard doc
   // and end the current season
   // And add a monthly win and the monthly win DateTime to any winners
+  // Then rebuild the Widget Tree to so the
+  // latest season is displayed
   _updateCurrentMonth(currentMonth) async {
     await _database.endMonthSeason(currentMonth);
+
+    // Rebuild Widget Tree
+    setState(() {});
   }
 
   // Retrieve the user data to determine the team name of the given user
@@ -146,6 +151,8 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
                                     // and end the current season
                                     // And add a monthly win and the monthly win
                                     // DateTime to any winners
+                                    // Then rebuild the Widget Tree to so the
+                                    // latest season is displayed
                                     _updateCurrentMonth(currentMonth);
                                   }
 
@@ -244,6 +251,7 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
                           // Determine the values of the three highest total wins so that the
                           // leaderboard rows that contain them can be coloured gold, silver,
                           // or bronze later in the ListView Widget
+                          firstHighestWins = 0;
                           int secondHighestWins = 0;
                           int thirdHighestWins = 0;
                           for (int wins in winsList) {
@@ -400,6 +408,8 @@ class _MonthlyLeaderboardState extends State<MonthlyLeaderboard> {
                             ),
                           );
                         }),
+
+
                     const SizedBox(height: 15.0),
                   ],
                 ),
