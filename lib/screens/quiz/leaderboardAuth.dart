@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
 import '../buildAppBar.dart';
 import '../buildTabTitle.dart';
@@ -18,7 +17,6 @@ class LeaderboardAuth extends StatefulWidget {
 // Leaderboard menu depending on whether there is a
 // currently logged-in admin account
 class _LeaderboardAuthState extends State<LeaderboardAuth> {
-  final AuthenticationService _auth = AuthenticationService();
   final DatabaseService _database = DatabaseService();
 
   // This Widget uses a FutureBuilder so that a loading Widget can be displayed

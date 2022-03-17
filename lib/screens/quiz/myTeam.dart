@@ -57,6 +57,15 @@ class _MyTeamState extends State<MyTeam> {
             teamName = returnedUser.teamName;
           }
 
+          // Append singular or plural depending on the number of wins
+          String formattedPubQuizWins = returnedUser.wins.toString();
+          if (returnedUser.wins != 1) {
+            formattedPubQuizWins += " Wins";
+          }
+          else {
+            formattedPubQuizWins += " Win";
+          }
+
           return Scaffold(
             backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
             appBar: buildAppBar(context, 'Quiz'),
@@ -144,7 +153,7 @@ class _MyTeamState extends State<MyTeam> {
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
-                              returnedUser.wins.toString() + " Wins",
+                              formattedPubQuizWins,
                             style: const TextStyle(
                               fontSize: 45,
                             ),

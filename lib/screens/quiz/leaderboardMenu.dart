@@ -36,7 +36,7 @@ class _LeaderboardMenuState extends State<LeaderboardMenu> {
                     child: Card(
                         margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                         child: Ink.image(
-                          image: const AssetImage('assets/leaderboards.png'),
+                          image: const AssetImage('assets/monthly.png'),
                           fit: BoxFit.fill,
                           child: InkWell(
                               splashColor: Colors.black.withOpacity(.3),
@@ -55,7 +55,7 @@ class _LeaderboardMenuState extends State<LeaderboardMenu> {
                     child: Card(
                         margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                         child: Ink.image(
-                          image: const AssetImage('assets/leaderboards.png'),
+                          image: const AssetImage('assets/semesterly.png'),
                           fit: BoxFit.fill,
                           child: InkWell(
                               splashColor: Colors.black.withOpacity(.3),
@@ -75,7 +75,7 @@ class _LeaderboardMenuState extends State<LeaderboardMenu> {
                         margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                         child: Ink.image(
                           image: const AssetImage(
-                              'assets/leaderboards.png'),
+                              'assets/yearly.png'),
                           fit: BoxFit.fill,
                           child: InkWell(
                               splashColor: Colors.black.withOpacity(.3),
