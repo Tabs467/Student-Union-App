@@ -152,9 +152,9 @@ class _ActiveQuizLeaderboardState extends State<ActiveQuizLeaderboard> {
                                 color: (score.score! == firstHighestScore)
                                     ? Colors.yellow
                                     : (score.score! == secondHighestScore)
-                                    ? Colors.blueGrey
+                                    ? Colors.blueGrey[300]
                                     : (score.score! == thirdHighestScore)
-                                    ? Colors.deepOrangeAccent
+                                    ? Colors.deepOrangeAccent[200]
                                     : (loggedInUser)
                                     ? Colors.pink
                                     : Colors.white,

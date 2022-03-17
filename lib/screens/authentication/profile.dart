@@ -15,7 +15,9 @@ class Profile extends StatefulWidget {
 
 // Widget to display the logged-in user's profile information and update name
 // information form
-// The sign-out button and reset password button is also displayed
+// The sign-out button and reset password button is also displayed, along with
+// a button to navigate to the MyTeam Widget for more detailed Pub Quiz Team
+// information
 class _ProfileState extends State<Profile> {
   final AuthenticationService _auth = AuthenticationService();
   final DatabaseService _database = DatabaseService();
@@ -132,13 +134,6 @@ class _ProfileState extends State<Profile> {
                               });
                             },
                           ),
-                          const SizedBox(height: 20.0),
-                          // Pub Quiz Wins field cannot be edited
-                          TextFormField(
-                            initialValue: "Pub Quiz Wins: " +
-                                returnedUser.wins.toString(),
-                            enabled: false,
-                          ),
                           const SizedBox(height: 12.0),
                           // Error text
                           Text(
@@ -167,6 +162,19 @@ class _ProfileState extends State<Profile> {
                           ),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 25.0),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 50),
+                        maximumSize: const Size(200, 50),
+                        primary: const Color.fromRGBO(22, 66, 139, 1),
+                      ),
+                      child: const Text('View Pub Quiz Team'),
+                      // Navigate the user to the MyTeam Widget
+                      onPressed: () async {
+                        Navigator.pushReplacementNamed(context, '/quiz/myTeam');
+                      },
                     ),
                     const SizedBox(height: 25.0),
                     ElevatedButton(

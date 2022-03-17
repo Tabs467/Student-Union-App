@@ -323,12 +323,12 @@ class _AdminSemesterlyLeaderboardState extends State<AdminSemesterlyLeaderboard>
                                                   : (leaderboardEntry
                                                   .totalWins! ==
                                                   secondHighestWins)
-                                                  ? Colors.blueGrey
+                                                  ? Colors.blueGrey[300]
                                                   : (leaderboardEntry
                                                   .totalWins! ==
                                                   thirdHighestWins)
                                                   ? Colors
-                                                  .deepOrangeAccent
+                                                  .deepOrangeAccent[200]
                                                   : (loggedInUser)
                                                   ? Colors.pink
                                                   : Colors.white,
