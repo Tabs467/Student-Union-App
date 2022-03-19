@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.taberner.student_union_app">
    <application
-        android:label="student_union_app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Salford SU App"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
