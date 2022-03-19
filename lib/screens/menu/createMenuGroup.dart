@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:student_union_app/models/MenuGroup.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
 
 class CreateMenuGroup extends StatefulWidget {
   const CreateMenuGroup({Key? key}) : super(key: key);

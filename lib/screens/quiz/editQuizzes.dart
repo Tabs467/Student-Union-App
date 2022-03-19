@@ -1,11 +1,11 @@
+import 'editQuiz.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/Quiz.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
-import 'editQuiz.dart';
 
 class EditQuizzes extends StatefulWidget {
   const EditQuizzes({Key? key}) : super(key: key);

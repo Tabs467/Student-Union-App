@@ -1,12 +1,12 @@
+import 'createMenuItem.dart';
+import 'editMenuItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/MenuSubGroup.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
-import 'createMenuItem.dart';
-import 'editMenuItem.dart';
 
 class EditMenuItems extends StatefulWidget {
   final String subGroupID;

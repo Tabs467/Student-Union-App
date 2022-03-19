@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/BandaokeQueue.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
 
 class BandaokeAdmin extends StatefulWidget {
   const BandaokeAdmin({Key? key}) : super(key: key);

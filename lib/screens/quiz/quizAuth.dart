@@ -1,12 +1,12 @@
+import 'adminQuizMainMenu.dart';
+import 'anonQuizMainMenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/screens/quiz/quizMainMenu.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
-import 'adminQuizMainMenu.dart';
-import 'anonQuizMainMenu.dart';
 
 class QuizAuth extends StatefulWidget {
   const QuizAuth({Key? key}) : super(key: key);

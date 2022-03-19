@@ -3,11 +3,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/screens/bandaoke/bandaoke.dart';
 import 'package:student_union_app/screens/bandaoke/bandaokeAdmin.dart';
 import 'package:student_union_app/screens/bandaoke/bandaokeAnon.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
-
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
 
 class BandaokeAuth extends StatefulWidget {
   const BandaokeAuth({Key? key}) : super(key: key);

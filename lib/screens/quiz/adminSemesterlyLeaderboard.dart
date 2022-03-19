@@ -4,10 +4,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/models/LeaderboardEntry.dart';
 import 'package:student_union_app/models/SemesterlyLeaderboardDoc.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
 
 class AdminSemesterlyLeaderboard extends StatefulWidget {
   const AdminSemesterlyLeaderboard({Key? key}) : super(key: key);

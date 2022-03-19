@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/screens/buildAppBar.dart';
-import 'package:student_union_app/services/database.dart';
-import '../buildTabTitle.dart';
-import 'package:flutter/material.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/authentication.dart';
+import 'package:student_union_app/services/database.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);

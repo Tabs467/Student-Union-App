@@ -1,6 +1,10 @@
+import 'authentication.dart';
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_union_app/models/BandaokeQueue.dart';
 import 'package:student_union_app/models/Comedian.dart';
 import 'package:student_union_app/models/ComedyNightSchedule.dart';
+import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/models/LeaderboardEntry.dart';
 import 'package:student_union_app/models/MenuGroup.dart';
 import 'package:student_union_app/models/MenuSubGroup.dart';
@@ -12,10 +16,6 @@ import 'package:student_union_app/models/Quiz.dart';
 import 'package:student_union_app/models/Score.dart';
 import 'package:student_union_app/models/SemesterlyLeaderboardDoc.dart';
 import 'package:student_union_app/models/YearlyLeaderboardDoc.dart';
-import 'authentication.dart';
-import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:student_union_app/models/CurrentUser.dart';
 
 // Database Service class to provide Google FireStore data and services
 // to the Views

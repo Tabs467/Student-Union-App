@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 
 class AdminLeaderboardMenu extends StatefulWidget {
   const AdminLeaderboardMenu({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
-import 'package:student_union_app/services/database.dart';
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
+import 'package:student_union_app/services/database.dart';
 
 // Authentication Service class to provide Google Auth data and services
 // to the Views

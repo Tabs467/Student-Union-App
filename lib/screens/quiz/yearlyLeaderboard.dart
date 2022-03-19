@@ -4,10 +4,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:student_union_app/models/CurrentUser.dart';
 import 'package:student_union_app/models/LeaderboardEntry.dart';
 import 'package:student_union_app/models/YearlyLeaderboardDoc.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
+import 'package:student_union_app/screens/buildTabTitle.dart';
 import 'package:student_union_app/services/authentication.dart';
 import 'package:student_union_app/services/database.dart';
-import '../buildAppBar.dart';
-import '../buildTabTitle.dart';
 
 class YearlyLeaderboard extends StatefulWidget {
   const YearlyLeaderboard({Key? key}) : super(key: key);

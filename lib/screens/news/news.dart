@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../buildAppBar.dart';
+import 'package:student_union_app/screens/buildAppBar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class News extends StatefulWidget {
