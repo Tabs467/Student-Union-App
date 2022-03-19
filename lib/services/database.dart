@@ -1053,8 +1053,8 @@ class DatabaseService {
       // active quiz
       // Retrieve the closest or matching user submitted answer for the nearest
       // wins question
-      double closestAnswer = -49032;
-      double difference = 9549389;
+      double closestAnswer = 0;
+      double difference = double.maxFinite;
       await scoreCollection
           .where('quizID', isEqualTo: quizID)
           .get()

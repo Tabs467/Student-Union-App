@@ -391,9 +391,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                               width: 1),
                                         ),
                                         child: InkWell(
-                                          onTap: () {
+                                          onTap: () async {
+                                            await _submitMultipleChoiceAnswer("a");
                                             setState(() {
-                                              _submitMultipleChoiceAnswer("a");
                                               _selectAnswer("a");
                                             });
                                           },
@@ -429,9 +429,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                               width: 1),
                                         ),
                                         child: InkWell(
-                                          onTap: () {
+                                          onTap: () async {
+                                            await _submitMultipleChoiceAnswer("b");
                                             setState(() {
-                                              _submitMultipleChoiceAnswer("b");
                                               _selectAnswer("b");
                                             });
                                           },
@@ -467,9 +467,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                               width: 1),
                                         ),
                                         child: InkWell(
-                                          onTap: () {
+                                          onTap: () async {
+                                            await _submitMultipleChoiceAnswer("c");
                                             setState(() {
-                                              _submitMultipleChoiceAnswer("c");
                                               _selectAnswer("c");
                                             });
                                           },
@@ -505,9 +505,9 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                               width: 1),
                                         ),
                                         child: InkWell(
-                                          onTap: () {
+                                          onTap: () async {
+                                            await _submitMultipleChoiceAnswer("d");
                                             setState(() {
-                                              _submitMultipleChoiceAnswer("d");
                                               _selectAnswer("d");
                                             });
                                           },
@@ -676,10 +676,10 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                                 // If a valid answer is submitted,
                                                 // submit it to the database and
                                                 // rebuild the Widget Tree
-                                                setState(() {
-                                                  _submitNearestWinsAnswer(
-                                                      nearestWinsAnswer);
-                                                });
+                                                await _submitNearestWinsAnswer(
+                                                    nearestWinsAnswer);
+
+                                                setState(() {});
                                               }
                                             },
                                           ),
