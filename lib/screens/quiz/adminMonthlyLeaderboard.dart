@@ -649,7 +649,7 @@ showEditPrizeDialog(context, seasonNumber, currentPrize) {
               // Prize text cannot be empty and must be
               // below 40 characters
               validator: (String? value) {
-                if (value != null && value.isEmpty) {
+                if (value != null && value.trim() == '') {
                   return "Prize Text cannot be empty!";
                 } else if (value!.length > 40) {
                   return "Prize Text must be below 40 characters!";

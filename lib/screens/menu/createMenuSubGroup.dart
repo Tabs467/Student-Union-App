@@ -61,7 +61,7 @@ class _CreateMenuSubGroupState extends State<CreateMenuSubGroup> {
                     // Sub Group Names cannot be empty and must be
                     // below 30 characters
                     validator: (String? value) {
-                      if (value != null && value.isEmpty) {
+                      if (value != null && value.trim() == '') {
                         return "Sub Group Name cannot be empty!";
                       }
                       else if (value!.length > 30) {

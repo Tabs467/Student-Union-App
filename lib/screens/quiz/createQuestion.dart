@@ -123,7 +123,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       // Question text cannot be empty and must be
                       // below 70 characters
                       validator: (String? value) {
-                        if (value != null && value.isEmpty) {
+                        if (value != null && value.trim() == '') {
                           return "Question Text cannot be empty!";
                         } else if (value!.length > 70) {
                           return "Question Text must be below 70 characters!";
@@ -150,7 +150,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                           // Answer A cannot be empty and must be
                           // below 50 characters
                           validator: (String? value) {
-                            if (value != null && value.isEmpty) {
+                            if (value != null && value.trim() == '') {
                               return "Answer A cannot be empty!";
                             } else if (value!.length > 50) {
                               return "Answer A must be below 50 characters!";
@@ -171,7 +171,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                           // Answer B cannot be empty and must be
                           // below 50 characters
                           validator: (String? value) {
-                            if (value != null && value.isEmpty) {
+                            if (value != null && value.trim() == '') {
                               return "Answer B cannot be empty!";
                             } else if (value!.length > 50) {
                               return "Answer B must be below 50 characters!";
@@ -192,7 +192,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                           // Answer C cannot be empty and must be
                           // below 50 characters
                           validator: (String? value) {
-                            if (value != null && value.isEmpty) {
+                            if (value != null && value.trim() == '') {
                               return "Answer C cannot be empty!";
                             } else if (value!.length > 50) {
                               return "Answer C must be below 50 characters!";
@@ -213,7 +213,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                           // Answer D cannot be empty and must be
                           // below 50 characters
                           validator: (String? value) {
-                            if (value != null && value.isEmpty) {
+                            if (value != null && value.trim() == '') {
                               return "Answer D cannot be empty!";
                             } else if (value!.length > 50) {
                               return "Answer D must be below 50 characters!";
@@ -235,67 +235,69 @@ class _CreateQuestionState extends State<CreateQuestion> {
                           ),
                         ),
                         // Radio buttons for the correct answer
-                        ButtonBar(children: [
-                          Row(
+                        ButtonBar(
+                            alignment: MainAxisAlignment.center,
                             children: [
-                              const Text('A:'),
-                              Radio(
-                                value: 'a',
-                                groupValue: correctMCQAnswer,
-                                activeColor: const Color.fromRGBO(22, 66, 139, 1),
-                                onChanged: (T) {
-                                  setState(() {
-                                    correctMCQAnswer = 'a';
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  const Text('A:'),
+                                  Radio(
+                                    value: 'a',
+                                    groupValue: correctMCQAnswer,
+                                    activeColor: const Color.fromRGBO(22, 66, 139, 1),
+                                    onChanged: (T) {
+                                      setState(() {
+                                        correctMCQAnswer = 'a';
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('B:'),
-                              Radio(
-                                value: 'b',
-                                groupValue: correctMCQAnswer,
-                                activeColor: const Color.fromRGBO(22, 66, 139, 1),
-                                onChanged: (T) {
-                                  setState(() {
-                                    correctMCQAnswer = 'b';
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  const Text('B:'),
+                                  Radio(
+                                    value: 'b',
+                                    groupValue: correctMCQAnswer,
+                                    activeColor: const Color.fromRGBO(22, 66, 139, 1),
+                                    onChanged: (T) {
+                                      setState(() {
+                                        correctMCQAnswer = 'b';
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('C:'),
-                              Radio(
-                                value: 'c',
-                                groupValue: correctMCQAnswer,
-                                activeColor: const Color.fromRGBO(22, 66, 139, 1),
-                                onChanged: (T) {
-                                  setState(() {
-                                    correctMCQAnswer = 'c';
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  const Text('C:'),
+                                  Radio(
+                                    value: 'c',
+                                    groupValue: correctMCQAnswer,
+                                    activeColor: const Color.fromRGBO(22, 66, 139, 1),
+                                    onChanged: (T) {
+                                      setState(() {
+                                        correctMCQAnswer = 'c';
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('D:'),
-                              Radio(
-                                value: 'd',
-                                groupValue: correctMCQAnswer,
-                                activeColor: const Color.fromRGBO(22, 66, 139, 1),
-                                onChanged: (T) {
-                                  setState(() {
-                                    correctMCQAnswer = 'd';
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  const Text('D:'),
+                                  Radio(
+                                    value: 'd',
+                                    groupValue: correctMCQAnswer,
+                                    activeColor: const Color.fromRGBO(22, 66, 139, 1),
+                                    onChanged: (T) {
+                                      setState(() {
+                                        correctMCQAnswer = 'd';
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
                         ]),
                       ],
                     )
@@ -313,7 +315,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                           // NWQ answer cannot be empty and must be a number
                           // And must be below 17 characters
                           validator: (String? value) {
-                            if (value != null && value.isEmpty) {
+                            if (value != null && value.trim() == '') {
                               return "Question Answer cannot be empty!";
                             } else if (value!.length > 17) {
                               return "Question Answer must be below 17 characters!";

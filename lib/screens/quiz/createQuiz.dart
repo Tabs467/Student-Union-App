@@ -49,7 +49,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                     // Quiz titles cannot be empty and must be
                     // below 40 characters
                     validator: (String? value) {
-                      if (value != null && value.isEmpty) {
+                      if (value != null && value.trim() == '') {
                         return "Quiz Title cannot be empty!";
                       }
                       else if (value!.length > 40) {

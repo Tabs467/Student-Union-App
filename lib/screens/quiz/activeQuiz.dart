@@ -619,7 +619,7 @@ class _ActiveQuizState extends State<ActiveQuiz> {
                                                 // must be below 17 characters,
                                                 // and must be a number
                                                 if (value != null &&
-                                                    value.isEmpty) {
+                                                    value.trim() == '') {
                                                   return "Answer cannot be empty!";
                                                 } else if (value!.length > 17) {
                                                   return "Answer must be below 17 characters!";

@@ -325,6 +325,7 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
                                                       onPressed: () async {
                                                         await _launchURL(comediansArray[arrayIndex]['facebook']);
                                                       },
+                                                      tooltip: "Tap to open the comedian's Facebook profile",
                                                       iconSize: (50),
                                                       icon: const Icon(
                                                         FontAwesomeIcons.facebook,
@@ -341,6 +342,7 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
                                                       onPressed: () async {
                                                         await _launchURL(comediansArray[arrayIndex]['instagram']);
                                                       },
+                                                      tooltip: "Tap to open the comedian's Instagram profile",
                                                       iconSize: (50),
                                                       icon: const Icon(
                                                         FontAwesomeIcons.instagram,
@@ -357,6 +359,7 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
                                                       onPressed: () async {
                                                         await _launchURL(comediansArray[arrayIndex]['twitter']);
                                                       },
+                                                      tooltip: "Tap to open the comedian's Twitter profile",
                                                       iconSize: (50),
                                                       icon: const Icon(
                                                         FontAwesomeIcons.twitter,
@@ -373,6 +376,7 @@ class _ComedyNightAdminState extends State<ComedyNightAdmin> {
                                                       onPressed: () async {
                                                         await _launchURL(comediansArray[arrayIndex]['snapchat']);
                                                       },
+                                                      tooltip: "Tap to open the comedian's Snapchat profile",
                                                       iconSize: (50),
                                                       icon: const Icon(
                                                         FontAwesomeIcons.snapchat,

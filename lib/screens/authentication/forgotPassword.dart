@@ -46,7 +46,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         ),
                         // Email field cannot be left empty
                         validator: (String? value) {
-                          if (value != null && value.isEmpty) {
+                          if (value != null && value.trim() == '') {
                             return "Email can't be empty!";
                           }
                           return null;

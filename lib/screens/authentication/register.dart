@@ -54,7 +54,7 @@ class _RegisterState extends State<Register> {
                         ),
                         // Email field cannot be left empty
                         validator: (String? value) {
-                          if (value != null && value.isEmpty) {
+                          if (value != null && value.trim() == '') {
                             return "Email can't be empty!";
                           }
                           return null;
@@ -113,7 +113,7 @@ class _RegisterState extends State<Register> {
                         ),
                         // Name cannot be empty and must be below 70 characters
                         validator: (String? value) {
-                          if (value != null && value.isEmpty) {
+                          if (value != null && value.trim() == '') {
                             return "Name cannot be empty!";
                           }
                           else if (value!.length > 70) {
@@ -136,7 +136,7 @@ class _RegisterState extends State<Register> {
                         // Team Name cannot be empty and must be below 40
                         // characters
                         validator: (String? value) {
-                          if (value != null && value.isEmpty) {
+                          if (value != null && value.trim() == '') {
                             return "Team name cannot be empty!";
                           }
                           else if (value!.length > 40) {

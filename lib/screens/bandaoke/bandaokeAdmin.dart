@@ -128,6 +128,8 @@ class _BandaokeAdminState extends State<BandaokeAdmin> {
                                   userAlreadyQueued = true;
                                 }
 
+                                print(userAlreadyQueued.toString());
+
                                 // Each row in the list is a FutureBuilder since a
                                 // Loading Widget needs to be displayed on each row
                                 // until the user's name for that row is retrieved
@@ -494,7 +496,7 @@ showQueueDialog(context) {
   AlertDialog alert = AlertDialog(
     title: const Text("Join the Queue"),
     content: SizedBox(
-      height: 70,
+      height: 100,
       child: Form(
         key: _formKey,
         child: Column(
@@ -506,7 +508,7 @@ showQueueDialog(context) {
               // Song Names cannot be empty and must be
               // below 30 characters
               validator: (String? value) {
-                if (value != null && value.isEmpty) {
+                if (value != null && value.trim() == '') {
                   return "Song Name cannot be empty!";
                 } else if (value!.length > 30) {
                   return "Song Name must be below 30 characters!";
@@ -692,7 +694,7 @@ showChangeSongDialog(context, chosenSongTitle) {
   AlertDialog alert = AlertDialog(
     title: const Text("Change Song"),
     content: SizedBox(
-      height: 70,
+      height: 100,
       child: Form(
         key: _formKey,
         child: Column(
@@ -705,7 +707,7 @@ showChangeSongDialog(context, chosenSongTitle) {
               // Song Names cannot be empty and must be
               // below 30 characters
               validator: (String? value) {
-                if (value != null && value.isEmpty) {
+                if (value != null && value.trim() == '') {
                   return "Song Name cannot be empty!";
                 } else if (value!.length > 30) {
                   return "Song Name must be below 30 characters!";

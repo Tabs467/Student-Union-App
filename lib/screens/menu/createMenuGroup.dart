@@ -50,7 +50,7 @@ class _CreateMenuGroupState extends State<CreateMenuGroup> {
                     // Menu Group Names cannot be empty and must be
                     // below 40 characters
                     validator: (String? value) {
-                      if (value != null && value.isEmpty) {
+                      if (value != null && value.trim() == '') {
                         return "Menu Group Name cannot be empty!";
                       }
                       else if (value!.length > 40) {

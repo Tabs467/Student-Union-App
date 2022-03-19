@@ -840,7 +840,7 @@ class DatabaseService {
   Future startQuiz(String quizID) async {
     // Mark the Quiz document that is used to mark that there
     // isn't a quiz currently active as inactive
-    quizCollection.doc('cy7RWIJ3VGIXlHSM1Il8').update({"isActive": false});
+    await quizCollection.doc('cy7RWIJ3VGIXlHSM1Il8').update({"isActive": false});
 
     // Mark the inputted quiz document as active
     return quizCollection
@@ -874,13 +874,11 @@ class DatabaseService {
 
   // Mark the inputted quiz as inactive and set the non active quiz marker in
   // the database to true
-  // Also reset all the currentQuestionCorrect booleans in the
-  // Scores collection for the active quiz to false
-  // And reset the currentQuestionAnswer variables to be empty
   // Also for each winning user of the quiz add one win to their User document
   // in the Users collection
   // And add the win DateTime to the User document
   // And update the user's leaderboard documents
+  // Then remove any Score documents for the quiz as they are no longer used
   Future endQuiz(String quizID, int highestScore) async {
     // Mark the Quiz document that is used to mark that there
     // isn't a quiz currently active as active
@@ -917,11 +915,7 @@ class DatabaseService {
       });
     }
 
-    // Reset all the currentQuestionCorrect booleans for the active quiz to
-    // false
-    // To allow this quiz to be restarted without accidentally giving out
-    // any points
-    // Also reset the currentQuestionAnswer variables to be empty
+    // Remove any Score documents for the quiz as they are no longer used
     return scoreCollection
         .where('quizID', isEqualTo: quizID)
         .get()
@@ -932,9 +926,7 @@ class DatabaseService {
 
         String scoreID = score.id!;
 
-        await scoreCollection
-            .doc(scoreID)
-            .update({'currentQuestionCorrect': false,'currentQuestionAnswer': ''});
+        await scoreCollection.doc(scoreID).delete();
       })
     });
   }

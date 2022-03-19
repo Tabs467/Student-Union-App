@@ -212,7 +212,7 @@ class _EditComedianState extends State<EditComedian> {
                       // Comedian Name cannot be empty and must be
                       // below 70 characters
                       validator: (String? value) {
-                        if (value != null && value.isEmpty) {
+                        if (value != null && value.trim() == '') {
                           return "Comedian Name cannot be empty!";
                         } else if (value!.length > 70) {
                           return "Comedian Name must be below 70 characters!";
@@ -462,6 +462,33 @@ class _EditComedianState extends State<EditComedian> {
                           }
                           if (snapchat == '') {
                             snapchat = "Not Set";
+                          }
+
+
+                          // Ensure the End DateTime has its seconds,
+                          // milliseconds, and microseconds as 0
+                          DateTime newDateTime = DateTime(
+                              1, 1, 1, endDateTime.hour,
+                              endDateTime.minute, 0, 0, 0
+                          );
+
+                          endDateTime = newDateTime;
+
+                          // Ensure the Start DateTime has its date set to
+                          // 1st January 1
+                          // As the date component of these DateTimes should not
+                          // be used
+                          // And ensure the Start DateTime has its seconds,
+                          // milliseconds, and microseconds as 0
+                          if (startDateTime.day != 1 && startDateTime.month != 1
+                              && startDateTime.year != 1) {
+
+                            newDateTime = DateTime(
+                                1, 1, 1, startDateTime.hour,
+                                startDateTime.minute, 0, 0, 0
+                            );
+
+                            startDateTime = newDateTime;
                           }
 
 

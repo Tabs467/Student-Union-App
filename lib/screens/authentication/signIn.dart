@@ -46,7 +46,7 @@ class _SignInState extends State<SignIn> {
                         ),
                         // Email field cannot be left empty
                         validator: (String? value) {
-                          if (value != null && value.isEmpty) {
+                          if (value != null && value.trim() == '') {
                             return "Email field left empty!";
                           }
                           return null;
@@ -81,7 +81,7 @@ class _SignInState extends State<SignIn> {
                         obscureText: hidePassword,
                         // Password field cannot be left empty
                         validator: (String? value) {
-                          if (value != null && value.isEmpty) {
+                          if (value != null && value.trim() == '') {
                             return "Password field left empty!";
                           }
                           return null;

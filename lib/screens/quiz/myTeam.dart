@@ -89,7 +89,7 @@ class _MyTeamState extends State<MyTeam> {
                               hintText: 'Pub Quiz Team Name',
                             ),
                             validator: (String? value) {
-                              if (value != null && value.isEmpty) {
+                              if (value != null && value.trim() == '') {
                                 return "Team name cannot be empty!";
                               }
                               else if (value!.length > 40) {

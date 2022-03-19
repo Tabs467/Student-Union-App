@@ -515,13 +515,10 @@ class _QuizControlState extends State<QuizControl> {
                 child: Card(
                     margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                     child: InkWell(
-                      // When tapped call the function to end the
-                      // quiz
-                      // In this case the quiz would be ending early so there is no
-                      // winning score to put into the endQuiz function
+                      // When tapped open the End Quiz confirmation dialogue
+                      // box
                       onTap: () {
-                        DatabaseService().endQuiz(currentQuiz.id!, 0);
-                        Navigator.pushReplacementNamed(context, '/quiz/admin');
+                        showEndQuizDialog(context, currentQuiz.id!);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -628,4 +625,56 @@ class _QuizControlState extends State<QuizControl> {
       drawerEdgeDragWidth: 500.0,
     );
   }
+}
+
+
+// The End Quiz pop-up Widget
+showEndQuizDialog(context, quizID) {
+  final DatabaseService _database = DatabaseService();
+
+  // If the user taps "Yes", end the quiz
+  // Then close the pop-up
+  // Then navigate back to the quiz admin main menu
+  Widget yesButton = TextButton(
+    child: const Text("Yes"),
+    onPressed: () async {
+
+      // End the quiz
+      // In this case the quiz would be ending early so there is no
+      // winning score to put into the endQuiz function
+      _database.endQuiz(quizID, 0);
+
+      // Close the pop-up
+      Navigator.of(context).pop();
+
+      // Navigate back to the quiz admin main menu
+      Navigator.pushReplacementNamed(context, '/quiz/admin');
+    },
+  );
+
+  // If the user taps "Cancel", just close the pop-up
+  Widget cancelButton = TextButton(
+    child: const Text("Cancel"),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // The alert dialog box
+  AlertDialog alert = AlertDialog(
+    title: const Text("Warning!"),
+    content: const Text("Are you sure you want to end the quiz?"),
+    actions: [
+      yesButton,
+      cancelButton,
+    ],
+  );
+
+  // The function to build the End Quiz dialog box
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

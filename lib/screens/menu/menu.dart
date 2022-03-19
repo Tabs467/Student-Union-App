@@ -325,7 +325,7 @@ class _MenuState extends State<Menu> {
                                                         menuItems += " " + removedHyphenItem;
                                                       }
 
-                                                      SemanticsService.announce(menuItems, TextDirection.ltr);
+                                                     SemanticsService.announce(menuItems, TextDirection.ltr);
                                                     },
                                                     title: Text(
                                                       menuSubGroup.name!,

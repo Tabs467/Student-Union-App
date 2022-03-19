@@ -71,7 +71,7 @@ class _CreateMenuItemState extends State<CreateMenuItem> {
                     // below 40 characters
                     // And must not contain the '£' character
                     validator: (String? value) {
-                      if (value != null && value.isEmpty) {
+                      if (value != null && value.trim() == '') {
                         return "Menu Item Name cannot be empty!";
                       }
                       else if (value!.length > 40) {
@@ -96,7 +96,7 @@ class _CreateMenuItemState extends State<CreateMenuItem> {
                     // Menu Item Price cannot be empty and must be
                     // a number
                     validator: (String? value) {
-                      if (value != null && value.isEmpty) {
+                      if (value != null && value.trim() == '') {
                         return "Menu Item Price cannot be empty!";
                       }
                       else if (!_isNumeric(value!)) {
