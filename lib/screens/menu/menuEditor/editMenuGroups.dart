@@ -164,7 +164,7 @@ class _EditMenuGroupsState extends State<EditMenuGroups> {
                       child: const Text('Create New Menu Group'),
                       // When tapped navigate the user to the CreateMenuGroup screen
                       onPressed: () async {
-                        Navigator.pushNamed(context, '/menu/createMenuGroup');
+                        Navigator.pushNamed(context, '/menu/menuEditor/createMenuGroup');
                       },
                     ),
                   ),

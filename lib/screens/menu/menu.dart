@@ -403,7 +403,7 @@ class _MenuState extends State<Menu> {
                             // When tapped, navigate the user to the Food/Drink
                             // menu admin Widget
                             onPressed: () {
-                              Navigator.pushNamed(context, '/menu/editMenuGroups');
+                              Navigator.pushNamed(context, '/menu/menuEditor/editMenuGroups');
                             },
                             backgroundColor:
                                 const Color.fromRGBO(22, 66, 139, 1),

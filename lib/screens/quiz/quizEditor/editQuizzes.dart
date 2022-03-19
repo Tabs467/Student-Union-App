@@ -215,7 +215,7 @@ class _EditQuizzesState extends State<EditQuizzes> {
                       child: const Text('Create New Quiz'),
                       // When tapped navigate the user to the createQuiz screen
                       onPressed: () async {
-                        Navigator.pushNamed(context, '/quiz/admin/createQuiz');
+                        Navigator.pushNamed(context, '/quiz/quizEditor/createQuiz');
                       },
                     ),
                   ),

@@ -89,7 +89,7 @@ class _QuizAdminState extends State<QuizAdmin> {
                                         // Widget
                                         onTap: () async {
                                           Navigator.pushNamed(context,
-                                              '/quiz/admin/selectQuiz');
+                                              '/quiz/selectQuiz');
                                         }),
                                   )),
                             ),
@@ -115,7 +115,7 @@ class _QuizAdminState extends State<QuizAdmin> {
                                         // push the user to the Quiz Control tab
                                         onTap: () async {
                                           Navigator.pushNamed(context,
-                                              '/quiz/admin/quizControl');
+                                              '/quiz/quizControl');
                                         }),
                                   )),
                             ),
@@ -138,7 +138,7 @@ class _QuizAdminState extends State<QuizAdmin> {
                                   // Edit Quizzes tab
                                   onTap: () {
                                     Navigator.pushNamed(
-                                        context, '/quiz/admin/editQuizzes');
+                                        context, '/quiz/quizEditor/editQuizzes');
                                   }),
                             )),
                       ),

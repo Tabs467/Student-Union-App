@@ -8,25 +8,25 @@ import 'package:student_union_app/screens/authentication/signIn.dart';
 import 'package:student_union_app/screens/bandaoke/bandaokeAuth.dart';
 import 'package:student_union_app/screens/comedy/ComedyNight.dart';
 import 'package:student_union_app/screens/comedy/ComedyNightAdmin.dart';
-import 'package:student_union_app/screens/menu/createMenuGroup.dart';
-import 'package:student_union_app/screens/menu/editMenuGroups.dart';
 import 'package:student_union_app/screens/menu/menu.dart';
+import 'package:student_union_app/screens/menu/menuEditor/createMenuGroup.dart';
+import 'package:student_union_app/screens/menu/menuEditor/editMenuGroups.dart';
 import 'package:student_union_app/screens/news/news.dart';
 import 'package:student_union_app/screens/quiz/activeQuiz.dart';
-import 'package:student_union_app/screens/quiz/admin.dart';
-import 'package:student_union_app/screens/quiz/adminMonthlyLeaderboard.dart';
-import 'package:student_union_app/screens/quiz/adminSemesterlyLeaderboard.dart';
-import 'package:student_union_app/screens/quiz/adminYearlyLeaderboard.dart';
-import 'package:student_union_app/screens/quiz/createQuiz.dart';
-import 'package:student_union_app/screens/quiz/editQuizzes.dart';
 import 'package:student_union_app/screens/quiz/leaderboardAuth.dart';
-import 'package:student_union_app/screens/quiz/monthlyLeaderboard.dart';
+import 'package:student_union_app/screens/quiz/leaderboards/adminMonthlyLeaderboard.dart';
+import 'package:student_union_app/screens/quiz/leaderboards/adminSemesterlyLeaderboard.dart';
+import 'package:student_union_app/screens/quiz/leaderboards/adminYearlyLeaderboard.dart';
+import 'package:student_union_app/screens/quiz/leaderboards/monthlyLeaderboard.dart';
+import 'package:student_union_app/screens/quiz/leaderboards/semesterlyLeaderboard.dart';
+import 'package:student_union_app/screens/quiz/leaderboards/yearlyLeaderboard.dart';
 import 'package:student_union_app/screens/quiz/myTeam.dart';
+import 'package:student_union_app/screens/quiz/quizAdminMenu.dart';
 import 'package:student_union_app/screens/quiz/quizAuth.dart';
 import 'package:student_union_app/screens/quiz/quizControl.dart';
+import 'package:student_union_app/screens/quiz/quizEditor/createQuiz.dart';
+import 'package:student_union_app/screens/quiz/quizEditor/editQuizzes.dart';
 import 'package:student_union_app/screens/quiz/selectQuiz.dart';
-import 'package:student_union_app/screens/quiz/semesterlyLeaderboard.dart';
-import 'package:student_union_app/screens/quiz/yearlyLeaderboard.dart';
 
 Future<void> main() async {
 
@@ -42,32 +42,32 @@ Future<void> main() async {
   runApp(MaterialApp(
     initialRoute: '/menu',
     routes: {
-      '/menu': (context) => const Menu(),
-      '/menu/createMenuGroup': (context) => const CreateMenuGroup(),
-      '/menu/editMenuGroups': (context) => const EditMenuGroups(),
-      '/quiz/activeQuiz': (context) => const ActiveQuiz(),
-      '/quiz/admin': (context) => const QuizAdmin(),
-      '/quiz/adminMonthly': (context) => const AdminMonthlyLeaderboard(),
-      '/quiz/adminSemesterly': (context) => const AdminSemesterlyLeaderboard(),
-      '/quiz/adminYearly': (context) => const AdminYearlyLeaderboard(),
-      '/quiz/monthly': (context) => const MonthlyLeaderboard(),
-      '/quiz/semesterly': (context) => const SemesterlyLeaderboard(),
-      '/quiz/yearly': (context) => const YearlyLeaderboard(),
-      '/quiz/admin/createQuiz': (context) => const CreateQuiz(),
-      '/quiz/admin/editQuizzes': (context) => const EditQuizzes(),
-      '/quiz/admin/quizControl': (context) => const QuizControl(),
-      '/quiz/admin/selectQuiz': (context) => const SelectQuiz(),
-      '/quiz/leaderboards': (context) => const LeaderboardAuth(),
-      '/quiz/quizAuth': (context) => const QuizAuth(),
-      '/quiz/myTeam': (context) => const MyTeam(),
       '/authentication/authenticate': (context) => const Authenticate(),
+      '/authentication/forgotPassword': (context) => const ForgotPassword(),
       '/authentication/register': (context) => const Register(),
       '/authentication/signIn': (context) => const SignIn(),
-      '/authentication/forgotPassword': (context) => const ForgotPassword(),
       '/bandaoke/bandaokeAuth': (context) => const BandaokeAuth(),
       '/comedy/comedyNight': (context) => const ComedyNight(),
       '/comedy/comedyNightAdmin': (context) => const ComedyNightAdmin(),
+      '/menu': (context) => const Menu(),
+      '/menu/menuEditor/createMenuGroup': (context) => const CreateMenuGroup(),
+      '/menu/menuEditor/editMenuGroups': (context) => const EditMenuGroups(),
       '/news/news': (context) => const News(),
+      '/quiz/activeQuiz': (context) => const ActiveQuiz(),
+      '/quiz/admin': (context) => const QuizAdmin(),
+      '/quiz/leaderboards': (context) => const LeaderboardAuth(),
+      '/quiz/leaderboards/adminMonthly': (context) => const AdminMonthlyLeaderboard(),
+      '/quiz/leaderboards/adminSemesterly': (context) => const AdminSemesterlyLeaderboard(),
+      '/quiz/leaderboards/adminYearly': (context) => const AdminYearlyLeaderboard(),
+      '/quiz/leaderboards/monthly': (context) => const MonthlyLeaderboard(),
+      '/quiz/leaderboards/semesterly': (context) => const SemesterlyLeaderboard(),
+      '/quiz/leaderboards/yearly': (context) => const YearlyLeaderboard(),
+      '/quiz/myTeam': (context) => const MyTeam(),
+      '/quiz/quizAuth': (context) => const QuizAuth(),
+      '/quiz/quizControl': (context) => const QuizControl(),
+      '/quiz/quizEditor/createQuiz': (context) => const CreateQuiz(),
+      '/quiz/quizEditor/editQuizzes': (context) => const EditQuizzes(),
+      '/quiz/selectQuiz': (context) => const SelectQuiz(),
     },
   ));
 }

@@ -42,7 +42,7 @@ class _LeaderboardMenuState extends State<LeaderboardMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/quiz/monthly');
+                                    context, '/quiz/leaderboards/monthly');
                               }),
                         )),
                   ),
@@ -61,7 +61,7 @@ class _LeaderboardMenuState extends State<LeaderboardMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/quiz/semesterly');
+                                    context, '/quiz/leaderboards/semesterly');
                               }),
                         )),
                   ),
@@ -81,7 +81,7 @@ class _LeaderboardMenuState extends State<LeaderboardMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/quiz/yearly');
+                                    context, '/quiz/leaderboards/yearly');
                               }),
                         )),
                   ),

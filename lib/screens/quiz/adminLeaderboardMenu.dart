@@ -42,7 +42,7 @@ class _AdminLeaderboardMenuState extends State<AdminLeaderboardMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/quiz/adminMonthly');
+                                    context, '/quiz/leaderboards/adminMonthly');
                               }),
                         )),
                   ),
@@ -61,7 +61,7 @@ class _AdminLeaderboardMenuState extends State<AdminLeaderboardMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                context, '/quiz/adminSemesterly');
+                                context, '/quiz/leaderboards/adminSemesterly');
                               }),
                         )),
                   ),
@@ -81,7 +81,7 @@ class _AdminLeaderboardMenuState extends State<AdminLeaderboardMenu> {
                               splashColor: Colors.black.withOpacity(.3),
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, '/quiz/adminYearly');
+                                    context, '/quiz/leaderboards/adminYearly');
                               }),
                         )),
                   ),

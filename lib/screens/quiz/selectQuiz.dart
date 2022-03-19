@@ -161,7 +161,7 @@ class _SelectQuizState extends State<SelectQuiz> {
                                           onPressed: () async {
                                             await _database.startQuiz(quiz.id!);
                                             Navigator.pushNamed(context,
-                                                '/quiz/admin/quizControl');
+                                                '/quiz/quizControl');
                                           },
                                         ),
                                       ),
