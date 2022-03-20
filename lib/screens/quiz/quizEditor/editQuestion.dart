@@ -76,6 +76,10 @@ class _EditQuestionState extends State<EditQuestion> {
       questionText = question.questionText!;
       correctNWQAnswer = question.correctAnswer!;
       questionType = question.questionType!;
+
+      // Set the default correct MCQ answer in case the question is switched to
+      // be an MCQ question
+      correctMCQAnswer = 'a';
     }
 
     super.initState();
