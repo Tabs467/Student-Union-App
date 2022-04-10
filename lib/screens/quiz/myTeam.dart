@@ -349,55 +349,58 @@ showWinsDialog(context, winCount, winsArray, title) {
         fontWeight: FontWeight.bold
       ),
     ),
-    content: ListView.builder(
-        shrinkWrap: true,
-        itemCount: winCount,
-        itemBuilder: (BuildContext context, int arrayIndex) {
+    content: SizedBox(
+      width: double.maxFinite,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: winCount,
+          itemBuilder: (BuildContext context, int arrayIndex) {
 
-          // Convert each TimeStamp to a DateTime
-          DateTime unformattedDate = DateTime.parse(
-              winsArray[arrayIndex].toDate().toString()
-          );
+            // Convert each TimeStamp to a DateTime
+            DateTime unformattedDate = DateTime.parse(
+                winsArray[arrayIndex].toDate().toString()
+            );
 
-          // Format DateTime for output
-          String date =
-              "${unformattedDate.day.toString().padLeft(2, '0')}"
-              "/${unformattedDate.month.toString().padLeft(2, '0')}"
-              "/${unformattedDate.year.toString()}"
-              " at ${unformattedDate.hour.toString()}"
-              ":${unformattedDate.minute.toString().padLeft(2, '0')}";
+            // Format DateTime for output
+            String date =
+                "${unformattedDate.day.toString().padLeft(2, '0')}"
+                "/${unformattedDate.month.toString().padLeft(2, '0')}"
+                "/${unformattedDate.year.toString()}"
+                " at ${unformattedDate.hour.toString()}"
+                ":${unformattedDate.minute.toString().padLeft(2, '0')}";
 
-          // Concatenate am or pm depending on the
-          // time of day stored
-          if (unformattedDate.hour <= 12) {
-            date += "am";
-          } else {
-            date += "pm";
-          }
+            // Concatenate am or pm depending on the
+            // time of day stored
+            if (unformattedDate.hour <= 12) {
+              date += "am";
+            } else {
+              date += "pm";
+            }
 
-          // Display each win date in a scrollable list
-          return Column(
-            children: [
-              Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    date,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontStyle: FontStyle.italic,
+            // Display each win date in a scrollable list
+            return Column(
+              children: [
+                Card(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      date,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10)
-            ],
-          );
-        }),
+                const SizedBox(height: 10)
+              ],
+            );
+          }),
+    ),
     actions: [
       closeButton,
     ],
