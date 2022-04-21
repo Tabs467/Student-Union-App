@@ -310,19 +310,23 @@ class _MyTeamState extends State<MyTeam> {
           // Return a loading widget whilst the asynchronous function takes
           // time to complete
         } else {
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 50.0),
-                child: buildTabTitle('My Team', 40),
-              ),
-              const SizedBox(height: 20.0),
-              const SpinKitRing(
-                color: Colors.white,
-                size: 50.0,
-              ),
-            ],
+          return Scaffold(
+            backgroundColor: const Color.fromRGBO(244, 175, 20, 1),
+            appBar: buildAppBar(context, 'Quiz'),
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20.0, horizontal: 50.0),
+                  child: buildTabTitle('My Team', 40),
+                ),
+                const SizedBox(height: 20.0),
+                const SpinKitRing(
+                  color: Colors.white,
+                  size: 50.0,
+                ),
+              ],
+            )
           );
         }
       });
