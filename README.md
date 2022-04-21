@@ -37,7 +37,9 @@ This should run successfully until it gets to an error that states that no iOS A
 Inside of the ios folder, open Runner.xcworkspace (NOT Runner.xcodeproj) in Xcode
 
 Ensure the correct ios version is set in the Podfile, the line should be: “platform :ios, ’10.0’”
+
 Ensure the iOS Deployment Target is set to 10.0 in the Project runner file
 
 Run the app in the Xcode simulator
+
 If given the error “The sandbox is not in sync with the Podfile.lock”, run “pod install” in the ios folder and rerun “flutter build ios” whilst also ensuring the previous iOS version numbers are set to 10.0
